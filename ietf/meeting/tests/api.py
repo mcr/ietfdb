@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.test.client import Client
 from ietf.meeting.models  import TimeSlot, Session, ScheduledSession
 from ietf.ietfauth.decorators import has_role
+from auths import auth_joeblow, auth_wlo, auth_ietfchair, auth_ferrel
 
 class ApiTestCase(TestCase):
     fixtures = [ 'names.xml',  # ietf/names/fixtures/names.xml for MeetingTypeName, and TimeSlotTypeName
@@ -14,37 +15,6 @@ class ApiTestCase(TestCase):
                  'groupgroup.json',
                  'person.json', 'users.json' ]
 
-    # from http://djangosnippets.org/snippets/850/
-    @property
-    def auth_wlo(self):
-        return {'REMOTE_USER':'wnl'}
-
-    @property
-    def auth_ietfchair(self):
-        # IETF chair until IETF86
-        return {'REMOTE_USER':'rhousley'}
-
-    @property
-    def auth_joeblow(self):
-        # this is a generic user who has no special role
-        return {'REMOTE_USER':'joeblow'}
-
-    def test_wlo_is_secretariat(self):
-        wnl = User.objects.filter(pk = 509)[0]
-        self.assertIsNotNone(wnl)
-        self.assertTrue(has_role(wnl, "Secretariat"))
-                               
-    def test_housley_is_ad(self):
-        rh = User.objects.filter(pk = 432)[0]
-        self.assertIsNotNone(rh)
-        self.assertTrue(has_role(rh, "Area Director"))
-
-    def test_joeblow_is_mortal(self):
-        jb = User.objects.filter(pk = 99870)[0]
-        self.assertIsNotNone(jb)
-        self.assertFalse(has_role(jb, "Area Director"))
-        self.assertFalse(has_role(jb, "Secretariat"))
-                               
     def test_noAuthenticationUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)
         ts_two = TimeSlot.objects.get(pk=2372)
@@ -92,7 +62,7 @@ class ApiTestCase(TestCase):
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
             'argv': '{"new_event":{"session_id":"2371","timeslot_id":"2372"}}'
-            }, **self.auth_joeblow)
+            }, **auth_joeblow)
 
         # confirm that without login, it does not have new value
         ss_one = ScheduledSession.objects.get(pk=2371)
@@ -110,7 +80,7 @@ class ApiTestCase(TestCase):
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
             'argv': '{"new_event":{"session_id":"2371","timeslot_id":"2372"}}'
-            }, **self.auth_wlo)
+            }, **auth_wlo)
 
         # confirm that it has new timeslot value
         ss_one = ScheduledSession.objects.get(pk=2371)
@@ -127,7 +97,7 @@ class ApiTestCase(TestCase):
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
             'argv': '{"new_event":{"session_id":"2371","timeslot_id":"2372"}}'
-            }, **self.auth_ietfchair)
+            }, **auth_ietfchair)
 
         # confirm that it has new timeslot value
         ss_one = ScheduledSession.objects.get(pk=2371)

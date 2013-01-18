@@ -18,7 +18,8 @@ class AgendaInfoTestCase(TestCase):
         self.assertEqual(len(timeslots),26)
         self.assertEqual(meeting.number,'83')
         self.assertEqual(venue.meeting_num, "83")
-        self.assertEqual(len(ads), 1)
+        # will change as more ADs are added to fixtures
+        self.assertEqual(len(ads), 2)   
 
     def test_AgendaInfoReturnsSortedTimeSlots(self):
         from ietf.meeting.views import agenda_info
