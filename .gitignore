@@ -4,3 +4,6 @@ db
 log
 run
 ietf/settings_local.py
+*#
+.mysql.socket
+run_old
