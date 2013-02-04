@@ -34,23 +34,24 @@ function meeting_event_click(event){
     Dajaxice.ietf.meeting.get_info(fill_in_info,{'meeting_obj':meeting_objs[ME_id]} );
 }
 function fill_in_info(inp){
+    console.log(inp);
     $('#ss_info').html(generate_info_table(inp));
 }
 var menu_bar_hidden = false;
 function hide_ietf_menu_bar(){
-    $('#IETF_MENUBAR').toggle();
+    $('#IETF_MENUBAR').toggle('slide',"",100);
     if(menu_bar_hidden){
 	menu_bar_hidden = false;
 	$('.wrapper').css('width','auto');
 	$('.wrapper').css('margin-left','160px');
-
+	$('#CLOSE_IETF_MENUBAR').html("<");
 
     }
     else{
 	menu_bar_hidden = true;
 	$('.wrapper').css('width','auto');
 	$('.wrapper').css('margin-left','0px');
-//	$('.wrapper').css('width','100%');
+	$('#CLOSE_IETF_MENUBAR').html(">");
     }
 }
 

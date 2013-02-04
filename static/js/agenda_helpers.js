@@ -117,7 +117,7 @@ function gen_tr_td(title,data){
 function generate_info_table(inp){
     var html = [];
     html.push("<table>");
-
+    console.log(inp);
     html.push(gen_tr_td("Group", inp.group));
     html.push(gen_tr_td("name", inp.name));
     html.push(gen_tr_td("Requested Time", inp.requested_time));
@@ -128,8 +128,11 @@ function generate_info_table(inp){
     html.push(gen_tr_td("Room:", inp.room));
 
     html.push("</table>");
+    
+    $("#info_grp").html("!!!!");
+    console.log("did i get here?");
 
-    return html.join(' ');
+    //return html.join(' ');
 }
 
 
