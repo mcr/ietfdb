@@ -115,24 +115,32 @@ function gen_tr_td(title,data){
    takes in a json. 
 */
 function generate_info_table(inp){
-    var html = [];
-    html.push("<table>");
-    console.log(inp);
-    html.push(gen_tr_td("Group", inp.group));
-    html.push(gen_tr_td("name", inp.name));
-    html.push(gen_tr_td("Requested Time", inp.requested_time));
-    html.push(gen_tr_td("Requested By", inp.requested_by));
-    html.push(gen_tr_td("Time", inp.ts_time));
-    html.push(gen_tr_td("Duration", inp.ts_duration));
+    // var html = [];
+    // html.push("<table>");
+    // console.log(inp);
+    // html.push(gen_tr_td("Group", inp.group));
+    // html.push(gen_tr_td("name", inp.name));
+    // html.push(gen_tr_td("Requested Time", inp.requested_time));
+    // html.push(gen_tr_td("Requested By", inp.requested_by));
+    // html.push(gen_tr_td("Time", inp.ts_time));
+    // html.push(gen_tr_td("Duration", inp.ts_duration));
     
-    html.push(gen_tr_td("Room:", inp.room));
+    // html.push(gen_tr_td("Room:", inp.room));
 
-    html.push("</table>");
+    // html.push("</table>");
     
-    $("#info_grp").html("!!!!");
-    console.log("did i get here?");
+    // $("#info_grp").html("!!!!");
+    // console.log("did i get here?");
 
     //return html.join(' ');
+    $("#info_grp").html(inp.group);
+    $("#info_name").html(inp.name);
+    $("#info_area").html(inp.requested_time);
+    $("#info_duration").html(inp.group);
+    $("#info_location").html(inp.group);
+    $("#info_responsible").html(inp.group);
+    $("#info_requestedby").html(inp.requested_by);
+
 }
 
 
