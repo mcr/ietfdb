@@ -367,7 +367,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     rooms = rooms.all()
     
     
-    return HttpResponse(render_to_string("meeting/portrait_edit.html",
+    return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"timeslots":ntimeslots,
                                           "rooms":rooms,
                                           "time_slices":time_slices,

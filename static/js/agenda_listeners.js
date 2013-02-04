@@ -14,7 +14,13 @@
 // this function needs to be renamed, it should only deal with this one listener.
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent. 
-    $('.meeting_event').click(meeting_event_click)
+    $('.meeting_event').click(meeting_event_click);
+
+}
+
+/* the functionality of these listeners will never change so they do not need to be run twice  */
+function static_listeners(){
+    $('#CLOSE_IETF_MENUBAR').click(hide_ietf_menu_bar);
 }
 
 /* When one clicks something contained inside a 'meeting_event' we 
@@ -29,6 +35,23 @@ function meeting_event_click(event){
 }
 function fill_in_info(inp){
     $('#ss_info').html(generate_info_table(inp));
+}
+var menu_bar_hidden = false;
+function hide_ietf_menu_bar(){
+    $('#IETF_MENUBAR').toggle();
+    if(menu_bar_hidden){
+	menu_bar_hidden = false;
+	$('.wrapper').css('width','auto');
+	$('.wrapper').css('margin-left','160px');
+
+
+    }
+    else{
+	menu_bar_hidden = true;
+	$('.wrapper').css('width','auto');
+	$('.wrapper').css('margin-left','0px');
+//	$('.wrapper').css('width','100%');
+    }
 }
 
 

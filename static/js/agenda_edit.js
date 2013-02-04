@@ -40,9 +40,10 @@ function initStuff(){
     log("load_events() ran");
 
     listeners();
+    static_listeners();
     log("listeners() ran");
     hide_empty();
-
+    
 }
 
 
