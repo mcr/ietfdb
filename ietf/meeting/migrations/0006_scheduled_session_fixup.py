@@ -213,8 +213,9 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'ScheduledSession'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'notes': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'schedule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['meeting.Schedule']"}),
-            'session': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['meeting.Session']"}),
+            'session': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['meeting.Session']", 'null': 'True'}),
             'timeslot': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['meeting.TimeSlot']"})
         },
         'meeting.session': {
