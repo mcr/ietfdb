@@ -35,8 +35,11 @@ class Migration(DataMigration):
 
                 # skip slots with no sessions.
                 if session is None:
-                    continue
-                sys.stdout.write ("  session for wg:%s       \r" % (session.group.acronym))
+                    wg = "none"
+                else:
+                    wg = session.group.acronym
+                    
+                sys.stdout.write ("  session for wg:%s       \r" % (wg))
                 ss = ScheduledSession(timeslot = slot,
                                       session  = slot.session,
                                       schedule = na,
