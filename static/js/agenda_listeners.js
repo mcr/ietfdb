@@ -11,10 +11,22 @@
 * 
 */
 
-// this function needs to be renamed, it should only deal with this one listener.
+/********* colors ************************************/
+
+var highlight = "red"; // when we click something and want to highlight it.
+var dragging_color = "blue"; // color when draging events.
+var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
+
+/****************************************************/
+
+
+/* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent. 
     $('.meeting_event').click(meeting_event_click);
+
+    $('#info_location_select').unbind('change');
+    $('#info_location_select').change(info_location_select_change);
 
 }
 
@@ -29,9 +41,28 @@ function static_listeners(){
    id. From this ID we are able to get the json object from 'meeting_objs'
    and from there ask django for more information
 */
+
+var current_item = null;
 function meeting_event_click(event){
+    if(current_item != null){
+	$(current_item).css('background','');
+    }
+    if(last_item != null){
+	$(last_item).css('background-color','');
+    }
+
     var ME_id = $(event.target).closest('.meeting_event').attr('id');
-    Dajaxice.ietf.meeting.get_info(fill_in_info,{'meeting_obj':meeting_objs[ME_id]} );
+    $("#"+ME_id).css('background-color',highlight);
+    current_item = "#"+ME_id;
+
+    Dajaxice.ietf.meeting.get_info(fill_in_info,{'meeting_obj':meeting_objs[ME_id]},dajaxice_error );
+}
+
+function dajaxice_error(a){
+    console.log(this.ME_id);
+    console.log(this);
+    console.log("error");
+    
 }
 function fill_in_info(inp){
     console.log(inp);
@@ -55,6 +86,15 @@ function hide_ietf_menu_bar(){
     }
 }
 
+var last_item = null;
+function info_location_select_change(){
+    if(last_item != null){
+	console.log(last_item);
+	$(last_item).css('background-color','');
+    }
+    last_item = '#'+$('#info_location_select').val();
+    $('#'+$('#info_location_select').val()).css('background-color',highlight);
+}
 
 /* create the droppable */
 function droppable(){
@@ -177,17 +217,17 @@ function drop_bucket(event, ui){
 
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
-    $(event.draggable).css("background","blue");
+    $(event.draggable).css("background",dragging_color);
 }
 
 
 /* what happens when moving a meeting event over something that is 'droppable' */
 function drop_over(event, ui){
     if(check_free(this)){
-	$(this).css("background","red");
+	$(this).css("background",highlight);
     }
-    $(ui.draggable).css("background","blue");
-    $(event.draggable).css("background","blue");
+    $(ui.draggable).css("background",dragging_color);
+    $(event.draggable).css("background",dragging_color);
 }
 
 /* when we have actually dropped the meeting event */

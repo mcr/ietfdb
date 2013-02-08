@@ -47,14 +47,16 @@ def get_info(request, meeting_obj):#, event):
     #     print e
     ss = ScheduledSession.objects.get(id=int(meeting_obj["session_id"]))
 
+  
     return simplejson.dumps({'room':str(ss.timeslot.location),
-                             'group':str(ss.session.group),
+                             'ss_id':str(meeting_obj["session_id"]),
+                             'group':str(ss.session.group.acronym),
                              'name':str(ss.session.name),
                              'short_name':str(ss.session.name),
                              'agenda_note':str(ss.session.agenda_note),
                              'attendees':str(ss.session.attendees),
                              'status': str(ss.session.status),
-                             'requested_time': str(ss.session.requested),
+                             'requested_time': str(ss.session.requested.strftime("%Y-%m-%d")),
                              'requested_by': str(ss.session.requested_by),
                              'requested_duration': str(ss.session.requested_duration),
                              'ss_name':str(ss.schedule.name),
@@ -62,6 +64,11 @@ def get_info(request, meeting_obj):#, event):
                              'ss_visible':str(ss.schedule.visible),
                              'ss_public':str(ss.schedule.public),
                              'ts_time':str(ss.timeslot.time),
+                             'ts_day_of_week':str(ss.timeslot.time.strftime("%A")),
+                             'ts_time_hour':str(ss.timeslot.time.strftime("%H:%M")),
                              'ts_duration':str(ss.timeslot.duration),
+                             'area':str(ss.session.group.parent.acronym),
+                             'responsible_ad':str(ss.session.group.ad),
+                             'GroupInfo_state':str(ss.session.group.state),
                              
                              })

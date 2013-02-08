@@ -21,6 +21,8 @@ body {
     background-color:#2647A0;
     width:100px;
     min-width:100px;
+    font-size:12px;
+
 
 
 
@@ -42,6 +44,7 @@ table.meeting_event {
     max-width:100px;
     /* height:67px; */
     cursor:pointer;
+    float:left;
 }
 
 
@@ -101,8 +104,18 @@ table.meeting_event {
 
 }
 tr.agenda_slot{
-
-   height:50px;
+    overflow-y:scroll;
+    height:20px;
+    max-height:20px;
+    min-height:20px;
+   /* height:50px; */
+}
+td.agenda_slot{
+    /* overflow-y:auto; */
+    /* height:20px; */
+    /* max-height:20px; */
+    /* min-height:20px; */
+   /* height:50px; */
 }
 
 .agenda_slot{
@@ -110,6 +123,15 @@ tr.agenda_slot{
     padding:0px;
     width:100px;
     min-width:100px;
+    height:20px;
+
+}
+
+div.agenda_slot{
+    max-height:45px;
+    height:35px;
+    /* overflow-y:auto; */
+    /* overflow-x:hidden; */
 }
 
 
@@ -146,6 +168,36 @@ tr.agenda_slot{
     margin-left:3px;
 
 }
+
+.ss_info_left table{
+    min-width:409px;
+    width:410px;
+
+}
+
+.ss_info button{
+
+    
+    border:1px solid black;
+    padding-top:1px;
+    padding-bottom:1px;
+    font-size:8px;
+      background-color:white;
+    cursor:pointer;
+
+}
+
+.ss_info button:hover {
+  background-color:#E0E0E0;
+ }
+
+.ss_info select{
+   border:1px solid black;
+   font-size:8px;
+   background-color:white;
+   cursor:pointer;
+}
+
 /* #2647A0*/
 .ss_info table{
 
@@ -153,6 +205,7 @@ tr.agenda_slot{
     border-top: 1px solid #89D;
     background-color: #EDF5FF;
     border-spacing:0;
+    border-collapse: collapse;
 
 }
 
@@ -160,6 +213,8 @@ tr.agenda_slot{
     /* border-right: 1px solid #89D; */
     /* border-top: 1px solid #89D; */
     border:1px soldi #89D
+    padding:0px;
+    
 }
 .ss_info td{
     min-width:200px;
@@ -170,10 +225,14 @@ tr.agenda_slot{
 
     text-align:left;
     font-size: 12px;
-
+    padding:0px;
 }
 
 .ss_info_name{
 
     max-width:100px;
 }
+
+/* ::-webkit-scrollbar{ */
+/*     width:3px; */
+/* } */

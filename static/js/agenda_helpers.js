@@ -115,31 +115,38 @@ function gen_tr_td(title,data){
    takes in a json. 
 */
 function generate_info_table(inp){
-    // var html = [];
-    // html.push("<table>");
-    // console.log(inp);
-    // html.push(gen_tr_td("Group", inp.group));
-    // html.push(gen_tr_td("name", inp.name));
-    // html.push(gen_tr_td("Requested Time", inp.requested_time));
-    // html.push(gen_tr_td("Requested By", inp.requested_by));
-    // html.push(gen_tr_td("Time", inp.ts_time));
-    // html.push(gen_tr_td("Duration", inp.ts_duration));
-    
-    // html.push(gen_tr_td("Room:", inp.room));
-
-    // html.push("</table>");
-    
-    // $("#info_grp").html("!!!!");
-    // console.log("did i get here?");
-
-    //return html.join(' ');
     $("#info_grp").html(inp.group);
     $("#info_name").html(inp.name);
-    $("#info_area").html(inp.requested_time);
-    $("#info_duration").html(inp.group);
-    $("#info_location").html(inp.group);
-    $("#info_responsible").html(inp.group);
-    $("#info_requestedby").html(inp.requested_by);
+    $("#info_area").html(inp.area);
+    $("#info_duration").html(inp.ts_duration);
+    //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
+//    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
+
+
+
+    $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
+    $("#info_location_select").val(inp.ss_id);
+    $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
+
+    listeners();
+    
+    $("#info_responsible").html(inp.responsible_ad);
+    $("#info_requestedby").html(inp.requested_by +" ("+inp.requested_time+")");
+    
+    
+    
+}
+
+function generate_select_box(){
+    var html = "<select id='info_location_select'>";
+    $.each(meeting_objs, function(K,V){
+	/* K is the meeting_objs key */
+	/* V is the meeting_event */
+	html=html+"<option value='"+K+"' id='info_location_select_option_"+V.session_id+"'>"+V.short_string()+"</option>";
+	
+    });
+    html = html+"</select>";
+    return html;
 
 }
 

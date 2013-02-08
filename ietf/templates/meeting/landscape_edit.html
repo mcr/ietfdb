@@ -117,14 +117,6 @@ console.log("{{t.id}}");
 
 <div class="agenda_div">
 
-
-<!-- <div style="float: left; width:900px; overflow:scroll; height:800px;"> -->
-  
-{% comment %} For each meeting day, we generate a table {% endcomment %}
-{% comment %} <button onclick="Dajaxice.ietf.meeting.sayhello(my_js_callback);">click me </button><!-- dajaxice example --> {% endcomment %}
-
-{% comment %} {% for day,value in date_slices.items %} {% endcomment %}
-
 <table id="meetings" class="ietf-navbar" style="width:100%">
   <th></th>
 {% for day in time_slices %} 
@@ -151,6 +143,7 @@ console.log("{{t.id}}");
     {% for day in time_slices %}
       {% for slot in date_slices|lookup:day %}
         <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda_slot {% cycle 'alt' '' %}" ></td>
+	<!-- <td><div id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda_slot {% cycle 'alt' '' %}"></div></td> -->
       {% endfor %}
     {% endfor %}
   </tr>
@@ -171,7 +164,7 @@ console.log("{{t.id}}");
     <tr><td class="ss_info_name">Area:</td><td id="info_area"></td></tr>
     </table>
   </div>
-  <div class="ss_info">
+  <div class="ss_info ss_info_left">
     <table>
     <tr><td class="ss_info_name">Duration:</td><td id="info_duration"></td></tr>
     <tr><td class="ss_info_name">Location:</td><td id="info_location"></td></tr>
@@ -180,29 +173,6 @@ console.log("{{t.id}}");
   </table>
   </div>
 </div>
-
-
-
-<!-- <div class="ss_info"> -->
-<!--   <table> -->
-<!--     <tr><td class="ss_info_name">Group:</td><td id="info_grp"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Name:</td><td id="info_name"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Area:</td><td id="info_area"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Duration:</td><td id="info_duration"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Location:</td><td id="info_location"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Responsible AD:</td><td id="info_responsible"></td></tr> -->
-<!--     <tr><td class="ss_info_name">Requested By:</td><td id="info_requestedby"></td></tr> -->
-<!--   </table> -->
-
-
-<!-- <div id="sortable-list" style="float:left; border:1px solid black;  height:400px; width:200px;overflow:scroll;"> -->
-<!-- 	<div style="background-color:maroon; "><b>Unassigned Events:</b></div> -->
-<!-- </div> -->
-
-<!-- </div>  -->
-
-
-
 
 </div>
 
