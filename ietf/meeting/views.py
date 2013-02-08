@@ -380,6 +380,7 @@ def edit_agenda(request, num=None, schedule_name=None):
                                           "meeting":meeting,
                                           "area_list": area_list,
                                           "wg_list": wg_list ,
+                                          "sessions": sessions,
                                           "scheduledsessions": scheduledsessions,
                                           "show_inline": set(["txt","htm","html"]) },
                                          RequestContext(request)), mimetype="text/html")
