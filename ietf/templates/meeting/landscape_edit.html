@@ -40,7 +40,7 @@ days.push("{{day}}");
 {% endfor %}
 {% for s in scheduledsessions %}
 	console.log("{{s.timeslot.id}}");
-var e_obj = new event_obj( "{{ s.session.group.acronym }}","{{ s.session.group.name }}","{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}","{{s.id}}", "{{s.timeslot.id}}", "{{s.owner.owner}}");
+var e_obj = new event_obj( "{{ s.session.short_name }}","{{ s.session.group.name }}","{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}","{{s.id}}", "{{s.timeslot.id}}", "{{s.owner.owner}}");
 
 	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
 var slot_status_id = { "{{s.timeslot.location|slugify}}_{{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}":{"empty":false,"timeslot_id":"{{s.timeslot.id}}"} };
