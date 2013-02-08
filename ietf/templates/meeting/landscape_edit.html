@@ -92,13 +92,11 @@ console.log("{{t.id}}");
 <table id="meetings" class="ietf-navbar" style="width:100%">
   <th></th>
 {% for day in time_slices %} 
-  <th colspan="{{date_slices|colWidth:day|add:'1'}}" id="{{day}}-btn" class="agenda_slot_title">{{day}}  </th>
+  <th colspan="{{date_slices|colWidth:day}}" id="{{day}}-btn" class="agenda_slot_title">{{day}}  </th>
 {% endfor %}
     <tr>
       <th></th>
     {% for day in time_slices %}
-    
-      
 	  {% for slot in date_slices|lookup:day %}
 	      <th class="room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
 	  {% endfor %}
