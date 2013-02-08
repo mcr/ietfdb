@@ -292,7 +292,7 @@ def build_all_agenda_slices(scheduledsessions, all = False):
     return time_slices,date_slices
 
 def build_agenda_slices(scheduledsessions):
-    return build_all_agenda_slices(scheduledsessions, True)
+    return build_all_agenda_slices(scheduledsessions, False)
 
 
 def get_scheduledsessions_from_schedule(schedule):
@@ -355,6 +355,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     schedule = get_schedule(meeting, schedule_name)
 
     # get_modified_from needs the query set, not the list
+    sessions = meeting.session_set.order_by("id", "group", "requested_by")
     scheduledsessions = get_scheduledsessions_from_schedule(schedule)
     modified = get_modified_from_scheduledsessions(scheduledsessions)
 
@@ -364,7 +365,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
     
-    time_slices,date_slices = build_agenda_slices(scheduledsessions)
+    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
 
     rooms = meeting.room_set
     rooms = rooms.all()

@@ -41,45 +41,17 @@ days.push("{{day}}");
 {% for s in scheduledsessions %}
 	console.log("{{s.timeslot.id}}");
 var e_obj = new event_obj( "{{ s.session.short_name }}","{{ s.session.group.name }}","{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}","{{s.id}}", "{{s.timeslot.id}}", "{{s.owner.owner}}");
+{% endfor %}
 
+{% for s in scheduledsessions %}
 	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
 var slot_status_id = { "{{s.timeslot.location|slugify}}_{{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}":{"empty":false,"timeslot_id":"{{s.timeslot.id}}"} };
 $.extend(slot_status, slot_status_id);
 //console.log("{{s}}");
 {% endfor %}
 
-
-
-{% comment %}
-{% for day in date_slices %}
-	{% for r in rooms %}
-		{% for slot in date_slices|lookup:day %}
-			var slot_status_id = { "{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}":false };
-			$.extend(slot_status, slot_status_id);	
-		{% endfor %}
-	{% endfor %}
-{% endfor %}
-{% endcomment %}
-
-
-
-
 console.log("setup_slots run");
 
-{% comment %} 
-{% for t in timeslots %}
-
-	{% for s in t.sessions %}
-
-var e_obj = new event_obj( "{{ s.group.acronym }}","{{ s.group.name }}","{{t.timeslot.location|slugify}}" ,"{{ t.time|date:'Hi' }}", "{{t.time|date:'Y-m-d'}}","{{t.id}}", "{{s.id}}", "{{s.owner}}");
-	//console.log(e_obj);
-	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
-
-	{% endfor %}
-	//console.log(meeting_objs);
-{% endfor %}
-
-{% endcomment %}
 console.log(slot_status);
 console.log(meeting_objs);
 console.log("{{timeslots|length}}");
