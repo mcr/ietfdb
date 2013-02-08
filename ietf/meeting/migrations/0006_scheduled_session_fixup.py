@@ -26,6 +26,7 @@ class Migration(DataMigration):
                              owner=wanda,
                              visible=True, public=True)
             na.save()
+            na.meeting = meeting;
             meeting.agenda = na
             meeting.save()
             sys.stdout.write("\n  creating schedule %s\n" %(na.name))
