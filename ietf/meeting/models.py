@@ -367,6 +367,16 @@ class Session(models.Model):
         ss0 = self.scheduledsession_set.order_by('timeslot__time')[0]
         return u"%s: %s %s" % (self.meeting, self.group.acronym, ss0.timeslot.time.strftime("%H%M") if ss0 else "(unscheduled)")
 
+    @property
+    def short_name(self):
+        if self.name:
+            return self.name
+        if self.short:
+            return self.short
+        if self.group:
+            return self.group.acronym
+        return u"req#%u" % (id)
+        
     def constraints(self):
         return Constraint.objects.filter(source=self.group, meeting=self.meeting).order_by('name__name')
 

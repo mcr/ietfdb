@@ -258,7 +258,7 @@ def get_area_list(scheduledsessions, num):
         'session__group__parent__acronym').values_list(
         'session__group__parent__acronym',flat=True)
 
-def build_agenda_slices(scheduledsessions):
+def build_all_agenda_slices(scheduledsessions, all = False):
 
     ################## just some debugging stuff ############
     time_slices = []
@@ -267,7 +267,7 @@ def build_agenda_slices(scheduledsessions):
 
     ids = []
     for ss in scheduledsessions:
-        if(ss.session != None):# and len(ss.timeslot.session.agenda_note)>1):
+        if(all or ss.session != None):# and len(ss.timeslot.session.agenda_note)>1):
             ymd = ss.timeslot.time.strftime("%Y-%m-%d")
             
             if ymd not in date_slices and ss.timeslot.location != None:
@@ -290,6 +290,9 @@ def build_agenda_slices(scheduledsessions):
     
 
     return time_slices,date_slices
+
+def build_agenda_slices(scheduledsessions):
+    return build_all_agenda_slices(scheduledsessions, True)
 
 
 def get_scheduledsessions_from_schedule(schedule):

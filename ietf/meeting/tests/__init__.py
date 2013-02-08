@@ -14,5 +14,6 @@ from ietf.meeting.tests.agenda        import AgendaInfoTestCase
 from ietf.meeting.tests.api           import ApiTestCase
 from ietf.meeting.tests.edit          import EditTestCase
 from ietf.meeting.tests.auths         import AuthDataTestCase
+from ietf.meeting.tests.view          import ViewTestCase
 
 
