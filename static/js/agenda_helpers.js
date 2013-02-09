@@ -41,31 +41,29 @@ function print_all(){
 
 /* this pushes every event into the calendars */
 function load_events(){
-    $.each(meeting_objs, function(key) {
-	    meeting_json = meeting_objs[key];
-	    populate_events(meeting_json.title,
-		        meeting_json.description, 
-			meeting_json.room, 
-			meeting_json.time, 
-			meeting_json.date,
-			meeting_json.session_id,
-			meeting_json.timeslot_id,
-			meeting_json.owner
-		);
+    $.each(slot_status, function(key) {
+	     log("loading event "+key)
+	     ssid = slot_status[key];
+	     session = meeting_objs[ssid.session_id];
+	     populate_events(key, 
+			     session.title,
+			     session.description, 
+			     session.session_id,
+			     session.owner);
 	});
 }
 
 
-function populate_events(title,description,room, time,date, session_id){
-    var eTemplate =     event_template(title, description,time, session_id);
+function populate_events(js_room_id, title, description, session_id, owner){
+    var eTemplate =     event_template(title, description, session_id);
     var t = title+" "+description;
-    var good = insert_cell(time,date, room.split(/[ ]/).join('.'), eTemplate);
+    var good = insert_cell(js_room_id, eTemplate);
     if(good < 1){
 	event_template(title, description,time).appendTo("#sortable-list");
     }
 }
 
-function event_template(event_title, description, time, session_id){
+function event_template(event_title, description, session_id){
     var part1 = "";
     var part2 = "";
     var part3 = "";
@@ -151,9 +149,9 @@ function generate_select_box(){
 }
 
 
-function insert_cell(time,date,room,text){
-    slot_id = ("#"+room+"_"+date+"_"+time);
-    slot_id_status = (room+"_"+date+"_"+time);
+function insert_cell(js_room_id, text){
+    slot_id = ("#"+js_room_id);
+    log("Adding "+slot_id+" with "+text)
     try{
 	var found = $(slot_id).append(text);
 	$(slot_id).css('background','');

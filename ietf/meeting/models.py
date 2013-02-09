@@ -177,9 +177,19 @@ class TimeSlot(models.Model):
         return agenda.scheduledsession_set.filter(timeslot__time=self.time, timeslot__type__in=("session", "plenary", "other"))
 
     @property
+    def js_identifier(self):
+        # this returns a unique identifier that is js happy.
+        #  {{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}"
+        # also must match:
+        #  {{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}
+        from django.template.defaultfilters import slugify
+        return "%s_%s_%s" % (slugify(self.location.name), self.time.strftime('%Y-%m-%d'), self.time.strftime('%H%M'))
+
+
+    @property
     def is_plenary(self):
         return self.type_id == "plenary"
-    
+
     @property
     def is_plenary_type(self, name, agenda=None):
         return self.scheduledsessions_at_same_time(agenda)[0].acronym == name
@@ -299,6 +309,23 @@ class ScheduledSession(models.Model):
                 return "WG"
 
         return ""
+
+    @property
+    def empty_str(self):
+        # return JS happy value
+        if self.session:
+            return "False"
+        else:
+            return "True"
+
+    @property
+    def session_js_str(self):
+        # really, this should be done in the JS serialization function for
+        # SS!!!!
+        if self.session:
+            return ''',"session_id":"%u"''' % (self.session.id)
+        else:
+            return ""
 
 class Constraint(models.Model):
     """

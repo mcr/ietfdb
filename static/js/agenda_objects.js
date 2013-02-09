@@ -83,7 +83,7 @@ function event_obj(title, description, session_id, owner){
     this.session_id = session_id;
     this.owner = owner;
     this.last_timeslot_id = null;
-    this.short_string = short_string;
+    //this.short_string = short_string;
 }
 
 

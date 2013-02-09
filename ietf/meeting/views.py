@@ -296,7 +296,7 @@ def build_agenda_slices(scheduledsessions):
 
 
 def get_scheduledsessions_from_schedule(schedule):
-   ss = schedule.scheduledsession_set.order_by('timeslot__time','timeslot__name')
+   ss = schedule.scheduledsession_set.filter(timeslot__location__isnull = False).order_by('timeslot__time','timeslot__name')
    return ss
 
 def get_modified_from_scheduledsessions(scheduledsessions):

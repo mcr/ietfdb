@@ -38,16 +38,17 @@ function setup_slots(){
 {% for day in time_slices %}
 days.push("{{day}}");
 {% endfor %}
+
 {% for s in sessions %}
-	console.log("{{s.timeslot.id}}");
-var e_obj = new event_obj( "{{ s.short_name }}","{{ s.group.name }}","{{s.id}}", "{{s.owner.owner}}");
+        var e_obj = new event_obj( "{{ s.short_name }}","{{ s.group.name }}","{{s.id}}", "{{s.owner.owner}}");
 	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
 {% endfor %}
 
 {% for s in scheduledsessions %}
-var slot_status_id = { "{{s.timeslot.location|slugify}}_{{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}":{"empty":false,"timeslot_id":"{{s.timeslot.id}}"} };
-$.extend(slot_status, slot_status_id);
-//console.log("{{s}}");
+	//console.log("{{s.timeslot.id}} is {{s.timeslot.js_identifier}}"); 
+        var slot_status_id = { "{{s.timeslot.js_identifier}}":{"empty":"{{s.empty_str}}", "timeslot_id":"{{s.timeslot.id}}"{{s.session_js_str|safe}} } };
+	console.log("adding: {{s.timeslot.js_identifier}}");
+        $.extend(slot_status, slot_status_id);
 {% endfor %}
 
 console.log("setup_slots run");
@@ -113,7 +114,6 @@ console.log("{{t.id}}");
     {% for day in time_slices %}
       {% for slot in date_slices|lookup:day %}
         <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda_slot {% cycle 'alt' '' %}" ></td>
-	<!-- <td><div id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda_slot {% cycle 'alt' '' %}"></div></td> -->
       {% endfor %}
     {% endfor %}
   </tr>
