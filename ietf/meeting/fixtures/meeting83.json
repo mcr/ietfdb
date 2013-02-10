@@ -166,6 +166,9 @@
 {"pk": 2518, "model": "meeting.scheduledsession", "fields": {"schedule": 24, "notes": "Auto created", "session": 2263, "timeslot": 2925}}, 
 {"pk": 2519, "model": "meeting.scheduledsession", "fields": {"schedule": 24, "notes": "Auto created", "session": 22089, "timeslot": 2926}}, 
 
+{"pk": 2371, "model": "meeting.scheduledsession", "fields": {"schedule": 24, "notes": "manually created", "timeslot": 2371}}, 
+
+
 {"pk": 206, "model": "meeting.room", "fields": {"meeting": 83, "name": "212/213"}},
 {"pk": 207, "model": "meeting.room", "fields": {"meeting": 83, "name": "243"}},
 {"pk": 208, "model": "meeting.room", "fields": {"meeting": 83, "name": "253"}},
@@ -352,6 +355,13 @@
 {"pk": 2924, "model": "meeting.timeslot", "fields": {"name": "Afternoon Session I", "meeting": 83, "modified": "2012-03-10 13:38:37", "location": 208, "show_location": true, "time": "2012-03-28 09:00:00", "duration": 9000, "type": "session"}},
 {"pk": 2925, "model": "meeting.timeslot", "fields": {"name": "Afternoon Session I", "meeting": 83, "modified": "2012-03-24 03:24:15", "location": 206, "show_location": true, "time": "2012-03-26 13:00:00", "duration": 7200, "type": "session"}},
 {"pk": 2926, "model": "meeting.timeslot", "fields": {"name": "Working Group Chairs' Lunch Tutorial", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 211, "show_location": false, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "other"}},
+
+{"pk": 2927, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 206, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
+{"pk": 2928, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 207, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
+{"pk": 2929, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 209, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
+{"pk": 2930, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 210, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
+{"pk": 2931, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 212, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
+{"pk": 2932, "model": "meeting.timeslot", "fields": {"name": "Lunch BOF session", "meeting": 83, "modified": "2012-03-28 09:52:00", "location": 216, "show_location": true, "time": "2012-03-28 11:30:00", "duration": 5400, "type": "session"}},
 
 {"pk": 2157, "model": "meeting.session", "fields": {"status": "sched", "requested": "2011-12-19 00:00:00", "short": "", "attendees": 45, "name": "", "agenda_note": "", "modified": "2012-02-23 00:00:00", "comments": "please, no evening sessions.", "requested_by": 630, "materials": ["agenda-83-pkix", "minutes-83-pkix", "slides-83-pkix-0", "slides-83-pkix-1", "slides-83-pkix-10", "slides-83-pkix-2", "slides-83-pkix-3", "slides-83-pkix-4", "slides-83-pkix-5", "slides-83-pkix-6", "slides-83-pkix-7", "slides-83-pkix-8", "slides-83-pkix-9"], "scheduled": "2012-02-23 00:00:00", "group": 1223, "meeting": 83, "requested_duration": 7200}},
 {"pk": 2158, "model": "meeting.session", "fields": {"status": "sched", "requested": "2011-12-19 00:00:00", "short": "", "attendees": 100, "name": "", "agenda_note": "", "modified": "2012-02-23 00:00:00", "comments": "", "requested_by": 109802, "materials": ["agenda-83-rtgwg", "minutes-83-rtgwg", "slides-83-rtgwg-0", "slides-83-rtgwg-1", "slides-83-rtgwg-10", "slides-83-rtgwg-11", "slides-83-rtgwg-2", "slides-83-rtgwg-3", "slides-83-rtgwg-4", "slides-83-rtgwg-5", "slides-83-rtgwg-6", "slides-83-rtgwg-7", "slides-83-rtgwg-8", "slides-83-rtgwg-9"], "scheduled": "2012-02-23 00:00:00", "group": 1619, "meeting": 83, "requested_duration": 5400}},
