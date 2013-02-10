@@ -318,14 +318,6 @@ class ScheduledSession(models.Model):
         else:
             return "True"
 
-    @property
-    def session_js_str(self):
-        # really, this should be done in the JS serialization function for
-        # SS!!!!
-        if self.session:
-            return ''',"session_id":"%u"''' % (self.session.id)
-        else:
-            return ""
 
 class Constraint(models.Model):
     """

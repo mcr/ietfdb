@@ -42,14 +42,18 @@ function print_all(){
 /* this pushes every event into the calendars */
 function load_events(){
     $.each(slot_status, function(key) {
-	     log("loading event "+key)
+	     //log("loading event "+key)
 	     ssid = slot_status[key];
 	     session = meeting_objs[ssid.session_id];
-	     populate_events(key, 
-			     session.title,
-			     session.description, 
-			     session.session_id,
-			     session.owner);
+	     if (session != null) {
+	       populate_events(key, 
+			       session.title,
+			       session.description, 
+			       session.session_id,
+			       session.owner);
+	     } else {
+	       log("ssid: "+key+" is null");
+	     }
 	});
 }
 
@@ -75,13 +79,12 @@ function event_template(event_title, description, session_id){
 
 function check_free(inp){
     var empty = false;
-    try{
-	empty = slot_status[inp.id].empty;
+    slot = slot_status[inp.id];
+    empty = false;
+    if(slot) {
+      empty = slot.empty;
     }
-    catch(err){
-	empty = false;
-	console.log(err);
-    }
+    console.log("inp.id "+inp.id + " returns "+empty);
     return empty;
 }
 
@@ -137,10 +140,10 @@ function generate_info_table(inp){
 
 function generate_select_box(){
     var html = "<select id='info_location_select'>";
-    $.each(meeting_objs, function(K,V){
-	/* K is the meeting_objs key */
-	/* V is the meeting_event */
-	html=html+"<option value='"+K+"' id='info_location_select_option_"+V.session_id+"'>"+V.short_string()+"</option>";
+    $.each(slot_status, function(K,V){
+	/* K is the slot_status key */
+	/* V is the slot_obj */
+	html=html+"<option value='"+K+"' id='info_location_select_option_"+V.timeslot_id+"'>"+V.short_string()+"</option>";
 	
     });
     html = html+"</select>";

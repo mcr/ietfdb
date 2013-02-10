@@ -46,9 +46,11 @@ days.push("{{day}}");
 
 {% for s in scheduledsessions %}
 	//console.log("{{s.timeslot.id}} is {{s.timeslot.js_identifier}}"); 
-        var slot_status_id = { "{{s.timeslot.js_identifier}}":{"empty":"{{s.empty_str}}", "timeslot_id":"{{s.timeslot.id}}"{{s.session_js_str|safe}} } };
+
+        var s_obj= new slot_obj("{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}");
+
 	console.log("adding: {{s.timeslot.js_identifier}}");
-        $.extend(slot_status, slot_status_id);
+        $.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
 {% endfor %}
 
 console.log("setup_slots run");
