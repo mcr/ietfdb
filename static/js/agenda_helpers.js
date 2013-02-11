@@ -25,6 +25,12 @@ function print_all(){
 
 /* this pushes every event into the calendars */
 function load_events(){
+    /* first delete all html items */
+    $.each(slot_status, function(key) {
+               ssid = slot_status[key];
+               insert_cell(ssid.domid, "", true);
+           });
+               
     $.each(slot_status, function(key) {
                //log("loading event "+key)
                ssid = slot_status[key];
@@ -59,7 +65,7 @@ function load_events(){
 function populate_events(js_room_id, title, description, session_id, owner){
     var eTemplate =     event_template(title, description, session_id);
     var t = title+" "+description;
-    insert_cell(js_room_id, eTemplate, true);
+    insert_cell(js_room_id, eTemplate, false);
 }
 
 function event_template(event_title, description, session_id){
