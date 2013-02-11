@@ -28,27 +28,25 @@ function print_all(){
 /* this pushes every event into the calendars */
 function load_events(){
     $.each(slot_status, function(key) {
-	     //log("loading event "+key)
-	     ssid = slot_status[key];
-	     slot_id = ("#"+ssid.domid);
-	     $(slot_id).css('background-color', '#006699');
-	     session = meeting_objs[ssid.session_id];
-
-	     if (session != null) {
-			 		session.slot_status_key = key;
-	       session.placed = true;
-	       populate_events(key, 
-			       session.title,
-			       session.description, 
-			       session.session_id,
-			       session.owner);
-	       //log("setting "+slot_id+" as used");
-	       //$(slot_id).css('background', '#553300');
-	     } else {
-	       log("ssid: "+key+" is null");
-	     }
-	});
-
+               //log("loading event "+key)
+               ssid = slot_status[key];
+               slot_id = ("#"+ssid.domid);
+               $(slot_id).css('background-color', '#006699');
+               session = meeting_objs[ssid.session_id];
+               if (session != null) {
+				   session.slot_status_key = key;
+                   session.placed = true;
+                   populate_events(key,
+                                   session.title,
+                                   session.description, 
+                                   session.session_id,
+                                   session.owner);
+                   //log("setting "+slot_id+" as used");
+                   //$(slot_id).css('background', '#553300');
+               } else {
+                   log("ssid: "+key+" is null");
+               }
+           });
     /*
     $.each(meeting_objs, function(key) {
 	     session = meeting_objs[key];
@@ -81,7 +79,7 @@ function check_free(inp){
     slot = slot_status[inp.id];
 	console.log(slot);
     if(slot) {
-		empty = slot.empty;
+        empty = slot.empty;
     }
     console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
 	if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
@@ -95,7 +93,7 @@ function check_free(inp){
 
 
 function json_to_id(j){
-     return (j.room+"_"+j.date+"_"+j.time);
+    return (j.room+"_"+j.date+"_"+j.time);
 }
 
 function id_to_json(id){
@@ -154,15 +152,16 @@ function calculate_room_select_box() {
 			   });
 
     for (n in sorted) {
-      var k1 = sorted[n];
-      var v1 = slot_status[k1];
-	  /* k1 is the slot_status key */
-      /* v1 is the slot_obj */
-      html=html+"<option value='"+k1;
-      html=html+"' id='info_location_select_option_";
-      html=html+v1.timeslot_id+"'>";
-      html=html+v1.short_string;
-      html=html+"</option>";
+        var k1 = sorted[n];
+        var v1 = slot_status[k1];
+        console.log("k1: "+k1+" v1: "+v1);
+        /* k1 is the slot_status key */
+        /* v1 is the slot_obj */
+        html=html+"<option value='"+k1;
+        html=html+"' id='info_location_select_option_";
+        html=html+v1.timeslot_id+"'>";
+        html=html+v1.short_string;
+        html=html+"</option>";
     }
     html = html+"</select>";
     room_select_html = html;
@@ -178,19 +177,25 @@ function insert_cell(js_room_id, text, replace){
     slot_id = ("#"+js_room_id);
     //log("Adding "+slot_id+" with "+text)
     try{
-      var found;
-      if(replace) {
-		  found = $(slot_id).html(text);
-      } else {
-	found = $(slot_id).append(text);
-      }
-      $(slot_id).css('background','');
-      if(found.length == 0){
-	// do something here, if length was zero... then?
-      }
+        var found;
+        if(replace) {
+            found = $(slot_id).html(text);
+        } else {
+            found = $(slot_id).append(text);
+        }
+        $(slot_id).css('background','');
+        if(found.length == 0){
+            // do something here, if length was zero... then?
+        }
     }
     catch(err){
-	log("error");
-	log(err);
+		log("error");
+		log(err);
     } 
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset:4
+ * End:
+ */
