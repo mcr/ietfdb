@@ -16,6 +16,7 @@
 var highlight = "red"; // when we click something and want to highlight it.
 var dragging_color = "blue"; // color when draging events.
 var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
+var color_droppable_empty_slot = 'rgb(0, 102, 153)';
 
 /****************************************************/
 
@@ -152,7 +153,8 @@ function drop_drop(event, ui){
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
 	var session_obj = meeting_objs[temp_id];
-	if(slot_status[slot_idd].empty == false){
+
+	if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
 		return;
 	}
 
@@ -205,60 +207,6 @@ function drop_bucket(event,ui){
 	listeners();
 
 }
-// this is pretty broken. re written above.
-// function drop_bucket_bad(event, ui){
-//     var temp_id = ui.draggable.attr('id'); // the django session id
-//     console.log("event "+event.id+" with ui.id "+temp_id);
-//     var slot_idd = $(this).attr('id');
-
-//     new_slot = slot_status[temp_id];
-//     new_event = slot_status[temp_id];
-//     var old_id = "old_id";
-
-//     if(new_slot) {
-//       old_id = json_to_id(new_slot);
-//     }
-
-//     var slot_status_obj = slot_status[old_id];
-
-// 	try{
-// 		slot_status[old_id].empty = true;
-// 	}
-// 	catch(err){
-// 		console.log(err);
-// 		console.log("old_id");
-// 		console.log(old_id);
-// 		console.log("slot_status[old_id]", slot_status[old_id]);
-// 	}
-//     var eTemplate = event_template( new_event.title, 
-// 				    new_event.description,
-// 				    new_event.session_id);
-//     var free = []
-//     $.each(slot_status, function(sskey) {
-// 	ss = slot_status[sskey];
-// 	var usable = true;
-// 	if(ss.empty == true){
-// 	    $.each(meeting_objs, function(mkey){
-// 		if(meeting_objs.timeslot_id == ss.timeslot_id){
-// 		    usable = false; 
-// 		}
-// 	    });
-// 	    if(usable){
-// 		new_event.timeslot_id = ss.timeslot_id;
-// 	    }
-// 	}
-//     });
-    
-//     meeting_objs[temp_id] = new_event;
-//     $(this).append(eTemplate); // add the html code to the new slot.
-//     ui.draggable.remove(); // remove the old one. 
-    
-//     Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
-    
-//     droppable(); // we need to run this again to toggle the new listeners
-//     listeners();
-// }
-
 
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
@@ -277,8 +225,10 @@ function drop_over(event, ui){
 
 /* when we have actually dropped the meeting event */
 function drop_out(event, ui){
+	console.log(this);
     if(check_free(this)){
-	$(this).css("background","");
+		$(this).css("background",color_droppable_empty_slot);
+		console.log("empty");
     }
 }
 
