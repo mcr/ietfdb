@@ -268,7 +268,7 @@ def build_all_agenda_slices(scheduledsessions, all = False):
     ids = []
     for ss in scheduledsessions:
         if(all or ss.session != None):# and len(ss.timeslot.session.agenda_note)>1):
-            ymd = ss.timeslot.time.strftime("%Y-%m-%d")
+            ymd = ss.timeslot.time.date()
             
             if ymd not in date_slices and ss.timeslot.location != None:
                 date_slices[ymd] = []
@@ -290,10 +290,6 @@ def build_all_agenda_slices(scheduledsessions, all = False):
     
 
     return time_slices,date_slices
-
-def build_agenda_slices(scheduledsessions):
-    return build_all_agenda_slices(scheduledsessions, False)
-
 
 def get_scheduledsessions_from_schedule(schedule):
    ss = schedule.scheduledsession_set.filter(timeslot__location__isnull = False).order_by('timeslot__time','timeslot__name')
@@ -337,7 +333,7 @@ def html_agenda(request, num=None, schedule_name=None):
     area_list = get_area_list(scheduledsessions, num)
     wg_list = get_wg_list(scheduledsessions)
     
-    time_slices,date_slices = build_agenda_slices(scheduledsessions)
+    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, False)
 
     rooms = meeting.room_set
 

@@ -27,10 +27,17 @@ body {
 
 
 }
+
 .agenda_slot_title{
-    color:white;
-    background-color:#2647A0;
-    
+  color:white;
+  background-color:#2647A0;
+  overflow-x: hidden;
+  padding: 7px 3px;
+}
+
+.bucket-list .agenda_slot_title {
+  padding: 1px;
+  font-size: 10px;
 }
 
 table.meeting_event {
