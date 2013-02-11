@@ -22,6 +22,15 @@
 `----
 */
 
+/********* colors ************************************/
+
+var highlight = "red"; // when we click something and want to highlight it.
+var dragging_color = "blue"; // color when draging events.
+var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
+var color_droppable_empty_slot = 'rgb(0, 102, 153)';
+
+/****************************************************/
+
 
 function slot(){
 }
