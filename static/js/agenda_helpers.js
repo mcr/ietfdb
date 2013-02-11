@@ -118,8 +118,6 @@ function generate_info_table(inp){
     //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
 //    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
-
-
     $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
     $("#info_location_select").val(inp.ss_id);
     $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
@@ -128,28 +126,46 @@ function generate_info_table(inp){
     
     $("#info_responsible").html(inp.responsible_ad);
     $("#info_requestedby").html(inp.requested_by +" ("+inp.requested_time+")");
-    
-    
-    
+}
+
+var room_select_html = "";
+function calculate_room_select_box() {
+    var html = "<select id='info_location_select'>";
+
+    var keys = Object.keys(slot_status)
+    var sorted = keys.sort(function(a,b) {
+			     a1=slot_status[a];
+			     b1=slot_status[b];
+			     if (a1.date != b1.date) {
+			       return a1.date-b1.date;
+			     }
+			     return a1.time - b1.time;
+			   });
+
+    for (n in sorted) {
+      var k1 = sorted[n];
+      var v1 = slot_status[k1];
+      console.log("k1: "+k1+" v1: "+v1);
+      /* k1 is the slot_status key */
+      /* v1 is the slot_obj */
+      html=html+"<option value='"+k1;
+      html=html+"' id='info_location_select_option_";
+      html=html+v1.timeslot_id+"'>";
+      html=html+v1.short_string;
+      html=html+"</option>";
+    }
+    html = html+"</select>";
+    room_select_html = html;
 }
 
 function generate_select_box(){
-    var html = "<select id='info_location_select'>";
-    $.each(slot_status, function(K,V){
-	/* K is the slot_status key */
-	/* V is the slot_obj */
-	html=html+"<option value='"+K+"' id='info_location_select_option_"+V.timeslot_id+"'>"+V.short_string()+"</option>";
-	
-    });
-    html = html+"</select>";
-    return html;
-
+    return room_select_html;
 }
 
 
 function insert_cell(js_room_id, text, replace){
     slot_id = ("#"+js_room_id);
-    log("Adding "+slot_id+" with "+text)
+    //log("Adding "+slot_id+" with "+text)
     try{
       var found;
       if(replace) {

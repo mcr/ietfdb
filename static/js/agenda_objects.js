@@ -77,14 +77,20 @@ function upperCaseWords(inp){
     
 }
 
-function slot_obj(empty, timeslot_id, session_id, room, date, time, domid) {
+function slot_obj(empty, timeslot_id, session_id, room, time, date, domid) {
   this.empty       = empty;
   this.timeslot_id = timeslot_id;
   this.session_id  = session_id;
   this.date        = date;
   this.time        = time;
   this.room        = room;
-  this.short_string = short_string;
+
+
+  var d = new Date(this.date);
+  var t = $.datepicker.formatDate('DD', d);
+  console.log("short_string "+this.date+" gives "+t);
+  this.short_string = t.toString() + ", "+ this.time + ", " + upperCaseWords(this.room);
+
   if(domid) {
     this.domid = domid;
   } else {
@@ -101,15 +107,3 @@ function event_obj(title, description, session_id, owner){
     this.last_timeslot_id = null;
 }
 
-
-/* event_obj functions. */
-
-/* function for event_obj that will produce a short string version of this obj. */
-function short_string(){
-    fmt_time = (this.date).split('-');
-    d = new Date(fmt_time[0],fmt_time[1], fmt_time[2]);
-    t = "";
-    t = $.datepicker.formatDate('DD', d);
-    t = t.toString() + ", "+ this.time + ", " + upperCaseWords(this.room);
-    return t;
-}
