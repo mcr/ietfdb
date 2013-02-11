@@ -183,3 +183,9 @@ function insert_cell(js_room_id, text, replace){
 	log(err);
     } 
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset:4
+ * End:
+ */
