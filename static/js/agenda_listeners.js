@@ -168,6 +168,7 @@ function drop_drop(event, ui){
 	} else {
 		// how do we deal with the case that there are two things in a slot?
 		slot_status[session_obj.slot_status_key].empty = true;
+		$("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
 		session_obj.slot_status_key = slot_idd;
 	}
 	
@@ -193,6 +194,7 @@ function drop_bucket(event,ui){
 
 	slot_status[session_obj.slot_status_key].session_id = null;
 	slot_status[session_obj.slot_status_key].empty = true;
+	$("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
 	session_obj.placed = false;
 	session_obj.slot_status_key = null;
 
