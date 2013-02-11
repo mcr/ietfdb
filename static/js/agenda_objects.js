@@ -66,14 +66,17 @@ function check_delimiter(inp){
 function upperCaseWords(inp){
     var newStr = "";
     var split = inp.split(check_delimiter(inp));
-    for(i=0; i<split.length; i++){
-	newStr = newStr+split[i][0].toUpperCase();
-	newStr = newStr+split[i].slice(1,split[i].length);
-	if(i+1 < split.length){ // so we don't get a extra space
-	    newStr = newStr+" ";
-	}
+    
+	for(i=0; i<split.length; i++){
+		newStr = newStr+split[i][0].toUpperCase();
+		newStr = newStr+split[i].slice(1,split[i].length);
+		
+		if(i+1 < split.length){ // so we don't get a extra space
+			newStr = newStr+" ";
+		}
     }
-    return newStr;
+    
+	return newStr;
     
 }
 
@@ -105,5 +108,6 @@ function event_obj(title, description, session_id, owner){
     this.session_id = session_id;
     this.owner = owner;
     this.last_timeslot_id = null;
+	this.slot_status_key = null;
 }
 

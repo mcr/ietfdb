@@ -43,12 +43,14 @@ function static_listeners(){
 */
 
 var current_item = null;
+var current_timeslot = null;
 function meeting_event_click(event){
     if(current_item != null){
-	$(current_item).css('background','');
+	  $(current_item).css('background','');
+    
     }
     if(last_item != null){
-	$(last_item).css('background-color','');
+	  $(last_item).css('background-color','');
     }
 
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
@@ -56,10 +58,13 @@ function meeting_event_click(event){
     slot = slot_status[slot_id];
     if(slot) {
       session_id = slot.session_id;
+      
       $("#session_"+session_id).css('background-color',highlight);
       
+        
       current_item = "#session_"+session_id;
-      
+	  current_timeslot = slot.timeslot_id;
+	
       Dajaxice.ietf.meeting.get_info(fill_in_info,
 				     {'meeting_obj':meeting_objs[session_id]},
 				     dajaxice_error );
@@ -137,100 +142,122 @@ function droppable(){
 
 /* what happens when we drop the session onto a timeslot. */
 function drop_drop(event, ui){
+	console.log("------ drop drop --------");
     var temp_id = ui.draggable.attr('id');
     console.log("event "+event.id+" with ui.id "+temp_id);
+	temp_id = temp_id.substring(8,temp_id.length);
     var slot_idd = $(this).attr('id');
-
+	console.log(slot_status[slot_idd]);
+	console.log(slot_idd);
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
+	var session_obj = meeting_objs[temp_id];
+	if(slot_status[slot_idd].empty == false){
+		return;
+	}
 
-    new_slot = slot_status[temp_id];
-    var old_id = "oldid";
-    if(new_slot) {
-      old_id = json_to_id(new_slot);
-    } else {
-      console.log("null new slot: "+temp_id);
-      return;
-    }
-    var empty = check_free(this);
-    
-    if(empty){
-	$(this).css("background","");
-	var eTemplate = event_template( event.title, 
-				        event.description,
-				        event.session_id );
+	// we are good, the slot is empty.
+	slot_status[slot_idd].empty = false; // it's going to be full now....
+	slot_status[slot_idd].session_id = temp_id;
+	console.log(session_obj);
+
+	if(meeting_objs[temp_id].slot_status_key == null){ // we are coming from a bucket list
+		session_obj.slot_status_key = slot_idd;
+	} else {
+		// how do we deal with the case that there are two things in a slot?
+		slot_status[session_obj.slot_status_key].empty = true;
+		session_obj.slot_status_key = slot_idd;
+	}
 	
-	$(this).append(eTemplate); // add the html code to the new slot.
-
-	console.log($(this));
-
-	ui.draggable.remove(); // remove the old one. 
-	droppable(); // we need to run this again to toggle the new listeners
-
-	log("id:   "+slot_idd)
-	log("oldid:"+old_id)
-	slot_status[slot_idd].empty = false;
-	slot_status[old_id].empty = true;
-
-	slot_status[slot_idd].session_id = event.id;
-
-	//if ((new_event.last_timeslot_id == null) || (new_event.last_timeslot_id != new_event.timeslot_id)){
-	//    new_event.last_timeslot_id = slot_status[old_id].timeslot_id
-	//}
-	//meeting_objs[temp_id] = new_event;
-	//Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event});
-    }
-    else{ // happens when you are moving the item to somewhere that has something in it.
+	
+	var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+	$(this).append(eTemplate);
+	ui.draggable.remove();
 	ui.draggable.css("background",""); // remove the old one. 	
-    }
-    listeners();
+	$(this).css("background","");
+	droppable();
+	listeners();
+	// Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event});
 }
 
 /* what happens when we drop the session onto the bucket list
    (thing named "unassigned events") */
-function drop_bucket(event, ui){
-    var temp_id = ui.draggable.attr('id'); // the django session id
-    console.log("event "+event.id+" with ui.id "+temp_id);
-    var slot_idd = $(this).attr('id');
 
-    new_slot = slot_status[temp_id];
-    var old_id = "old_id";
+function drop_bucket(event,ui){
+	console.log("drop_bucket called");
+	var temp_session_id = ui.draggable.attr('id'); // the django session id
+	var idd = temp_session_id.substring(8,temp_session_id.length);
+	var session_obj =  meeting_objs[idd];
 
-    if(new_slot) {
-      old_id = json_to_id(new_slot);
-    }
+	slot_status[session_obj.slot_status_key].session_id = null;
+	slot_status[session_obj.slot_status_key].empty = true;
+	session_obj.placed = false;
+	session_obj.slot_status_key = null;
 
-    var slot_status_obj = slot_status[old_id];
+	var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+	$(this).append(eTemplate);
 
-    slot_status[old_id].empty = true;
-    var eTemplate = event_template( new_event.title, 
-				    new_event.description,
-				    new_event.session_id);
-    var free = []
-    $.each(slot_status, function(sskey) {
-	ss = slot_status[sskey];
-	var usable = true;
-	if(ss.empty == true){
-	    $.each(meeting_objs, function(mkey){
-		if(meeting_objs.timeslot_id == ss.timeslot_id){
-		    usable = false; 
-		}
-	    });
-	    if(usable){
-		new_event.timeslot_id = ss.timeslot_id;
-	    }
-	}
-    });
-    
-    meeting_objs[temp_id] = new_event;
-    $(this).append(eTemplate); // add the html code to the new slot.
-    ui.draggable.remove(); // remove the old one. 
-    
-    Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
-    
-    droppable(); // we need to run this again to toggle the new listeners
-    listeners();
+	
+	ui.draggable.remove();
+	// dajaxice call should say this session has no timeslot.  
+    // Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
+	droppable();
+	listeners();
+
 }
+// this is pretty broken. re written above.
+// function drop_bucket_bad(event, ui){
+//     var temp_id = ui.draggable.attr('id'); // the django session id
+//     console.log("event "+event.id+" with ui.id "+temp_id);
+//     var slot_idd = $(this).attr('id');
+
+//     new_slot = slot_status[temp_id];
+//     new_event = slot_status[temp_id];
+//     var old_id = "old_id";
+
+//     if(new_slot) {
+//       old_id = json_to_id(new_slot);
+//     }
+
+//     var slot_status_obj = slot_status[old_id];
+
+// 	try{
+// 		slot_status[old_id].empty = true;
+// 	}
+// 	catch(err){
+// 		console.log(err);
+// 		console.log("old_id");
+// 		console.log(old_id);
+// 		console.log("slot_status[old_id]", slot_status[old_id]);
+// 	}
+//     var eTemplate = event_template( new_event.title, 
+// 				    new_event.description,
+// 				    new_event.session_id);
+//     var free = []
+//     $.each(slot_status, function(sskey) {
+// 	ss = slot_status[sskey];
+// 	var usable = true;
+// 	if(ss.empty == true){
+// 	    $.each(meeting_objs, function(mkey){
+// 		if(meeting_objs.timeslot_id == ss.timeslot_id){
+// 		    usable = false; 
+// 		}
+// 	    });
+// 	    if(usable){
+// 		new_event.timeslot_id = ss.timeslot_id;
+// 	    }
+// 	}
+//     });
+    
+//     meeting_objs[temp_id] = new_event;
+//     $(this).append(eTemplate); // add the html code to the new slot.
+//     ui.draggable.remove(); // remove the old one. 
+    
+//     Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
+    
+//     droppable(); // we need to run this again to toggle the new listeners
+//     listeners();
+// }
 
 
 /* first thing that happens when we grab a meeting_event */

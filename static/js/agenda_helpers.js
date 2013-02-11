@@ -23,6 +23,8 @@ function print_all(){
     }
 }
 
+
+
 /* this pushes every event into the calendars */
 function load_events(){
     $.each(slot_status, function(key) {
@@ -31,7 +33,9 @@ function load_events(){
 	     slot_id = ("#"+ssid.domid);
 	     $(slot_id).css('background-color', '#006699');
 	     session = meeting_objs[ssid.session_id];
+
 	     if (session != null) {
+			 		session.slot_status_key = key;
 	       session.placed = true;
 	       populate_events(key, 
 			       session.title,
@@ -120,6 +124,8 @@ function generate_info_table(inp){
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
     $("#info_location_select").val(inp.ss_id);
+    console.log($("#info_location_select_option_"+current_timeslot));
+	$("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
     $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
 
     listeners();
@@ -145,8 +151,7 @@ function calculate_room_select_box() {
     for (n in sorted) {
       var k1 = sorted[n];
       var v1 = slot_status[k1];
-      console.log("k1: "+k1+" v1: "+v1);
-      /* k1 is the slot_status key */
+	  /* k1 is the slot_status key */
       /* v1 is the slot_obj */
       html=html+"<option value='"+k1;
       html=html+"' id='info_location_select_option_";
@@ -156,6 +161,7 @@ function calculate_room_select_box() {
     }
     html = html+"</select>";
     room_select_html = html;
+    
 }
 
 function generate_select_box(){
@@ -169,7 +175,7 @@ function insert_cell(js_room_id, text, replace){
     try{
       var found;
       if(replace) {
-	found = $(slot_id).html(text);
+		  found = $(slot_id).html(text);
       } else {
 	found = $(slot_id).append(text);
       }
