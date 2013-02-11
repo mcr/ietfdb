@@ -212,13 +212,13 @@ div.agenda_slot{
 .ss_info tr{
     /* border-right: 1px solid #89D; */
     /* border-top: 1px solid #89D; */
-    border:1px soldi #89D
+    border:1px solid #89D
     padding:0px;
     
 }
 .ss_info td{
     min-width:200px;
-/* //  border:1px soldi #89D; */
+/* //  border:1px solid #89D; */
     border: 0px;
     border-bottom: 1px solid #89D;
     border-right: 1px solid #89D;
