@@ -51,11 +51,19 @@ function meeting_event_click(event){
 	$(last_item).css('background-color','');
     }
 
-    var ME_id = $(event.target).closest('.meeting_event').attr('id');
-    $("#"+ME_id).css('background-color',highlight);
-    current_item = "#"+ME_id;
+    var slot_id = $(event.target).closest('.agenda_slot').attr('id');
 
-    Dajaxice.ietf.meeting.get_info(fill_in_info,{'meeting_obj':meeting_objs[ME_id]},dajaxice_error );
+    slot = slot_status[slot_id];
+    if(slot) {
+      session_id = slot.session_id;
+      $("#session_"+session_id).css('background-color',highlight);
+      
+      current_item = "#session_"+session_id;
+      
+      Dajaxice.ietf.meeting.get_info(fill_in_info,
+				     {'meeting_obj':meeting_objs[session_id]},
+				     dajaxice_error );
+    }
 }
 
 function dajaxice_error(a){

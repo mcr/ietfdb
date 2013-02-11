@@ -77,7 +77,7 @@ function upperCaseWords(inp){
     
 }
 
-function slot_obj(empty, timeslot_id, session_id, room, date, time) {
+function slot_obj(empty, timeslot_id, session_id, room, date, time, domid) {
   this.empty       = empty;
   this.timeslot_id = timeslot_id;
   this.session_id  = session_id;
@@ -85,6 +85,12 @@ function slot_obj(empty, timeslot_id, session_id, room, date, time) {
   this.time        = time;
   this.room        = room;
   this.short_string = short_string;
+  if(domid) {
+    this.domid = domid;
+  } else {
+    this.domid = json_to_id(this);
+    console.log("gen "+timeslot_id+" is domid: "+this.domid);
+  }
 }
 
 function event_obj(title, description, session_id, owner){

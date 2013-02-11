@@ -16,7 +16,7 @@
 
 //////////////-GLOBALS----////////////////////////////////////////
 
-var meeting_objs = {};    // contains a list of event_obj's
+var meeting_objs = {};    // contains a list of session objects
 var slot_status = {};     // the status of the slot, in format { room_year-month-day_hour: { free: t/f, timeslotid: id } }
 var days = [];
 /////////////-END-GLOBALS-///////////////////////////////////////
@@ -42,8 +42,6 @@ function initStuff(){
     listeners();
     static_listeners();
     log("listeners() ran");
-    hide_empty();
-    
 }
 
 
