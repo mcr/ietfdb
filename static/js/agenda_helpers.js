@@ -23,6 +23,8 @@ function print_all(){
     }
 }
 
+
+
 /* this pushes every event into the calendars */
 function load_events(){
     /* first delete all html items */
@@ -38,6 +40,7 @@ function load_events(){
                $(slot_id).css('background-color', '#006699');
                session = meeting_objs[ssid.session_id];
                if (session != null) {
+				   session.slot_status_key = key;
                    session.placed = true;
                    populate_events(key,
                                    session.title,
@@ -50,7 +53,6 @@ function load_events(){
                    log("ssid: "+key+" is null");
                }
            });
-
     /*
     $.each(meeting_objs, function(key) {
 	     session = meeting_objs[key];
@@ -81,12 +83,17 @@ function event_template(event_title, description, session_id){
 function check_free(inp){
     var empty = false;
     slot = slot_status[inp.id];
-    empty = false;
+	console.log(slot);
     if(slot) {
         empty = slot.empty;
     }
     console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
-    return empty;
+	if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
+		return false;
+	}
+	else{
+		return true;
+	}
 }
 
 
@@ -126,6 +133,8 @@ function generate_info_table(inp){
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
     $("#info_location_select").val(inp.ss_id);
+    console.log($("#info_location_select_option_"+current_timeslot));
+	$("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
     $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
 
     listeners();
@@ -162,6 +171,7 @@ function calculate_room_select_box() {
     }
     html = html+"</select>";
     room_select_html = html;
+    
 }
 
 function generate_select_box(){
@@ -185,8 +195,8 @@ function insert_cell(js_room_id, text, replace){
         }
     }
     catch(err){
-	log("error");
-	log(err);
+		log("error");
+		log(err);
     } 
 }
 
