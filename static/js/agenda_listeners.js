@@ -11,14 +11,6 @@
 * 
 */
 
-/********* colors ************************************/
-
-var highlight = "red"; // when we click something and want to highlight it.
-var dragging_color = "blue"; // color when draging events.
-var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
-var color_droppable_empty_slot = 'rgb(0, 102, 153)';
-
-/****************************************************/
 
 
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
@@ -73,11 +65,9 @@ function meeting_event_click(event){
 }
 
 function dajaxice_error(a){
-    console.log(this.ME_id);
-    console.log(this);
-    console.log("error");
-    
+    console.log("dajaxice_error");
 }
+
 function fill_in_info(inp){
     console.log(inp);
     $('#ss_info').html(generate_info_table(inp));
@@ -153,10 +143,14 @@ function drop_drop(event, ui){
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
 	var session_obj = meeting_objs[temp_id];
-
-	if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
+	try{
+		if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
+			return;
+		}
+	} catch(err) { // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
 		return;
 	}
+		
 
 	// we are good, the slot is empty.
 	slot_status[slot_idd].empty = false; // it's going to be full now....
