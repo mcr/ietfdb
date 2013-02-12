@@ -26,10 +26,6 @@ class ViewTestCase(TestCase):
         edu1_session = Session.objects.get(pk=2274)
         self.assertEqual(edu1_session.short_name, "Tools for Creating Internet-Drafts Tutorial")
 
-    def test_scheduledslot_clue(self):
-        iepg_ss = ScheduledSession.objects.get(pk=2413)
-        self.assertEqual(iepg_ss.session_js_str, ''',"session_id":"2194"''')
-        
     def test_js_identifier_clue(self):
         iepg_ss = ScheduledSession.objects.get(pk=2413)
         slot = iepg_ss.timeslot
