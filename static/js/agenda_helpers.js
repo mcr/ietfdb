@@ -48,7 +48,7 @@ function load_events(){
     });
     
     $.each(slot_status, function(key) {
-        log("loading event "+key)
+//        log("loading event "+key)
         ssid_arr = slot_status[key]
 	
 	for(var q = 0; q<ssid_arr.length; q++){
@@ -80,19 +80,10 @@ function populate_events(js_room_id, title, description, session_id, owner){
     var eTemplate =     event_template(title, description, session_id);
     var t = title+" "+description;
     insert_cell(js_room_id, eTemplate, false);
-//	console.log("*********");
-//	console.log(js_room_id, eTemplate, true);
 }
 
 function event_template(event_title, description, session_id){
-    var part1 = "";
-    var part2 = "";
-    var part3 = "";
-    var part2 = "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr>";
-    // var part2 = "<table class='meeting_event' id='"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr><tr><td> .."+description+" ..</td></tr></table>"
-    // var part2 = "<table class='meeting_event' id='"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr><tr><td style='height:10px'> .."+description+" ..</td></tr></table>"
-//    return $(part1+part2+part3);
-    return (part1+part2+part3);
+    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr>";
 }
 
 function check_free(inp){
@@ -135,10 +126,33 @@ function gen_tr_td(title,data){
     return "<tr><td>"+title+"</td><td>"+data+"</td></tr>";
 }
 
+/* Mainly for the case where we didn't get any data back from the server */ 
+function empty_info_table(){
+    $("#info_grp").html("");
+    $("#info_name").html("");
+    $("#info_area").html("");
+    $("#info_duration").html("");
+    $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
+    $("#info_location_select").val("");
+    $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
+    $("#info_responsible").html("");
+    $("#info_requestedby").html("");
+
+    // $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
+
+//    listeners();
+    
+
+
+
+
+}
+
 /* creates the 'info' table that is located on the right side. 
    takes in a json. 
 */
 function generate_info_table(inp){
+    empty_info_table(); // this should not need to be called as a empty string should over write the fields.
     $("#info_grp").html(inp.group);
     $("#info_name").html(inp.name);
     $("#info_area").html(inp.area);
@@ -158,6 +172,7 @@ function generate_info_table(inp){
     $("#info_requestedby").html(inp.requested_by +" ("+inp.requested_time+")");
 }
 
+
 var room_select_html = "";
 function calculate_room_select_box() {
     var html = "<select id='info_location_select'>";
@@ -174,15 +189,18 @@ function calculate_room_select_box() {
 
     for (n in sorted) {
         var k1 = sorted[n];
-        var v1 = slot_status[k1];
-        //console.log("k1: "+k1+" v1: "+v1);
+        var val_arr = slot_status[k1];
+		
         /* k1 is the slot_status key */
         /* v1 is the slot_obj */
-        html=html+"<option value='"+k1;
-        html=html+"' id='info_location_select_option_";
-        html=html+v1.timeslot_id+"'>";
-        html=html+v1.short_string;
-        html=html+"</option>";
+	for(var i = 0; i<val_arr.length; i++){
+	    var v1 = val_arr[i];
+            html=html+"<option value='"+k1;
+            html=html+"' id='info_location_select_option_";
+            html=html+v1.timeslot_id+"'>";
+            html=html+v1.short_string;
+            html=html+"</option>";
+	}
     }
     html = html+"</select>";
     room_select_html = html;
@@ -195,8 +213,8 @@ function generate_select_box(){
 
 
 function insert_cell(js_room_id, text, replace){
-	slot_id = ("#"+js_room_id);
-	console.log(slot_id);
+    slot_id = ("#"+js_room_id);
+    //console.log(slot_id);
     //log("Adding "+slot_id+" with "+text+" to "+ $(slot_id).attr('id'))
     try{
 	var found;
@@ -204,17 +222,17 @@ function insert_cell(js_room_id, text, replace){
 	    found = $(slot_id).html(text);
         } else {
             found = $(slot_id).append($(text));
-
+	    
         }
         $(slot_id).css('background','');
         if(found.length == 0){
             // do something here, if length was zero... then?
         }
-
+	
     }
     catch(err){
-		log("error");
-		log(err);
+	log("error");
+	log(err);
     } 
 }
 

@@ -82,7 +82,13 @@ function dajaxice_error(a){
 }
 
 function fill_in_info(inp){
+    console.log("fill_in_info");
     console.log(inp);
+
+    if(inp == null || inp == "None"){
+	console.log("null returned");
+	empty_info_table();
+    }
     $('#ss_info').html(generate_info_table(inp));
 }
 var menu_bar_hidden = false;
