@@ -35,32 +35,45 @@ function static_listeners(){
    and from there ask django for more information
 */
 
+var clicked_event;
+
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
     if(current_item != null){
-	  $(current_item).css('background','');
-    
+	$(current_item).css('background','');
+	
     }
     if(last_item != null){
-	  $(last_item).css('background-color','');
+	$(last_item).css('background-color','');
     }
-
+    
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
-
+    var meeting_event_id = $(event.target).closest('.meeting_event').attr('id');
+    
+    console.log("meeting event click");
+    console.log(event);
+    clicked_event = event;
+    console.log("event.taget.id",$(event).attr('id'));
+    console.log("slot_id:", slot_id);
     slot = slot_status[slot_id];
+    console.log(meeting_event_id);
+    
+    console.log(meeting_objs[meeting_event_id]);
+    meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
     if(slot) {
-      session_id = slot.session_id;
-      
-      $("#session_"+session_id).css('background-color',highlight);
-      
-        
-      current_item = "#session_"+session_id;
-	  current_timeslot = slot.timeslot_id;
+	session_id = slot.session_id;
 	
-      Dajaxice.ietf.meeting.get_info(fill_in_info,
-				     {'meeting_obj':meeting_objs[session_id]},
-				     dajaxice_error );
+	$("#session_"+session_id).css('background-color',highlight);
+	
+        
+	current_item = "#session_"+session_id;
+	current_timeslot = slot.timeslot_id;
+	
+//				       {'meeting_obj':meeting_objs[session_id]},
+	Dajaxice.ietf.meeting.get_info(fill_in_info,
+				       {'meeting_obj':meeting_objs[meeting_event_id]},
+				       dajaxice_error );
     }
 }
 
@@ -172,9 +185,12 @@ function drop_drop(event, ui){
 	ui.draggable.remove();
 	ui.draggable.css("background",""); // remove the old one. 	
 	$(this).css("background","");
+	
+	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':session_obj, 'timeslot_id':slot_status[slot_idd].timeslot_id});
+	
 	droppable();
 	listeners();
-	// Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event});
+
 }
 
 /* what happens when we drop the session onto the bucket list

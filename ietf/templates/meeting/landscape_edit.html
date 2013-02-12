@@ -36,35 +36,33 @@ function my_js_callback(data){
 
 function setup_slots(){
 {% for day in time_slices %}
-days.push("{{day}}");
+    days.push("{{day}}");
 {% endfor %}
 
 {% for s in sessions %}
-        var e_obj = new event_obj( "{{ s.short_name }}","{{ s.group.name }}","{{s.id}}", "{{s.owner.owner}}");
+    var e_obj = new event_obj( "{{ s.short_name }}","{{ s.group.name }}","{{s.id}}", "{{s.owner.owner}}");
+	//e_obj.slot_status_key = "blank{{s.timeslot.js_identifier}}"
 	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
 {% endfor %}
 
 {% for s in scheduledsessions %}
+    var s_obj= new slot_obj("{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
+	//console.log("adding: {{s.timeslot.js_identifier}}");
+    if(slot_status["{{s.timeslot.js_identifier}}"] != null){ // the key so two sessions in the same timeslot
 
-	//console.log("{{s.timeslot.id}} is {{s.timeslot.js_identifier}}"); 
-        var s_obj= new slot_obj("{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
-	console.log("adding: {{s.timeslot.js_identifier}}");
-        $.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
-
+    }
+    else{ // doesn't exist so we create it.
+	$.extend(slot_status, { "{{s.timeslot.js_identifier}}":[]});
+    }
+    slot_status["{{s.timeslot.js_identifier}}"].push(s_obj);
+    //$.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
+    //$.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
 {% endfor %}
 
 console.log("setup_slots run");
 
 calculate_room_select_box();
-//console.log(slot_status);
-//console.log(meeting_objs);
 console.log("{{timeslots|length}}");
-
-{% comment %}
-{% for t in time_slices %}
-console.log("{{t.id}}");
-{% endfor %}
-{% endcomment %}
 
 }
 
