@@ -1,8 +1,7 @@
 # Copyright The IETF Trust 2007, All Rights Reserved
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url, include
 from django.views.generic.simple import redirect_to
-
 from ietf.meeting import views
 
 urlpatterns = patterns('',
@@ -21,8 +20,7 @@ urlpatterns = patterns('',
     (r'^(?P<num>\d+)/agenda(?:.html)?/?$', views.agenda_html_request),
     (r'^(?P<num>\d+)/agenda/edit$',        views.edit_agenda),
     (r'^(?P<num>\d+)/agenda/(?P<schedule_name>[A-Za-z0-9-:_]+)(?:.html)?/?$', views.agenda_html_request),
-    url(r'^(?P<num>\d+)/agenda/(?P<schedule_name>[A-Za-z0-9-:_]+)/edit$',
-        views.edit_agenda,
+    url(r'^(?P<num>\d+)/agenda/(?P<schedule_name>[A-Za-z0-9-:_]+)/edit$',      views.edit_agenda,
         'edit_agenda_by_name'),
     (r'^(?P<num>\d+)/requests.html$', redirect_to, {"url": '/meeting/%(num)s/requests', "permanent": True}),
     (r'^(?P<num>\d+)/requests$', views.meeting_requests),

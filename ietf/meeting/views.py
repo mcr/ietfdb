@@ -390,11 +390,10 @@ def agenda_create(request, num=None, schedule_name=None):
         ss.pk = None
         ss.schedule=newschedule
         ss.save()
-        print "ss id: %u" % (ss.id)
         
     # now redirect to this new schedule.
     return HttpResponseRedirect(
-        reverse('edit_agenda_by_name',
+        reverse(edit_agenda,
                 args=[meeting.number, newschedule.name]))
     
 

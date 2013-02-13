@@ -51,8 +51,9 @@ class ViewTestCase(TestCase):
 
     def test_agenda_edit_url(self):
         from django.core.urlresolvers import reverse
-        url = reverse('edit_agenda_by_name',
-                      args['83', 'fred'])
+        from ietf.meeting.views import edit_agenda
+        url = reverse(edit_agenda,
+                      args=['83', 'fred'])
         self.assertEqual(url, "/meeting/83/agenda/fred/edit")
     
 
