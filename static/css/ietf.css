@@ -164,7 +164,7 @@ div.agenda_slot{
     /* border:1px solid blue; */
     height:50px;
     border-bottom: 1px solid black;
-
+  overflow-x: auto;
 }
 
 
