@@ -63,37 +63,27 @@ def update_timeslot(request, new_event=None, timeslot_id=None):
 
 
 @dajaxice_register
-def get_info(request, scheduledsession_id=None):#, event):
+def get_info(request, scheduledsession_id=None, session_id=None):#, event):
     
     try:
-        ss = ScheduledSession.objects.get(pk=int(scheduledsession_id))
-    except ScheduledSession.DoesNotExist:
-        logging.debug("No ScheduledSession was found for id:%s" % (scheduledsession_id))
+        session = Session.objects.get(pk=int(session_id))
+    except Session.DoesNotExist:
+        logging.debug("No ScheduledSession was found for id:%s" % (session_id))
         # in this case we want to return empty the session information and perhaps indicate to the user there is a issue.
         return
 
   
-    return simplejson.dumps({'room':str(ss.timeslot.location),
-                             'ss_id':str(ss.session.id),
-                             'group':str(ss.session.group.acronym),
-                             'name':str(ss.session.name),
-                             'short_name':str(ss.session.name),
-                             'agenda_note':str(ss.session.agenda_note),
-                             'attendees':str(ss.session.attendees),
-                             'status': str(ss.session.status),
-                             'requested_time': str(ss.session.requested.strftime("%Y-%m-%d")),
-                             'requested_by': str(ss.session.requested_by),
-                             'requested_duration': str(ss.session.requested_duration),
-                             'ss_name':str(ss.schedule.name),
-                             'ss_owner':str(ss.schedule.owner),
-                             'ss_visible':str(ss.schedule.visible),
-                             'ss_public':str(ss.schedule.public),
-                             'ts_time':str(ss.timeslot.time),
-                             'ts_day_of_week':str(ss.timeslot.time.strftime("%A")),
-                             'ts_time_hour':str(ss.timeslot.time.strftime("%H:%M")),
-                             'ts_duration':str(ss.timeslot.duration),
-                             'area':str(ss.session.group.parent.acronym),
-                             'responsible_ad':str(ss.session.group.ad),
-                             'GroupInfo_state':str(ss.session.group.state),
-                             
+    return simplejson.dumps({'ss_id':str(scheduledsession_id),
+                             'group':str(session.group.acronym),
+                             'name':str(session.name),
+                             'short_name':str(session.name),
+                             'agenda_note':str(session.agenda_note),
+                             'attendees':str(session.attendees),
+                             'status': str(session.status),
+                             'requested_time': str(session.requested.strftime("%Y-%m-%d")),
+                             'requested_by': str(session.requested_by),
+                             'requested_duration': str(session.requested_duration),
+                             'area':str(session.group.parent.acronym),
+                             'responsible_ad':str(session.group.ad),
+                             'GroupInfo_state':str(session.group.state),
                              })

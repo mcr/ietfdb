@@ -72,9 +72,9 @@ function meeting_event_click(event){
 	
 //				       {'meeting_obj':meeting_objs[session_id]},
 
-        console.log("ssid: "+ slot[0].scheduledsession_id);
 	Dajaxice.ietf.meeting.get_info(fill_in_info,
-				       {'scheduledsession_id': slot[0].scheduledsession_id},
+				       {"scheduledsession_id": slot[0].scheduledsession_id,
+                                           "session_id": slot[0].session_id },
 				       dajaxice_error );
     }
 }
