@@ -81,6 +81,12 @@ class Meeting(models.Model):
     def get_submission_correction_date(self):
         return self.date + datetime.timedelta(days=settings.SUBMISSION_CORRECTION_DAYS)
 
+    def get_schedule_by_name(self, name):
+        qs = self.schedule_set.filter(name=name)
+        if qs:
+            return qs[0]
+        return None
+
 class Room(models.Model):
     meeting = models.ForeignKey(Meeting)
     name = models.CharField(max_length=255)
