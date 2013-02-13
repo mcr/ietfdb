@@ -311,6 +311,14 @@ def get_wg_list(scheduledsessions):
     return Group.objects.filter(acronym__in = set(wg_name_list)).order_by('parent__acronym','acronym')
 
 ##########################################################################################################################
+## dispatch based upon request type.
+def agenda_html_request(request,num=None, schedule_name=None):
+    if request.method == 'POST':
+        return agenda_create(request, num, schedule_name)
+    else:
+        # GET and HEAD.
+        return html_agenda(request, num, schedule_name)
+
 @decorator_from_middleware(GZipMiddleware)
 def html_agenda(request, num=None, schedule_name=None):
     if  settings.SERVER_MODE != 'production' and '_testiphone' in request.REQUEST:
@@ -342,6 +350,51 @@ def html_agenda(request, num=None, schedule_name=None):
          "area_list": area_list, "wg_list": wg_list ,
          "show_inline": set(["txt","htm","html"]) },
         RequestContext(request)), mimetype="text/html")
+
+@group_required('Area_Director','Secretariat')
+def agenda_create(request, num=None, schedule_name=None):
+    meeting = get_meeting(num)
+    schedule = get_schedule(meeting, schedule_name)
+
+    if schedule is None:
+        # here we have to return some ajax to display an error.
+        raise Http404("No meeting information for meeting %s schedule %s available" % (num,schedule_name))
+
+    # authorization was enforced by the @group_require decorator above.
+
+    # now validate the POST items.
+    if not ('savename' in request.POST and 'saveas' in request.POST and request.POST['saveas'] == 'saveas'):
+        return HttpResponse(status=404)
+    
+    # determine that there isn't already a meeting by this name.
+    
+    
+    # create the new schedule, and copy the scheduledsessions
+    newschedule = Schedule(name=request.POST['savename'],
+                           owner=request.user.person,
+                           meeting=meeting,
+                           visible=False,
+                           public=False)
+
+    newschedule.save()
+    if newschedule is None:
+        return HttpResponse(status=500)
+
+    print "newschedule id: %u" % (newschedule.id)
+    
+    for ss in schedule.scheduledsession_set.all():
+        # hack to copy the object, creating a new one
+        # just reset the key, and save it again.
+        ss.pk = None
+        ss.schedule=newschedule
+        ss.save()
+        print "ss id: %u" % (ss.id)
+        
+    # now redirect to this new schedule.
+    return HttpResponseRedirect(
+        reverse('edit_agenda_by_name',
+                args=[meeting.number, newschedule.name]))
+    
 
 ##########################################################################################################################
 @decorator_from_middleware(GZipMiddleware)
