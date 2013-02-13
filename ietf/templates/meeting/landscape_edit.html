@@ -150,7 +150,7 @@ console.log("{{t.id}}");
     <div id="agenda_title"><b>Agenda name: </b><span>unnamed</span></div>
     <div id="agenda_saveas">
       {% comment %} redo this with a Form {% endcomment %}
-      <form action="/meeting/85/agenda">
+      <form action="/meeting/85/agenda" method="POST">
         <input type="text" name="savename" value="unnamed">
         <input type="submit" name="saveas" value="saveas">
       </form>
