@@ -17,6 +17,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.decorators import decorator_from_middleware
+from ietf.ietfauth.decorators import group_required
 from django.middleware.gzip import GZipMiddleware
 from django.db.models import Max
 
@@ -33,6 +34,7 @@ from ietf.proceedings.models import Meeting as OldMeeting, WgMeetingSession, Mee
 
 # New models
 from ietf.meeting.models import Meeting, TimeSlot, Session
+from ietf.meeting.models import Schedule, ScheduledSession
 from ietf.group.models import Group
 
 

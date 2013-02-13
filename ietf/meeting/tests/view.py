@@ -30,6 +30,32 @@ class ViewTestCase(TestCase):
         iepg_ss = ScheduledSession.objects.get(pk=2413)
         slot = iepg_ss.timeslot
         self.assertEqual(slot.js_identifier, "252b_2012-03-27_0900")
+
+    def test_agenda_save(self):
+        from ietf.meeting.views import get_meeting
+        #
+        # determine that there isn't a schedule called "fred"
+        mtg = get_meeting(83)
+        fred = mtg.get_schedule_by_name("fred")
+        self.assertIsNone(fred)
+        #
+        # move this session from one timeslot to another.
+        self.client.post('/meeting/83/agenda', {
+            'savename': "fred",
+            'saveas': "saveas",
+            }, **auth_wlo)
+        #
+        # confirm that a new schedule has been created
+        fred = mtg.get_schedule_by_name("fred")
+        self.assertNotEqual(fred, None, "fred not found")
+
+    def test_agenda_edit_url(self):
+        from django.core.urlresolvers import reverse
+        url = reverse('edit_agenda_by_name',
+                      args['83', 'fred'])
+        self.assertEqual(url, "/meeting/83/agenda/fred/edit")
+    
+
         
 
         
