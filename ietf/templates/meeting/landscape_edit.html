@@ -146,6 +146,16 @@ console.log("{{t.id}}");
     <tr><td class="ss_info_name">Requested By:</td><td id="info_requestedby"></td></tr>
   </table>
   </div>
+  <div class="agenda_save_box">
+    <div id="agenda_title"><b>Agenda name: </b><span>unnamed</span></div>
+    <div id="agenda_saveas">
+      {% comment %} redo this with a Form {% endcomment %}
+      <form action="/meeting/85/agenda">
+        <input type="text" name="savename" value="unnamed">
+        <input type="submit" name="saveas" value="saveas">
+      </form>
+    </div>
+  </div>
 </div>
 
 </div>

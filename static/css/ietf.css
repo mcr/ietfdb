@@ -103,7 +103,8 @@ table.meeting_event {
 }
 
 #session-info{
-    height:100px;
+  height:100px;
+  position: relative;
 }
 
 #IETF_MENUBAR{
@@ -236,9 +237,21 @@ div.agenda_slot{
 }
 
 .ss_info_name{
-
-    max-width:100px;
+    max-width:70px;
 }
+
+.agenda_save_box {
+  border: 2px solid #89D;
+  font-size: 11px;
+  background-color: #EDF5FF;
+  position: absolute;
+  right:  3px;
+  bottom: 3px;
+  margin: 4px;
+  padding: 5px;
+  max-width:  150px;
+}
+
 
 /* ::-webkit-scrollbar{ */
 /*     width:3px; */
