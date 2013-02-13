@@ -46,7 +46,7 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in scheduledsessions %}
-    var s_obj= new slot_obj("{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
+    var s_obj= new slot_obj("{{s.id}}","{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
 	//console.log("adding: {{s.timeslot.js_identifier}}");
     if(slot_status["{{s.timeslot.js_identifier}}"] != null){ // the key so two sessions in the same timeslot
 

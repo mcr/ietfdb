@@ -81,14 +81,14 @@ function upperCaseWords(inp){
     
 }
 
-function slot_obj(empty, timeslot_id, session_id, room, time, date, domid) {
+function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
+  this.scheduledsession_id = scheduledsession_id;
   this.empty       = empty;
   this.timeslot_id = timeslot_id;
   this.session_id  = session_id;
   this.date        = date;
   this.time        = time;
   this.room        = room;
-
 
   var d = new Date(this.date);
   var t = $.datepicker.formatDate('DD', d);

@@ -63,23 +63,18 @@ def update_timeslot(request, new_event=None, timeslot_id=None):
 
 
 @dajaxice_register
-def get_info(request, meeting_obj=None):#, event):
-    if meeting_obj == None:
-        logging.debug("meeting_obj is none, something bad happened")
-        return
-    else:
-        logging.debug(meeting_obj)
+def get_info(request, scheduledsession_id=None):#, event):
     
     try:
-        ss = ScheduledSession.objects.get(id=int(meeting_obj["session_id"]))
+        ss = ScheduledSession.objects.get(pk=int(scheduledsession_id))
     except ScheduledSession.DoesNotExist:
-        logging.debug("No ScheduledSession was found for id:%s" % meeting_obj["session_id"])
+        logging.debug("No ScheduledSession was found for id:%s" % (scheduledsession_id))
         # in this case we want to return empty the session information and perhaps indicate to the user there is a issue.
         return
 
   
     return simplejson.dumps({'room':str(ss.timeslot.location),
-                             'ss_id':str(meeting_obj["session_id"]),
+                             'ss_id':str(ss.session.id),
                              'group':str(ss.session.group.acronym),
                              'name':str(ss.session.name),
                              'short_name':str(ss.session.name),

@@ -71,8 +71,10 @@ function meeting_event_click(event){
 	current_timeslot = slot.timeslot_id;
 	
 //				       {'meeting_obj':meeting_objs[session_id]},
+
+        console.log("ssid: "+ slot[0].scheduledsession_id);
 	Dajaxice.ietf.meeting.get_info(fill_in_info,
-				       {'meeting_obj':meeting_objs[meeting_event_id]},
+				       {'scheduledsession_id': slot[0].scheduledsession_id},
 				       dajaxice_error );
     }
 }
