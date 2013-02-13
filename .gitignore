@@ -1,6 +1,6 @@
 *~
 *.pyc
-db
+^db
 log
 run
 ietf/settings_local.py
