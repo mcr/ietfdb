@@ -11,14 +11,6 @@
 * 
 */
 
-/********* colors ************************************/
-
-var highlight = "red"; // when we click something and want to highlight it.
-var dragging_color = "blue"; // color when draging events.
-var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
-var color_droppable_empty_slot = 'rgb(0, 102, 153)';
-
-/****************************************************/
 
 
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
@@ -43,43 +35,60 @@ function static_listeners(){
    and from there ask django for more information
 */
 
+var clicked_event;
+
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
     if(current_item != null){
-	  $(current_item).css('background','');
-    
+	$(current_item).css('background','');
+	
     }
     if(last_item != null){
-	  $(last_item).css('background-color','');
+	$(last_item).css('background-color','');
     }
-
+    
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
-
+    var meeting_event_id = $(event.target).closest('.meeting_event').attr('id');
+    
+    console.log("meeting event click");
+    console.log(event);
+    clicked_event = event;
+    console.log("event.taget.id",$(event).attr('id'));
+    console.log("slot_id:", slot_id);
     slot = slot_status[slot_id];
+    console.log(meeting_event_id);
+    
+    console.log(meeting_objs[meeting_event_id]);
+    meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
     if(slot) {
-      session_id = slot.session_id;
-      
-      $("#session_"+session_id).css('background-color',highlight);
-      
-        
-      current_item = "#session_"+session_id;
-	  current_timeslot = slot.timeslot_id;
+	session_id = slot.session_id;
 	
-      Dajaxice.ietf.meeting.get_info(fill_in_info,
-				     {'meeting_obj':meeting_objs[session_id]},
-				     dajaxice_error );
+	$("#session_"+session_id).css('background-color',highlight);
+	
+        
+	current_item = "#session_"+session_id;
+	current_timeslot = slot.timeslot_id;
+	
+//				       {'meeting_obj':meeting_objs[session_id]},
+	Dajaxice.ietf.meeting.get_info(fill_in_info,
+				       {'meeting_obj':meeting_objs[meeting_event_id]},
+				       dajaxice_error );
     }
 }
 
 function dajaxice_error(a){
-    console.log(this.ME_id);
-    console.log(this);
-    console.log("error");
-    
+    console.log("dajaxice_error");
 }
+
 function fill_in_info(inp){
+    console.log("fill_in_info");
     console.log(inp);
+
+    if(inp == null || inp == "None"){
+	console.log("null returned");
+	empty_info_table();
+    }
     $('#ss_info').html(generate_info_table(inp));
 }
 var menu_bar_hidden = false;
@@ -153,10 +162,14 @@ function drop_drop(event, ui){
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
 	var session_obj = meeting_objs[temp_id];
-
-	if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
+	try{
+		if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
+			return;
+		}
+	} catch(err) { // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
 		return;
 	}
+		
 
 	// we are good, the slot is empty.
 	slot_status[slot_idd].empty = false; // it's going to be full now....
@@ -178,9 +191,12 @@ function drop_drop(event, ui){
 	ui.draggable.remove();
 	ui.draggable.css("background",""); // remove the old one. 	
 	$(this).css("background","");
+	
+	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':session_obj, 'timeslot_id':slot_status[slot_idd].timeslot_id});
+	
 	droppable();
 	listeners();
-	// Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event});
+
 }
 
 /* what happens when we drop the session onto the bucket list

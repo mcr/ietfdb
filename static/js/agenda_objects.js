@@ -22,14 +22,6 @@
 `----
 */
 
-/********* colors ************************************/
-
-var highlight = "red"; // when we click something and want to highlight it.
-var dragging_color = "blue"; // color when draging events.
-var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
-var color_droppable_empty_slot = 'rgb(0, 102, 153)';
-
-/****************************************************/
 
 
 function slot(){
@@ -100,7 +92,7 @@ function slot_obj(empty, timeslot_id, session_id, room, time, date, domid) {
 
   var d = new Date(this.date);
   var t = $.datepicker.formatDate('DD', d);
-  console.log("short_string "+this.date+" gives "+t);
+  //console.log("short_string "+this.date+" gives "+t);
   this.short_string = t.toString() + ", "+ this.time + ", " + upperCaseWords(this.room);
 
   if(domid) {
