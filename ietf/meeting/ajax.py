@@ -21,44 +21,37 @@ def sayhello(request):
 
 @group_required('Area_Director','Secretariat') 
 @dajaxice_register
-def update_timeslot(request, new_event=None, timeslot_id=None):
-    if(new_event == None or timeslot_id == None):
-        if(timeslot_id == None):
+def update_timeslot(request, session_id=None, scheduledsession_id=None):
+    if(session_id == None or scheduledsession_id == None):
+        if(scheduledsession_id == None):
             pass # most likely the user moved the item and dropped it in the same box. js should never make the call in this case.
         else:
-            logging.debug("new_event=%s , timeslot_id=%s doing nothing and returning" % (new_event, timeslot_id))
+            logging.debug("session_id=%s , scheduledsession_id=%s doing nothing and returning" % (session_id, scheduledsession_id))
 
         return
-    print "update_timeslot"
-    # get the ScheduledSession.
 
-    ss_id = int(new_event["session_id"])
-
-    #    timeslot_id = int(new_event["timeslot_id"])
-    timeslot_id = int(timeslot_id)
-
-
-    log.info("%s is updating scheduledsession_id=%u to timeslot_id=%u" %
-             (request.user, ss_id, timeslot_id))
+    session_id = int(session_id)
+    ss_id = int(scheduledsession_id)
+    log.info("%s is updating scheduledsession_id=%u to session_id=%u" %
+             (request.user, ss_id, session_id))
 
     try:
-        sess = Session.objects.get(id=ss_id)
-        ss = ScheduledSession.objects.get(session=sess)
-        print "SecheduledSession.id", ss.id
-        #ss = Session.objects.get(id=ss_id)
-    except Exception as e:
-        print e
+        session = Session.objects.get(pk=session_id)
+    except:
+        return simplejson.dumps({'error':'invalid session'})
 
-    try:
-        # find the timeslot, assign it to the ScheduledSession's timeslot, save it. 
-        slots = TimeSlot.objects.get(id=timeslot_id)
-        ss.timeslot = slots
-        print slots
+    for ss in session.scheduledsession_set.all():
+        ss.session = None
         ss.save()
-        print "saved..."
-    except Exception as e:
-        print e
 
+    try:
+        # find the scheduledsession, assign the Session to it.
+        ss = ScheduledSession.objects.get(pk=ss_id)
+        ss.session = session
+        ss.save()
+    except Exception as e:
+        return simplejson.dumps({'error':'invalid scheduledsession'})
+        
     return simplejson.dumps({'message':'im happy!'})
 
 

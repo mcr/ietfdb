@@ -214,7 +214,11 @@ function drop_drop(event, ui){
 	ui.draggable.css("background",""); // remove the old one. 	
 	$(this).css("background","");
 	
-	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':session_obj, 'timeslot_id':slot_status[slot_idd].timeslot_id});
+	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
+                                              {
+                                                'new_event':session_obj,
+                                                  'scheduledsession_id':slot_status[slot_idd].scheduledsession_id
+                                                  });
 	
 	droppable();
 	listeners();
