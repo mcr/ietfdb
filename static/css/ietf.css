@@ -170,7 +170,7 @@ div.agenda_slot{
 
 .ss_info{
     
-    width:310px;
+    /* width:310px; */
     float:left;
     margin-top:3px;
     margin-left:3px;
@@ -204,6 +204,7 @@ div.agenda_slot{
    font-size:8px;
    background-color:white;
    cursor:pointer;
+   max-width:150px;
 }
 
 /* #2647A0*/
@@ -214,6 +215,7 @@ div.agenda_slot{
     background-color: #EDF5FF;
     border-spacing:0;
     border-collapse: collapse;
+
 
 }
 
@@ -233,21 +235,36 @@ div.agenda_slot{
 
     text-align:left;
     font-size: 12px;
-    padding:0px;
+    padding:1px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
-.ss_info_name{
-    max-width:70px;
+td.ss_info_name_long{
+    max-width:100px;
+    width:100px;
+
+    min-width:100px;
 }
+
+td.ss_info_name_short{
+    max-width:50px;
+    width:50px;
+
+    min-width:50px;
+}
+
 
 .agenda_save_box {
-  border: 2px solid #89D;
+  border: 1px solid #89D;
   font-size: 11px;
   background-color: #EDF5FF;
   position: absolute;
   right:  3px;
-  bottom: 3px;
-  margin: 4px;
+  /* bottom: 3px; */
+   margin: 3px; 
+  /* margin-top:3px; */
+  /* margin-bottom:3px; */
   padding: 5px;
   max-width:  150px;
 }
