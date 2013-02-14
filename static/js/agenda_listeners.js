@@ -76,17 +76,34 @@ function meeting_event_click(event){
 	    
 	    //				       {'meeting_obj':meeting_objs[session_id]},
             empty_info_table();
-
-	    Dajaxice.ietf.meeting.get_info(fill_in_info,
-                                           {   "active_slot_id": slot_id,
-                                               "scheduledsession_id": slot[i].scheduledsession_id,
-                                               "timeslot_id": slot[i].timeslot_id,
-                                               "session_id": slot[i].session_id
-                                               },
-                                           dajaxice_error );
+	    dajaxice_fill_in_info(slot[i],slot_id);
+	    // Dajaxice.ietf.meeting.get_info(fill_in_info,
+            //                                {   "active_slot_id": slot_id,
+            //                                    "scheduledsession_id": slot[i].scheduledsession_id,
+            //                                    "timeslot_id": slot[i].timeslot_id,
+            //                                    "session_id": slot[i].session_id
+            //                                    },
+            //                                dajaxice_error );
         }
     }
 }
+
+
+function dajaxice_fill_in_info(slot, slot_id){
+    console.log("slot_id:",slot_id);
+    console.log("slot.scheduledsession_id:",slot.scheduledsession_id);
+    console.log("timeslot_id:", slot.timeslot_id);
+    console.log("session_id:", slot.session_id);
+    console.log(slot);
+    Dajaxice.ietf.meeting.get_info(fill_in_info,
+                                   {   "active_slot_id": slot_id,
+                                       "scheduledsession_id": slot.scheduledsession_id,
+                                       "timeslot_id": slot.timeslot_id,
+                                       "session_id": slot.session_id
+                                   },
+                                   dajaxice_error );
+}
+
 
 function dajaxice_error(a){
     console.log("dajaxice_error");
@@ -132,11 +149,17 @@ function info_location_select_change(){
 
 var last_name_item = null;
 function info_name_select_change(){
+
     if(last_name_item != null){
 	console.log(last_name_item);
 	$(last_name_item).css('background-color','');
     }
     last_name_item = '#'+$('#info_name_select').val();
+    var slot_id = last_name_item.substring(1,last_name_item.length);
+    var slot_status_obj = slot_status[slot_id];
+    current_item = "#session_"+slot_status_obj[0].session_id;
+    current_timeslot = slot_status_obj[0].timeslot_id;
+    dajaxice_fill_in_info(slot_status_obj[0],slot_id);
     $('#'+$('#info_name_select').val()).css('background-color',highlight);
 }
 

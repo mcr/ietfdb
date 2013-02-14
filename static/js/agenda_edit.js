@@ -53,6 +53,7 @@ function initStuff(){
     listeners();
     static_listeners();
     log("listeners() ran");
+    calculate_name_select_box();
 }
 
 

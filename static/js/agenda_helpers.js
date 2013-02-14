@@ -72,7 +72,7 @@ function load_events(){
             }
 	}
     });
-    
+
 }
 
 
@@ -132,7 +132,7 @@ function empty_info_table(){
     $("#info_name").html("");
     $("#info_area").html("");
     $("#info_duration").html("");
-    $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
+    $("#info_location").html(generate_select_box()+"<button id='info_location_set'>Set</button>");
     $("#info_location_select").val("");
     $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
     $("#info_responsible").html("");
@@ -161,7 +161,7 @@ function generate_info_table(inp){
     //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
 //    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
-    $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
+    $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
     $("#info_name_select").val(inp.ss_id);
     $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
@@ -216,38 +216,53 @@ function calculate_room_select_box() {
     
 }
 var name_select_html = "";
+var temp_sorted = null;
 function calculate_name_select_box(){
     var html = "<select id='info_name_select'>";
-
-    var keys = Object.keys(slot_status)
-    var sorted = keys.sort(function(a,b) {
-			     a1=slot_status[a];
-			     b1=slot_status[b];
-			     if (a1.date != b1.date) {
-			       return a1.date-b1.date;
-			     }
-			     return a1.time - b1.time;
-			   });
-
-    for (n in sorted) {
-        var k1 = sorted[n];
-        var val_arr = slot_status[k1];
-		
-        /* k1 is the slot_status key */
-        /* v1 is the slot_obj */
-	for(var i = 0; i<val_arr.length; i++){
-	    var v1 = val_arr[i];
-            html=html+"<option value='"+k1;
-            html=html+"' id='info_name_select_option_";
-            html=html+v1.timeslot_id+"'>";
-	    try{
-		html=html+meeting_objs[v1.session_id].title + " (" + meeting_objs[v1.session_id].description + ")";
-	    } catch(err) {
-		html=html+"ERRROR!!!";
-	    }
-            html=html+"</option>";
+    var keys = Object.keys(meeting_objs)
+    var mobj_array = []
+    $.each(meeting_objs, function(key, value){ mobj_array.push(value) });
+    mobj_array2 = mobj_array.sort(function(a,b) { return a.title.localeCompare(b.title); });
+    temp_sorted =mobj_array;
+    for(var i = 0; i < mobj_array.length; i++){
+	console.log(mobj_array[i]);
+	html=html+"<option value='"+mobj_array[i].slot_status_key;
+        html=html+"' id='info_name_select_option_";
+	ts_id = "err";
+	try{
+	    ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
+	    console.log(ts_id);
+	}catch(err){
 	}
+        html=html+ts_id+"'>";
+    
+
+	try{
+	    html=html+mobj_array[i].title; // + " (" + mobj_array[i].description + ")";
+	} catch(err) {
+	    html=html+"ERRROR!!!";
+	}
+        html=html+"</option>";
     }
+    // for (n in sorted) {
+    //     var k1 = sorted[n];
+    //     var val_arr = slot_status[k1];
+		
+    //     /* k1 is the slot_status key */
+    //     /* v1 is the slot_obj */
+    // 	// for(var i = 0; i<val_arr.length; i++){
+    // 	    var v1 = val_arr[i];
+    //         html=html+"<option value='"+k1;
+    //         html=html+"' id='info_name_select_option_";
+    //         html=html+v1.timeslot_id+"'>";
+    // 	    try{
+    // 		html=html+meeting_objs[v1.session_id].title + " (" + meeting_objs[v1.session_id].description + ")";
+    // 	    } catch(err) {
+    // 		html=html+"ERRROR!!!";
+    // 	    }
+    //         html=html+"</option>";
+    // 	}
+
     html = html+"</select>";
     name_select_html = html;
  
