@@ -93,12 +93,12 @@ console.log("{{timeslots|length}}");
 <div class="agenda_div">
 
 <table id="meetings" class="ietf-navbar" style="width:100%">
-  <th></th>
+  <th class="schedule_title">name: {{schedule.name}}</th>
 {% for day in time_slices %} 
   <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class="agenda_slot_title">{{day|date:'D'}}&nbsp;({{day}})  </th>
 {% endfor %}
     <tr>
-      <th></th>
+      <th><div id="spinner"><!-- spinney goes here --></div></th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
 	      <th class="room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
@@ -145,7 +145,7 @@ console.log("{{timeslots|length}}");
   </table>
   </div>
   <div class="agenda_save_box">
-    <div id="agenda_title"><b>Agenda name: </b><span>unnamed</span></div>
+    <div id="agenda_title"><b>Agenda name: </b><span>{{schedule.name}}</span></div>
     <div id="agenda_saveas">
       {% comment %} redo this with a Form {% endcomment %}
       <form action="/meeting/85/agenda" method="POST">

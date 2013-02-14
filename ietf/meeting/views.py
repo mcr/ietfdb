@@ -423,6 +423,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"timeslots":ntimeslots,
+                                          "schedule":schedule,
                                           "rooms":rooms,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,
