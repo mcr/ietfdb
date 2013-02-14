@@ -174,54 +174,68 @@ function droppable(){
 
 /* what happens when we drop the session onto a timeslot. */
 function drop_drop(event, ui){
-	console.log("------ drop drop --------");
+    console.log("------ drop drop --------");
     var temp_id = ui.draggable.attr('id');
     console.log("event "+event.id+" with ui.id "+temp_id);
-	temp_id = temp_id.substring(8,temp_id.length);
+    temp_id = temp_id.substring(8,temp_id.length);
     var slot_idd = $(this).attr('id');
-	console.log(slot_status[slot_idd]);
-	console.log(slot_idd);
+    console.log("slot_idd: "+slot_idd);
+    console.log("slot_status:"); console.log(slot_status[slot_idd]);
+
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
-	var session_obj = meeting_objs[temp_id];
-	try{
-		if(slot_status[slot_idd].empty == false || slot_status[slot_idd].empty == "False"){ // refactor to use check_free(inp.id)
-			return;
-		}
-	} catch(err) { // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
-		return;
-	}
+    var session_obj = meeting_objs[temp_id];
+
+
+    // find an empty slot.
+    slot = slot_status[slot_idd];
+    // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
+    if(!slot) return;
+
+    var status_obj; 
+    var found = false;
+    for(var i = 0; i<slot.length; i++) {
+        if(slot[i].empty != false &&
+           slot[i].empty != "False") { // refactor to use check_free(inp.id)
+            found = true;
+            status_obj = slot[i];
+        }
+    }
+
+    /* no available slot */
+    if(!found) return;
 		
+    // we are good, the slot is empty.
+    status_obj.empty = false; // it's going to be full now....
+    status_obj.session_id = temp_id;
 
-	// we are good, the slot is empty.
-	slot_status[slot_idd].empty = false; // it's going to be full now....
-	slot_status[slot_idd].session_id = temp_id;
-	console.log(session_obj);
-
-	if(meeting_objs[temp_id].slot_status_key == null){ // we are coming from a bucket list
-		session_obj.slot_status_key = slot_idd;
-	} else {
-		// how do we deal with the case that there are two things in a slot?
-		slot_status[session_obj.slot_status_key].empty = true;
-		$("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
-		session_obj.slot_status_key = slot_idd;
-	}
-	
-	
-	var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
-	$(this).append(eTemplate);
-	ui.draggable.remove();
-	ui.draggable.css("background",""); // remove the old one. 	
-	$(this).css("background","");
-	
-	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
-                                              {
-                                                'new_event':session_obj,
-                                                  'scheduledsession_id':slot_status[slot_idd].scheduledsession_id
-                                                  });
-	
-	droppable();
-	listeners();
+    console.log("session_obj:"); console.log(session_obj);
+    console.log("ss.id: "+status_obj.scheduledsession_id);
+    
+    if(meeting_objs[temp_id].slot_status_key == null){ // we are coming from a bucket list
+        session_obj.slot_status_key = slot_idd;
+    } else {
+        // how do we deal with the case that there are two things in a slot?
+        status_obj.empty = true;
+        $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
+        session_obj.slot_status_key = slot_idd;
+    }
+    
+    
+    var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+    $(this).append(eTemplate);
+    ui.draggable.remove();
+    ui.draggable.css("background",""); // remove the old one. 	
+    $(this).css("background","");
+    
+    Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
+                                          {
+                                              'session_id':session_obj.session_id,
+                                              'scheduledsession_id': status_obj.scheduledsession_id,
+                                          });
+    
+    droppable();
+    listeners();
 
 }
 
@@ -293,3 +307,8 @@ function handelDrop(event, ui){
 }
 
 
+/*
+ * Local Variables:
+ * c-basic-offset:4
+ * End:
+ */
