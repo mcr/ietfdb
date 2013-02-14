@@ -63,7 +63,7 @@ def update_timeslot(request, new_event=None, timeslot_id=None):
 
 
 @dajaxice_register
-def get_info(request, active_slot_id=None, timeslot_id=None, session_id=None):#, event):
+def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id=None, session_id=None):#, event):
     
     try:
         session = Session.objects.get(pk=int(session_id))
@@ -74,6 +74,7 @@ def get_info(request, active_slot_id=None, timeslot_id=None, session_id=None):#,
 
   
     return simplejson.dumps({'active_slot_id':str(active_slot_id),
+                             'ss_id':str(scheduledsession_id),
                              'timeslot_id':str(timeslot_id),
                              'group':str(session.group.acronym),
                              'name':str(session.name),

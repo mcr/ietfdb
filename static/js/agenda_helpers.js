@@ -148,18 +148,26 @@ function empty_info_table(){
 
 }
 
+
+var temp_1;
 /* creates the 'info' table that is located on the right side. 
    takes in a json. 
 */
 function generate_info_table(inp){
     $("#info_grp").html(inp.group);
-    $("#info_name").html(inp.name);
+    $("#info_name").html(name_select_html);
     $("#info_area").html(inp.area);
     $("#info_duration").html(inp.ts_duration);
     //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
 //    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
+
+    $("#info_name_select").val(inp.ss_id);
+    $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
+    temp_1 = $("#info_name_select_option_"+current_timeslot).val();
+    $("#info_name_select_option_"+inp.ss_id).css('background-color',highlight);
+
 
     $("#info_location_select").val(inp.timeslot_id);
     console.log("git "+"#info_location_select_option_"+inp.timeslot_id);
@@ -207,10 +215,52 @@ function calculate_room_select_box() {
     room_select_html = html;
     
 }
+var name_select_html = "";
+function calculate_name_select_box(){
+    var html = "<select id='info_name_select'>";
+
+    var keys = Object.keys(slot_status)
+    var sorted = keys.sort(function(a,b) {
+			     a1=slot_status[a];
+			     b1=slot_status[b];
+			     if (a1.date != b1.date) {
+			       return a1.date-b1.date;
+			     }
+			     return a1.time - b1.time;
+			   });
+
+    for (n in sorted) {
+        var k1 = sorted[n];
+        var val_arr = slot_status[k1];
+		
+        /* k1 is the slot_status key */
+        /* v1 is the slot_obj */
+	for(var i = 0; i<val_arr.length; i++){
+	    var v1 = val_arr[i];
+            html=html+"<option value='"+k1;
+            html=html+"' id='info_name_select_option_";
+            html=html+v1.timeslot_id+"'>";
+	    try{
+		html=html+meeting_objs[v1.session_id].title + " (" + meeting_objs[v1.session_id].description + ")";
+	    } catch(err) {
+		html=html+"ERRROR!!!";
+	    }
+            html=html+"</option>";
+	}
+    }
+    html = html+"</select>";
+    name_select_html = html;
+ 
+
+}
+
+
 
 function generate_select_box(){
     return room_select_html;
 }
+
+
 
 
 function insert_cell(js_room_id, text, replace){

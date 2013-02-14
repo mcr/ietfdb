@@ -21,6 +21,9 @@ function listeners(){
     $('#info_location_select').unbind('change');
     $('#info_location_select').change(info_location_select_change);
 
+    $('#info_name_select').unbind('change');
+    $('#info_name_select').change(info_name_select_change);
+
 }
 
 /* the functionality of these listeners will never change so they do not need to be run twice  */
@@ -62,23 +65,26 @@ function meeting_event_click(event){
     console.log(meeting_objs[meeting_event_id]);
     meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
     if(slot) {
-	session_id = slot.session_id;
-	
-	$("#session_"+session_id).css('background-color',highlight);
-	
-        
-	current_item = "#session_"+session_id;
-	current_timeslot = slot.timeslot_id;
-	
-//				       {'meeting_obj':meeting_objs[session_id]},
+	for(var i = 0; i<slot.length; i++){
+	    session_id = slot[i].session_id;
+	    
+	    $("#session_"+session_id).css('background-color',highlight);
+	    
+            
+	    current_item = "#session_"+session_id;
+	    current_timeslot = slot[i].timeslot_id;
+	    
+	    //				       {'meeting_obj':meeting_objs[session_id]},
+            empty_info_table();
 
-        empty_info_table();
-	Dajaxice.ietf.meeting.get_info(fill_in_info,
-				       {"active_slot_id": slot_id,
-                                           "timeslot_id": slot[0].timeslot_id,
-                                           "session_id": slot[0].session_id
-                                           },
-				       dajaxice_error );
+	    Dajaxice.ietf.meeting.get_info(fill_in_info,
+                                           {   "active_slot_id": slot_id,
+                                               "scheduledsession_id": slot[i].scheduledsession_id,
+                                               "timeslot_id": slot[i].timeslot_id,
+                                               "session_id": slot[i].session_id
+                                               },
+                                           dajaxice_error );
+        }
     }
 }
 
@@ -123,6 +129,17 @@ function info_location_select_change(){
     last_item = '#'+$('#info_location_select').val();
     $('#'+$('#info_location_select').val()).css('background-color',highlight);
 }
+
+var last_name_item = null;
+function info_name_select_change(){
+    if(last_name_item != null){
+	console.log(last_name_item);
+	$(last_name_item).css('background-color','');
+    }
+    last_name_item = '#'+$('#info_name_select').val();
+    $('#'+$('#info_name_select').val()).css('background-color',highlight);
+}
+
 
 /* create the droppable */
 function droppable(){
