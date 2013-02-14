@@ -74,8 +74,10 @@ function meeting_event_click(event){
 
         empty_info_table();
 	Dajaxice.ietf.meeting.get_info(fill_in_info,
-				       {"scheduledsession_id": slot[0].scheduledsession_id,
-                                           "session_id": slot[0].session_id },
+				       {"active_slot_id": slot_id,
+                                           "timeslot_id": slot[0].timeslot_id,
+                                           "session_id": slot[0].session_id
+                                           },
 				       dajaxice_error );
     }
 }

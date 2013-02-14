@@ -152,7 +152,6 @@ function empty_info_table(){
    takes in a json. 
 */
 function generate_info_table(inp){
-    empty_info_table(); // this should not need to be called as a empty string should over write the fields.
     $("#info_grp").html(inp.group);
     $("#info_name").html(inp.name);
     $("#info_area").html(inp.area);
@@ -161,10 +160,12 @@ function generate_info_table(inp){
 //    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_swap'>Swap</button>");
-    $("#info_location_select").val(inp.ss_id);
-    console.log($("#info_location_select_option_"+current_timeslot));
-	$("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
-    $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
+
+    $("#info_location_select").val(inp.timeslot_id);
+    console.log("git "+"#info_location_select_option_"+inp.timeslot_id);
+    $("#info_location_select").val($("#info_location_select_option_"+inp.timeslot_id).val());
+
+    $("#"+inp.timeslot_id).css('background-color',highlight);
 
     listeners();
     
