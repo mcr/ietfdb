@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 def sayhello(request):
     return simplejson.dumps({'message':'Hello World'})
 
-#@group_required('Area_Director','Secretariat') #removed because my user doesn't have the correct permissions
+@group_required('Area_Director','Secretariat') 
 @dajaxice_register
 def update_timeslot(request, new_event=None, timeslot_id=None):
     if(new_event == None or timeslot_id == None):
