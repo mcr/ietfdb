@@ -81,6 +81,9 @@ function upperCaseWords(inp){
     
 }
 
+var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+
+
 function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
   this.scheduledsession_id = scheduledsession_id;
   this.empty       = empty;
@@ -91,9 +94,9 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
   this.room        = room;
 
   var d = new Date(this.date);
-  var t = $.datepicker.formatDate('DD', d);
+  var t = d.getUTCDay();
   //console.log("short_string "+this.date+" gives "+t);
-  this.short_string = t.toString() + ", "+ this.time + ", " + upperCaseWords(this.room);
+  this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
 
   if(domid) {
     this.domid = domid;
