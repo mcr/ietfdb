@@ -214,7 +214,7 @@ function drop_drop(event, ui){
     slot = slot_status[slot_idd];
     // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
     if(!slot) return;
-
+   
     var status_obj; 
     var found = false;
     for(var i = 0; i<slot.length; i++) {
@@ -262,31 +262,32 @@ function drop_drop(event, ui){
 
 }
 
+
+
 /* what happens when we drop the session onto the bucket list
    (thing named "unassigned events") */
-
 function drop_bucket(event,ui){
-	console.log("drop_bucket called");
-	var temp_session_id = ui.draggable.attr('id'); // the django session id
-	var idd = temp_session_id.substring(8,temp_session_id.length);
-	var session_obj =  meeting_objs[idd];
-
-	slot_status[session_obj.slot_status_key].session_id = null;
-	slot_status[session_obj.slot_status_key].empty = true;
-	$("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
-	session_obj.placed = false;
-	session_obj.slot_status_key = null;
-
-	var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
-	$(this).append(eTemplate);
-
-	
-	ui.draggable.remove();
-	// dajaxice call should say this session has no timeslot.  
+    console.log("drop_bucket called");
+    var temp_session_id = ui.draggable.attr('id'); // the django session id
+    var idd = temp_session_id.substring(8,temp_session_id.length);
+    var session_obj =  meeting_objs[idd];
+    
+    slot_status[session_obj.slot_status_key].session_id = null;
+    slot_status[session_obj.slot_status_key][0].empty = true;
+    $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
+    session_obj.placed = false;
+    session_obj.slot_status_key = null;
+    
+    var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+    $(this).append(eTemplate);
+    
+    
+    ui.draggable.remove();
+    // dajaxice call should say this session has no timeslot.  
     // Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
-	droppable();
-	listeners();
-
+    droppable();
+    listeners();
+    
 }
 
 /* first thing that happens when we grab a meeting_event */
