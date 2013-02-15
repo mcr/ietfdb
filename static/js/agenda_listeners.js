@@ -307,10 +307,8 @@ function drop_over(event, ui){
 
 /* when we have actually dropped the meeting event */
 function drop_out(event, ui){
-	console.log(this);
     if(check_free(this)){
-		$(this).css("background",color_droppable_empty_slot);
-		console.log("empty");
+	$(this).css("background",color_droppable_empty_slot);
     }
 }
 

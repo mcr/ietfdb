@@ -89,17 +89,16 @@ function event_template(event_title, description, session_id){
 function check_free(inp){
     var empty = false;
     slot = slot_status[inp.id];
-	console.log(slot);
-    if(slot) {
-        empty = slot.empty;
+    if(slot == null){
+	return false;
     }
-//    console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
-	if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
-		return false;
+    for(var i =0;i<slot.length; i++){
+	if (slot[i].empty == false || slot[i].empty == "False"){
+	    return false;
 	}
-	else{
-		return true;
-	}
+    }
+    return true;
+
 }
 
 
