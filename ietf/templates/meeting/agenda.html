@@ -35,15 +35,9 @@ tr.grouprow > td { padding: 4px; }
 td.materials { align:right; }
 span.note { font-style: italic; color:#ff0000; }
 
-#APP-groups, #selector-APP { color:#008; background-color:#eef }
-#GEN-groups, #selector-GEN { color:#080; background-color:#efe }
-#INT-groups, #selector-INT { color:#088; background-color:#eff }
-#OPS-groups, #selector-OPS { color:#800; background-color:#fee }
-#RAI-groups, #selector-RAI { color:#808; background-color:#fef }
-#RTG-groups, #selector-RTG { color:#880; background-color:#ffe }
-#SEC-groups, #selector-SEC { color:#488; background-color:#dff }
-#TSV-groups, #selector-TSV { color:#484; background-color:#dfd }
-#IRTF-groups, #selector-IRTF { color:#448; background-color:#ddf }
+{% for area in area_list %}
+#{{ area.upcase_acronym }}-groups, #selector-{{ area.upcase_acronym }} { color:{{ area.fg_color }}; background-color: {{ area.bg_color }} }
+{% endfor %}
 
 img.hidden { display: none; }
 
@@ -308,7 +302,7 @@ You can customize the agenda below to show only selected working group sessions.
 <table id="wg-selector" width="100%" class="hidden">
   <tr>
     {% for area in area_list %}
-      <th><div id='selector-{{area|upper}}' class="unselected" onclick="toggle(this)">{{area|upper}}</div></th>
+      <th><div id='selector-{{area.acronym|upper}}' class="unselected" onclick="toggle(this)">{{area.acronym|upper}}</div></th>
     {% endfor %}
   </tr>
   <tr>
@@ -338,7 +332,7 @@ You can customize the agenda below to show only selected working group sessions.
 <table width="100%" id="ics-preconfig"><tr><td align="center">
   Preconfigured .ics links:
   {% for area in area_list %}
-    <a href="{% url ietf.meeting.views.ical_agenda num=meeting.number %}?{{area|upper}},-~Other,-~Plenary">{{area|upper}}</a> &#8226;
+    <a href="{% url ietf.meeting.views.ical_agenda num=meeting.number %}?{{area|upper}},-~Other,-~Plenary">{{area.acronym|upper}}</a> &#8226;
   {% endfor %}
   <a href="{% url ietf.meeting.views.ical_agenda num=meeting.number %}">Non-Area Events</a>
 </td></tr></table>

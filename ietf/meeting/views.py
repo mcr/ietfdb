@@ -253,8 +253,14 @@ def agenda_info(num=None, name=None):
 
     return ntimeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda
 
-def get_area_list(scheduledsessions, num):
+# get list of all areas, + IRTF.
+def get_areas():
+    return Group.objects.filter(Q(state="active",
+                                  name="IRTF")|
+                                Q(state="active", type="area")).order_by('acronym')
 
+# get list of areas that are referenced.
+def get_area_list_from_sessions(scheduledsessions, num):
     return scheduledsessions.filter(timeslot__type = 'Session',
                                     session__group__parent__isnull = False).order_by(
         'session__group__parent__acronym').distinct(
@@ -341,7 +347,8 @@ def html_agenda(request, num=None, schedule_name=None):
     scheduledsessions = get_scheduledsessions_from_schedule(schedule)
     modified = get_modified_from_scheduledsessions(scheduledsessions)
 
-    area_list = get_area_list(scheduledsessions, num)
+    area_list = get_areas()
+    print "area list: %s" % area_list
     wg_list = get_wg_list(scheduledsessions)
     
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, False)
@@ -350,7 +357,7 @@ def html_agenda(request, num=None, schedule_name=None):
 
     return HttpResponse(render_to_string("meeting/agenda.html",
         {"scheduledsessions":scheduledsessions, "rooms":rooms, "time_slices":time_slices, "date_slices":date_slices  ,"modified": modified, "meeting":meeting,
-         "area_list": area_list, "wg_list": wg_list ,
+         "area_list": area_list, "wg_list": wg_list,
          "fg_group_colors": fg_group_colors,
          "bg_group_colors": bg_group_colors,
          "show_inline": set(["txt","htm","html"]) },
@@ -414,7 +421,7 @@ def edit_agenda(request, num=None, schedule_name=None):
 
     ntimeslots = get_ntimeslots_from_ss(schedule, scheduledsessions)
 
-    area_list = get_area_list(scheduledsessions, num)
+    area_list = get_area_list_from_sessions(scheduledsessions, num)
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
     
@@ -441,7 +448,6 @@ def edit_agenda(request, num=None, schedule_name=None):
 
 ###########################################################################################################################
 
-
 def iphone_agenda(request, num, name):
     timeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda = agenda_info(num, name)
 
@@ -451,7 +457,7 @@ def iphone_agenda(request, num, name):
 
     wgs = IETFWG.objects.filter(status=IETFWG.ACTIVE).filter(group_acronym__acronym__in = groups_meeting).order_by('group_acronym__acronym')
     rgs = IRTF.objects.all().filter(acronym__in = groups_meeting).order_by('acronym')
-    areas = Area.objects.filter(status=Area.ACTIVE).order_by('area_acronym__acronym')
+    areas = get_areas()
     template = "meeting/m_agenda.html"
     return render_to_response(template,
             {"timeslots":timeslots,
@@ -463,8 +469,7 @@ def iphone_agenda(request, num, name):
              "plenaryw_agenda":plenaryw_agenda,
              "plenaryt_agenda":plenaryt_agenda, 
              "wg_list" : wgs,
-             "rg_list" : rgs,
-             "area_list" : areas},
+             "rg_list" : rgs},
             context_instance=RequestContext(request))
 
  
