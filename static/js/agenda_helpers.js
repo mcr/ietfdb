@@ -48,7 +48,7 @@ function load_events(){
     });
     
     $.each(slot_status, function(key) {
-//        log("loading event "+key)
+        //log("loading event "+key)
         ssid_arr = slot_status[key]
 	
 	for(var q = 0; q<ssid_arr.length; q++){
@@ -90,17 +90,17 @@ function event_template(event_title, description, session_id, area){
 function check_free(inp){
     var empty = false;
     slot = slot_status[inp.id];
-	console.log(slot);
+    //console.log(slot);
     if(slot) {
         empty = slot.empty;
     }
-//    console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
-	if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
-		return false;
-	}
-	else{
-		return true;
-	}
+    //console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
+    if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
+        return false;
+    }
+    else{
+        return true;
+    }
 }
 
 
@@ -226,13 +226,13 @@ function calculate_name_select_box(){
     mobj_array2 = mobj_array.sort(function(a,b) { return a.title.localeCompare(b.title); });
     temp_sorted =mobj_array;
     for(var i = 0; i < mobj_array.length; i++){
-	console.log(mobj_array[i]);
+	//console.log("select box mobj["+i+"]="+mobj_array[i]);
 	html=html+"<option value='"+mobj_array[i].slot_status_key;
         html=html+"' id='info_name_select_option_";
 	ts_id = "err";
 	try{
 	    ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
-	    console.log(ts_id);
+	    //console.log("ts_id="+ts_id);
 	}catch(err){
 	}
         html=html+ts_id+"'>";
