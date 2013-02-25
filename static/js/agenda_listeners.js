@@ -245,7 +245,8 @@ function drop_drop(event, ui){
     }
     
     
-    var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+    var eTemplate = event_template(session_obj.title, session_obj.description,
+                                   session_obj.session_id, session_obj.area);
     $(this).append(eTemplate);
     ui.draggable.remove();
     ui.draggable.css("background",""); // remove the old one. 	
@@ -278,7 +279,8 @@ function drop_bucket(event,ui){
     session_obj.placed = false;
     session_obj.slot_status_key = null;
     
-    var eTemplate = event_template(session_obj.title, session_obj.description, session_obj.session_id);
+    var eTemplate = event_template(session_obj.title, session_obj.description,
+                                   session_obj.session_id, session_obj.area);
     $(this).append(eTemplate);
     
     
@@ -329,7 +331,6 @@ function drag_drag(event, ui){
 function handelDrop(event, ui){
     $(d).append(ui.draggable);
 }
-
 
 /*
  * Local Variables:

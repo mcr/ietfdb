@@ -348,7 +348,6 @@ def html_agenda(request, num=None, schedule_name=None):
     modified = get_modified_from_scheduledsessions(scheduledsessions)
 
     area_list = get_areas()
-    print "area list: %s" % area_list
     wg_list = get_wg_list(scheduledsessions)
     
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, False)
@@ -421,7 +420,7 @@ def edit_agenda(request, num=None, schedule_name=None):
 
     ntimeslots = get_ntimeslots_from_ss(schedule, scheduledsessions)
 
-    area_list = get_area_list_from_sessions(scheduledsessions, num)
+    area_list = get_areas()
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
     

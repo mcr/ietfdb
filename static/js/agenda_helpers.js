@@ -63,7 +63,7 @@ function load_events(){
                                 session.title,
                                 session.description, 
                                 session.session_id,
-                                session.owner);
+                                session.owner, session.area);
 		//log("setting "+slot_id+" as used");
 
             } else {
@@ -76,14 +76,15 @@ function load_events(){
 }
 
 
-function populate_events(js_room_id, title, description, session_id, owner){
-    var eTemplate =     event_template(title, description, session_id);
+function populate_events(js_room_id, title, description, session_id, owner, area){
+    var eTemplate =     event_template(title, description, session_id, area);
     var t = title+" "+description;
     insert_cell(js_room_id, eTemplate, false);
 }
 
-function event_template(event_title, description, session_id){
-    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr>";
+function event_template(event_title, description, session_id, area){
+    //console.log("area:"+area)
+    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme'>"+event_title+"</th></tr>";
 }
 
 function check_free(inp){

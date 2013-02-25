@@ -106,11 +106,12 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
   }
 }
 
-function event_obj(title, description, session_id, owner){
+function event_obj(title, description, session_id, owner, area){
     this.title = title;
     this.description = description;
     this.session_id = session_id;
     this.owner = owner;
+    this.area  = area;
     this.last_timeslot_id = null;
     this.slot_status_key = null;
 }
