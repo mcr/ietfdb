@@ -18,3 +18,4 @@
 404     /meeting/83/agenda/doesnotexist
 200     /meeting/83/agenda/mtg:83/edit
 404     /meeting/83/agenda/doesnotexist/edit
+200     /meeting/83/agenda.ics?APP,-~Other,-~Plenary

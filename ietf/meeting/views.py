@@ -686,7 +686,7 @@ def week_view(request, num=None):
     return render_to_response(template,
             {"timeslots":timeslots,"render_types":["Session","Other","Break","Plenary"]}, context_instance=RequestContext(request))
 
-def ical_agenda(request, num=None):
+def ical_agenda(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
 
     q = request.META.get('QUERY_STRING','') or ""
@@ -713,8 +713,11 @@ def ical_agenda(request, num=None):
             elif item[0] == '~':
                 include_types |= set([item[1:2].upper()+item[2:]])
 
-    timeslots = TimeSlot.objects.filter(Q(meeting__id = meeting.id),
-        Q(type__name__in = include_types) |
+    schedule = get_schedule(meeting, schedule_name)
+    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
+
+    scheduledsessions = scheduledsessions.filter(
+        Q(timeslot__type__name__in = include_types) |
         Q(session__group__acronym__in = filter) |
         Q(session__group__parent__acronym__in = filter)
         ).exclude(Q(session__group__acronym__in = exclude))
@@ -737,7 +740,7 @@ def ical_agenda(request, num=None):
         vtimezone = None
 
     return HttpResponse(render_to_string("meeting/agendaREDESIGN.ics",
-        {"timeslots":timeslots, "meeting":meeting, "vtimezone": vtimezone },
+        {"scheduledsessions":scheduledsessions, "meeting":meeting, "vtimezone": vtimezone },
         RequestContext(request)), mimetype="text/calendar")
 
 def csv_agenda(request, num=None, name=None):
