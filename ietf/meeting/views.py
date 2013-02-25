@@ -20,6 +20,7 @@ from django.utils.decorators import decorator_from_middleware
 from ietf.ietfauth.decorators import group_required
 from django.middleware.gzip import GZipMiddleware
 from django.db.models import Max
+from ietf.group.colors import fg_group_colors, bg_group_colors
 
 import debug
 import urllib
@@ -350,6 +351,8 @@ def html_agenda(request, num=None, schedule_name=None):
     return HttpResponse(render_to_string("meeting/agenda.html",
         {"scheduledsessions":scheduledsessions, "rooms":rooms, "time_slices":time_slices, "date_slices":date_slices  ,"modified": modified, "meeting":meeting,
          "area_list": area_list, "wg_list": wg_list ,
+         "fg_group_colors": fg_group_colors,
+         "bg_group_colors": bg_group_colors,
          "show_inline": set(["txt","htm","html"]) },
         RequestContext(request)), mimetype="text/html")
 
