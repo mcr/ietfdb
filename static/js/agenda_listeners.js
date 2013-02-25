@@ -38,19 +38,18 @@ function static_listeners(){
    and from there ask django for more information
 */
 
+
+
+
+
 var clicked_event;
 
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
-    if(current_item != null){
-	$(current_item).css('background','');
-	
-    }
-    if(last_item != null){
-	$(last_item).css('background-color','');
-    }
-    
+    clear_highlight(find_friends(current_item));
+    $(last_item).css("background-color", '');
+
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     var meeting_event_id = $(event.target).closest('.meeting_event').attr('id');
     
@@ -69,23 +68,52 @@ function meeting_event_click(event){
 	    session_id = slot[i].session_id;
 	    
 	    $("#session_"+session_id).css('background-color',highlight);
-	    
-            
+
 	    current_item = "#session_"+session_id;
 	    current_timeslot = slot[i].timeslot_id;
 	    
-	    //				       {'meeting_obj':meeting_objs[session_id]},
             empty_info_table();
 	    dajaxice_fill_in_info(slot[i],slot_id);
-	    // Dajaxice.ietf.meeting.get_info(fill_in_info,
-            //                                {   "active_slot_id": slot_id,
-            //                                    "scheduledsession_id": slot[i].scheduledsession_id,
-            //                                    "timeslot_id": slot[i].timeslot_id,
-            //                                    "session_id": slot[i].session_id
-            //                                    },
-            //                                dajaxice_error );
-        }
+	}
     }
+}
+
+var last_item = null; // used during location change. we make the background color
+// of the timeslot highlight because it is being set into that slot.
+function info_location_select_change(){
+    console.log("last_item...");
+    if(last_item != null){
+	console.log(last_item);
+	$(last_item).css('background-color','');
+    }
+    last_item = '#'+$('#info_location_select').val();
+    console.log("last_item...");    
+    //$('#'+$('#info_location_select').val()).css('background-color',highlight);
+    $(last_item).css('background-color',highlight);
+}
+
+var last_name_item = null;
+function info_name_select_change(){
+    console.log(last_item);
+    $(last_item).css("background-color", '');
+    $(current_item).css('background-color','');
+    if(last_name_item != null){
+	console.log(last_name_item);
+	$(last_name_item).css('background-color','');
+	
+    }
+    if(current_item != null){
+	$(current_item).css('background-color','');
+	
+    }
+    last_name_item = '#'+$('#info_name_select').val();
+    var slot_id = last_name_item.substring(1,last_name_item.length);
+    var slot_status_obj = slot_status[slot_id];
+    current_item = "#session_"+slot_status_obj[0].session_id;
+    current_timeslot = slot_status_obj[0].timeslot_id;
+    dajaxice_fill_in_info(slot_status_obj[0],slot_id);
+    $(current_item).css('background-color',highlight);
+//    $('#'+$('#info_name_select').val()).css('background-color',highlight);
 }
 
 
@@ -137,31 +165,6 @@ function hide_ietf_menu_bar(){
     }
 }
 
-var last_item = null;
-function info_location_select_change(){
-    if(last_item != null){
-	console.log(last_item);
-	$(last_item).css('background-color','');
-    }
-    last_item = '#'+$('#info_location_select').val();
-    $('#'+$('#info_location_select').val()).css('background-color',highlight);
-}
-
-var last_name_item = null;
-function info_name_select_change(){
-
-    if(last_name_item != null){
-	console.log(last_name_item);
-	$(last_name_item).css('background-color','');
-    }
-    last_name_item = '#'+$('#info_name_select').val();
-    var slot_id = last_name_item.substring(1,last_name_item.length);
-    var slot_status_obj = slot_status[slot_id];
-    current_item = "#session_"+slot_status_obj[0].session_id;
-    current_timeslot = slot_status_obj[0].timeslot_id;
-    dajaxice_fill_in_info(slot_status_obj[0],slot_id);
-    $('#'+$('#info_name_select').val()).css('background-color',highlight);
-}
 
 
 /* create the droppable */
@@ -195,19 +198,40 @@ function droppable(){
 } // end droppable()
 
 
-/* what happens when we drop the session onto a timeslot. */
+
 function drop_drop(event, ui){
     console.log("------ drop drop --------");
-    var temp_id = ui.draggable.attr('id');
-    console.log("event "+event.id+" with ui.id "+temp_id);
-    temp_id = temp_id.substring(8,temp_id.length);
-    var slot_idd = $(this).attr('id');
-    console.log("slot_idd: "+slot_idd);
-    console.log("slot_status:"); console.log(slot_status[slot_idd]);
+    var meeting_id = ui.draggable.attr('id'); // the meeting id. 
+    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this. 
+    
+    var to_slot_id = $(this).attr('id'); // where we are dragging it. 
+    
+    var to_slot = slot_status[to_slot_id]
+    var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
+    
+    for(var i = 0; i<from_slot.length; i++){
+	if(from_slot[i].session_id == meeting_id){
+	    from_slot = from_slot[i];
+	    break;
+	}
+    }
+    console.log("chugging along...")
 
+    
+
+}
+
+var drop_temp;
+/* what happens when we drop the session onto a timeslot. */
+function drop_drop2(event, ui){
+    console.log("------ drop drop --------");
+    var meeting_id = ui.draggable.attr('id'); // the meeting id. 
+    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this. 
+    var slot_idd = $(this).attr('id'); // where we are dragging it. 
+    
     // make a json with the new values to inject into the event
     var event_json = id_to_json(slot_idd); 
-    var session_obj = meeting_objs[temp_id];
+    var session_obj = meeting_objs[meeting_id];
 
 
     // find an empty slot.
@@ -218,29 +242,30 @@ function drop_drop(event, ui){
     var status_obj; 
     var found = false;
     for(var i = 0; i<slot.length; i++) {
-        if(slot[i].empty != false &&
-           slot[i].empty != "False") { // refactor to use check_free(inp.id)
+        if(slot[i].empty != false && slot[i].empty != "False") { // refactor to use check_free(inp.id)
             found = true;
             status_obj = slot[i];
         }
     }
-
     /* no available slot */
     if(!found) return;
 		
     // we are good, the slot is empty.
     status_obj.empty = false; // it's going to be full now....
-    status_obj.session_id = temp_id;
 
+    status_obj.session_id = meeting_id;
+    drop_temp = status_obj;
     console.log("session_obj:"); console.log(session_obj);
     console.log("ss.id: "+status_obj.scheduledsession_id);
     
-    if(meeting_objs[temp_id].slot_status_key == null){ // we are coming from a bucket list
+    if(meeting_objs[meeting_id].slot_status_key == null){ // we are coming from a bucket list
         session_obj.slot_status_key = slot_idd;
     } else {
         // how do we deal with the case that there are two things in a slot?
         status_obj.empty = true;
+	drop_temp = status_obj;
         $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
+	
         session_obj.slot_status_key = slot_idd;
     }
     

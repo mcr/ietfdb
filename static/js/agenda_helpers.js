@@ -48,7 +48,7 @@ function load_events(){
     });
     
     $.each(slot_status, function(key) {
-//        log("loading event "+key)
+
         ssid_arr = slot_status[key]
 	
 	for(var q = 0; q<ssid_arr.length; q++){
@@ -101,6 +101,30 @@ function check_free(inp){
 
 }
 
+/* clears any background highlight colors of scheduled sessions */
+function clear_highlight(inp_arr){ // @args: array from slot_status{}
+    if(inp_arr == null){
+	return false;
+    }
+    for(var i =0; i<inp_arr.length; i++){
+	$("#session_"+inp_arr[i].session_id).css('background-color','');
+    }
+    return true;
+
+}
+
+/* based on any meeting object, it finds any other objects inside the same timeslot. */
+function find_friends(inp){
+    var ts = $(inp).parent().attr('id');
+    var ss_arr = slot_status[ts];
+    if (ss_arr != null){
+	return ss_arr;
+    }
+    else{
+	console.log("find_friends("+inp+") did not find anything");
+	return null;
+    }
+}
 
 
 function json_to_id(j){
@@ -136,15 +160,6 @@ function empty_info_table(){
     $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
     $("#info_responsible").html("");
     $("#info_requestedby").html("");
-
-    // $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
-
-//    listeners();
-    
-
-
-
-
 }
 
 
@@ -157,8 +172,6 @@ function generate_info_table(inp){
     $("#info_name").html(name_select_html);
     $("#info_area").html(inp.area);
     $("#info_duration").html(inp.ts_duration);
-    //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
-//    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
@@ -243,24 +256,6 @@ function calculate_name_select_box(){
 	}
         html=html+"</option>";
     }
-    // for (n in sorted) {
-    //     var k1 = sorted[n];
-    //     var val_arr = slot_status[k1];
-		
-    //     /* k1 is the slot_status key */
-    //     /* v1 is the slot_obj */
-    // 	// for(var i = 0; i<val_arr.length; i++){
-    // 	    var v1 = val_arr[i];
-    //         html=html+"<option value='"+k1;
-    //         html=html+"' id='info_name_select_option_";
-    //         html=html+v1.timeslot_id+"'>";
-    // 	    try{
-    // 		html=html+meeting_objs[v1.session_id].title + " (" + meeting_objs[v1.session_id].description + ")";
-    // 	    } catch(err) {
-    // 		html=html+"ERRROR!!!";
-    // 	    }
-    //         html=html+"</option>";
-    // 	}
 
     html = html+"</select>";
     name_select_html = html;
@@ -279,8 +274,6 @@ function generate_select_box(){
 
 function insert_cell(js_room_id, text, replace){
     slot_id = ("#"+js_room_id);
-    //console.log(slot_id);
-    //log("Adding "+slot_id+" with "+text+" to "+ $(slot_id).attr('id'))
     try{
 	var found;
         if(replace) {
