@@ -12,6 +12,12 @@
 */
 
 
+// console = { 
+//     log: function(inp){
+	
+//     } 
+// };
+
 
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
@@ -49,31 +55,24 @@ var current_timeslot = null;
 function meeting_event_click(event){
     clear_highlight(find_friends(current_item));
     $(last_item).css("background-color", '');
-
+    
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
-    var meeting_event_id = $(event.target).closest('.meeting_event').attr('id');
-    
-    console.log("meeting event click");
-    console.log(event);
+    var meeting_event_id = $(this).attr('id');
+   
     clicked_event = event;
-    console.log("event.taget.id",$(event).attr('id'));
-    console.log("slot_id:", slot_id);
+
     slot = slot_status[slot_id];
-    console.log(meeting_event_id);
-    
-    console.log(meeting_objs[meeting_event_id]);
     meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
     if(slot) {
 	for(var i = 0; i<slot.length; i++){
 	    session_id = slot[i].session_id;
-	    
-	    $("#session_"+session_id).css('background-color',highlight);
-
-	    current_item = "#session_"+session_id;
-	    current_timeslot = slot[i].timeslot_id;
-	    
-            empty_info_table();
-	    dajaxice_fill_in_info(slot[i],slot_id);
+	    if(session_id == meeting_event_id){
+		$("#session_"+session_id).css('background-color',highlight);
+		current_item = "#session_"+session_id;
+		current_timeslot = slot[i].timeslot_id;
+		empty_info_table();
+		dajaxice_fill_in_info(slot[i],slot_id);
+	    }
 	}
     }
 }
