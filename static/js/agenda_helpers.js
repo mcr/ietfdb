@@ -157,7 +157,7 @@ var temp_1;
 function generate_info_table(inp){
     $("#info_grp").html(inp.group);
     $("#info_name").html(name_select_html);
-    $("#info_area").html(inp.area);
+    $("#info_area").html("<span class='"+inp.area.toUpperCase()+"-scheme'>"+inp.area+"</span>");
     $("#info_duration").html(inp.ts_duration);
     //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
 //    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
