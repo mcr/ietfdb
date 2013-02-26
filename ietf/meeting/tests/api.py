@@ -1,9 +1,9 @@
 import base64
 import sys
-from django.test import TestCase
+from django.test import TestCase, Client
+
 #from ietf.person.models import Person
 from django.contrib.auth.models import User
-from django.test.client import Client
 from ietf.meeting.models  import TimeSlot, Session, ScheduledSession
 from ietf.ietfauth.decorators import has_role
 from auths import auth_joeblow, auth_wlo, auth_ietfchair, auth_ferrel

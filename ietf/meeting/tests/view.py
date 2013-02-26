@@ -40,7 +40,7 @@ class ViewTestCase(TestCase):
         self.assertIsNone(fred)
         #
         # move this session from one timeslot to another.
-        self.client.post('/meeting/83/schedule', {
+        self.client.post('/meeting/83/schedule/edit', {
             'savename': "fred",
             'saveas': "saveas",
             }, **auth_wlo)

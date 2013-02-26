@@ -384,14 +384,16 @@ def agenda_create(request, num=None, schedule_name=None):
     savedname = saveasform.cleaned_data['savename']
     
     # create the new schedule, and copy the scheduledsessions
-    qs = meeting.schedule_set.filter(name=savedname, owner=request.user.person)
-    newschedule = qs[0]
-    if newschedule:
-        # XXX needs to record a session error and redirect to where?
-        return HttpResponseRedirect(
-            reverse(edit_agenda,
-                    args=[meeting.number, newschedule.name]))
-        
+    try:
+        sched = meeting.schedule_set.get(name=savedname, owner=request.user.person)
+        if sched:
+            # XXX needs to record a session error and redirect to where?
+            return HttpResponseRedirect(
+                reverse(edit_agenda,
+                        args=[meeting.number, sched.name]))
+
+    except Schedule.DoesNotExist:
+        pass
 
     # must be done
     newschedule = Schedule(name=savedname,
