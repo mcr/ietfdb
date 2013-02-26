@@ -523,8 +523,11 @@ class TestCase(TransactionTestCase):
     to use TransactionTestCase, if you need transaction management inside a test.
     """
 
+    fixtures_loaded = False
+    
     def _fixture_setup(self):
         if not connections_support_transactions():
+            print "transactions not available, have to reload fixtures"
             return super(TestCase, self)._fixture_setup()
 
         # If the test case has a multi_db=True flag, setup all databases.
@@ -534,21 +537,28 @@ class TestCase(TransactionTestCase):
         else:
             databases = [DEFAULT_DB_ALIAS]
 
+        if not TestCase.fixtures_loaded:
+            print "Loading fixtures for the first time"
+            from django.contrib.sites.models import Site
+            Site.objects.clear_cache()
+
+            for db in databases:
+                # BUG, if the set of fixtures changes, then it might not
+                # get reloaded properly.
+                if hasattr(self, 'fixtures'):
+                    call_command('loaddata', *self.fixtures, **{
+                                                            'verbosity': 0,
+                                                            'commit': False,
+                                                            'database': db
+                                                            })
+            TestCase.fixtures_loaded = True
+
+        # now start a transaction.
         for db in databases:
             transaction.enter_transaction_management(using=db)
             transaction.managed(True, using=db)
         disable_transaction_methods()
 
-        from django.contrib.sites.models import Site
-        Site.objects.clear_cache()
-
-        for db in databases:
-            if hasattr(self, 'fixtures'):
-                call_command('loaddata', *self.fixtures, **{
-                                                            'verbosity': 0,
-                                                            'commit': False,
-                                                            'database': db
-                                                            })
 
     def _fixture_teardown(self):
         if not connections_support_transactions():
