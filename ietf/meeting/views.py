@@ -8,6 +8,7 @@ import tarfile
 
 from tempfile import mkstemp
 
+from django import forms
 from django.shortcuts import render_to_response, get_object_or_404
 from ietf.idtracker.models import IETFWG, IRTF, Area
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -37,7 +38,6 @@ from ietf.proceedings.models import Meeting as OldMeeting, WgMeetingSession, Mee
 from ietf.meeting.models import Meeting, TimeSlot, Session
 from ietf.meeting.models import Schedule, ScheduledSession
 from ietf.group.models import Group
-
 
 @decorator_from_middleware(GZipMiddleware)
 def show_html_materials(request, meeting_num=None, schedule_name=None):
@@ -362,6 +362,10 @@ def html_agenda(request, num=None, schedule_name=None):
          "show_inline": set(["txt","htm","html"]) },
         RequestContext(request)), mimetype="text/html")
 
+
+class SaveAsForm(forms.Form):
+    savename = forms.CharField(max_length=100)
+    
 @group_required('Area_Director','Secretariat')
 def agenda_create(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
@@ -373,15 +377,24 @@ def agenda_create(request, num=None, schedule_name=None):
 
     # authorization was enforced by the @group_require decorator above.
 
-    # now validate the POST items.
-    if not ('savename' in request.POST and 'saveas' in request.POST and request.POST['saveas'] == 'saveas'):
+    saveasform = SaveAsForm(request.POST) 
+    if not saveasform.is_valid(): 
         return HttpResponse(status=404)
-    
-    # determine that there isn't already a meeting by this name.
-    
+
+    savedname = saveasform.cleaned_data['savename']
     
     # create the new schedule, and copy the scheduledsessions
-    newschedule = Schedule(name=request.POST['savename'],
+    qs = meeting.schedule_set.filter(name=savedname, owner=request.user.person)
+    newschedule = qs[0]
+    if newschedule:
+        # XXX needs to record a session error and redirect to where?
+        return HttpResponseRedirect(
+            reverse(edit_agenda,
+                    args=[meeting.number, newschedule.name]))
+        
+
+    # must be done
+    newschedule = Schedule(name=savedname,
                            owner=request.user.person,
                            meeting=meeting,
                            visible=False,
@@ -410,6 +423,9 @@ def agenda_create(request, num=None, schedule_name=None):
 @decorator_from_middleware(GZipMiddleware)
 def edit_agenda(request, num=None, schedule_name=None):
 
+    if request.method == 'POST':
+        return agenda_create(request, num, schedule_name)
+
     meeting = get_meeting(num)
     schedule = get_schedule(meeting, schedule_name)
 
@@ -428,11 +444,15 @@ def edit_agenda(request, num=None, schedule_name=None):
 
     rooms = meeting.room_set
     rooms = rooms.all()
-    
+    saveas = SaveAsForm()
+    saveasurl=reverse(edit_agenda,
+                      args=[meeting.number, schedule.name])
     
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"timeslots":ntimeslots,
                                           "schedule":schedule,
+                                          "saveas": saveas,
+                                          "saveasurl": saveasurl,
                                           "rooms":rooms,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,
