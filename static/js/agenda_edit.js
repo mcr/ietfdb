@@ -35,7 +35,7 @@ var color_droppable_empty_slot = 'rgb(0, 102, 153)';
 /* refactor this out into the html */
 $(document).ready(function() {
     initStuff();
-    $("#CLOSE_IETF_MENUBAR").click();
+    //$("#CLOSE_IETF_MENUBAR").click();
 
 });
 

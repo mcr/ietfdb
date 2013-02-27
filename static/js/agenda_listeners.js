@@ -200,13 +200,12 @@ function droppable(){
 
 var arr_key_index = null;
 function update_to_slot(meeting_id, to_slot_id, force){
-    console.log("----update_to_slot----");
+    console.log("\t----update_to_slot----");
     var to_slot = slot_status[to_slot_id];
-    console.log(to_slot, to_slot.length);
+//    console.log(to_slot, to_slot.length);
     var found = false;
     for(var i=0; i<to_slot.length; i++){
 	if(to_slot[i].empty == "True" || to_slot[i].empty == true){ // we found a empty place to put it.
-	    console.log("true");
 	    // setup slot_status info.
 	    to_slot[i].session_id = meeting_id;
 	    console.log(meeting_id);
@@ -218,11 +217,11 @@ function update_to_slot(meeting_id, to_slot_id, force){
 	    meeting_objs[meeting_id].placed = true;
 	    found = true;
 	    // update from_slot
-	    console.log("work is done, breaking");
+//	    console.log("work is done, breaking");
 	    return found;
 	}
     }
-    console.log("something was not found...");
+    console.log("\tsomething was not found...");
     if(!found && force){
 	to_slot.push(new slot_obj(to_slot[0].scheduledsession_id, to_slot[0].empty, to_slot[0].timeslot_id,meeting_id,to_slot[0].room, to_slot[0].time,to_slot[0].date,to_slot[0].domid));
 	found = true;
@@ -233,10 +232,10 @@ function update_to_slot(meeting_id, to_slot_id, force){
 
 
 function update_from_slot(meeting_id, from_slot_id){
-    console.log("----update_from_slot-----");
+    console.log("\t----update_from_slot-----");
     var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
     var found = false;
-    console.log(from_slot, from_slot.length);
+//    console.log(from_slot, from_slot.length);
     if(from_slot_id != null){ // it will be null if it's coming from a bucketlist
 	for(var k = 0; k<from_slot.length; k++){
 	    if(from_slot[k].session_id == meeting_id){
@@ -244,15 +243,14 @@ function update_from_slot(meeting_id, from_slot_id){
 		from_slot[k].empty = true;
 		from_slot[k].session_id = null;
 
-		console.log(meeting_objs[meeting_id].slot_status_key,slot_status[meeting_objs[meeting_id].slot_status_key]);
-		console.log(from_slot[k]);
-		console.log("found, updated, breaking");
+//		console.log(meeting_objs[meeting_id].slot_status_key,slot_status[meeting_objs[meeting_id].slot_status_key]);
+//		console.log("found, updated, breaking");
 		return found;
 	    }
 	}
     }
     else{
-	console.log("from_slot_id is null!");
+	console.log("\tfrom_slot_id is null!");
 	return found;
     }
     return found;
@@ -283,19 +281,16 @@ function drop_drop(event, ui){
 
     var from_slot_id = meeting_objs[meeting_id].slot_status_key;
     var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
-    console.log(to_slot_id);
 
     bucket_list = (to_slot_id == "sortable-list");
-    console.log("bucketlist==", bucket_list, to_slot_id, ((!check_free({id:to_slot_id})) || (bucket_list)));
     if(!check_free({id:to_slot_id}) ){
-	console.log($("#"+$(this).attr('id')).html());
 	console.log("not free...");
 	if(!bucket_list){
 	    return
 	}
     }
-    console.log("to_slot_id",to_slot_id, slot_status[to_slot_id]);
-    console.log("from_slot_id",from_slot_id, slot_status[from_slot_id]);
+//    console.log("to_slot_id",to_slot_id, slot_status[to_slot_id]);
+//    console.log("from_slot_id",from_slot_id, slot_status[from_slot_id]);
     var update_to_slot_worked = false;
     
     if(bucket_list){
@@ -307,8 +302,7 @@ function drop_drop(event, ui){
     
     if(update_to_slot_worked){
 	if(update_from_slot(meeting_id, from_slot_id)){
-	    console.log("success!");
-	    // do dajaxice call
+	    // do something
 	}
 	else{
 	    console.log("issue updateing from_slot");
@@ -346,10 +340,26 @@ function drop_drop(event, ui){
 	$("#"+from_slot_id).css('background-color',none_color);
     }
     $("#"+"sortable-list").css('background-color',none_color);
-    
-
     /******************************************************/
    
+    var schedulesession_id = null;
+    for(var i =0; i< to_slot.length; i++){
+	if (to_slot[i].session_id == meeting_id){
+	    schedulesession_id = to_slot[i].scheduledsession_id;
+	    break;
+	}
+    }
+    if(schedulesession_id != null){
+	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
+                                              {
+						  'session_id':meeting_objs[meeting_id].session_id,
+						  'scheduledsession_id': schedulesession_id,
+                                              });
+	
+    }
+    else{
+	console.log("issue sending ajax call!!!");
+    }
     droppable();
     listeners();
     console.log("moving complete.");
