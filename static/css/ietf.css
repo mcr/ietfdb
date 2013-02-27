@@ -55,7 +55,7 @@ table.meeting_event {
 }
 
 
-.meeting_event th{
+.meeting_event th {
     /* background:#E6E6FA; */
     padding:0px;
     /* background-color:#ff7373; */
@@ -100,11 +100,6 @@ table.meeting_event {
     float:left;
     cursor:pointer;
 
-}
-
-#session-info{
-  height:100px;
-  position: relative;
 }
 
 #IETF_MENUBAR{
@@ -168,6 +163,11 @@ div.agenda_slot{
 }
 
 
+#session-info{
+  height: 130px;
+  position: relative;
+}
+
 .ss_info{
     
     /* width:310px; */
@@ -184,8 +184,6 @@ div.agenda_slot{
 }
 
 .ss_info button{
-
-    
     border:1px solid black;
     padding-top:1px;
     padding-bottom:1px;
@@ -209,7 +207,6 @@ div.agenda_slot{
 
 /* #2647A0*/
 .ss_info table{
-
     border-left: 1px solid #89D;
     border-top: 1px solid #89D;
     background-color: #EDF5FF;
@@ -272,6 +269,22 @@ td.ss_info_name_short{
 .schedule_title {
   font-size: 10px;
   font-family: serif;  /* live life a bit */
+}
+
+.color_legend {
+  position: absolute;
+  
+  left: 3px;
+  bottom: 2px;
+  padding-bottom: 3px;
+  margin-top: 5px;
+  height: 20px;
+  width: 500px;
+  text-align:left;
+  font-size: 12px;
+}
+.color_legend span {
+  padding-right: 4px;
 }
 
 

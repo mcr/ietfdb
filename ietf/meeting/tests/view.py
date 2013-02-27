@@ -40,7 +40,7 @@ class ViewTestCase(TestCase):
         self.assertIsNone(fred)
         #
         # move this session from one timeslot to another.
-        self.client.post('/meeting/83/agenda', {
+        self.client.post('/meeting/83/schedule/edit', {
             'savename': "fred",
             'saveas': "saveas",
             }, **auth_wlo)
@@ -54,7 +54,7 @@ class ViewTestCase(TestCase):
         from ietf.meeting.views import edit_agenda
         url = reverse(edit_agenda,
                       args=['83', 'fred'])
-        self.assertEqual(url, "/meeting/83/agenda/fred/edit")
+        self.assertEqual(url, "/meeting/83/schedule/fred/edit")
     
 
         

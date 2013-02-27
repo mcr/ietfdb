@@ -48,7 +48,6 @@ function load_events(){
     });
     
     $.each(slot_status, function(key) {
-
         ssid_arr = slot_status[key]
 	if(key == "sortable-list"){
 	    console.log("sortable list");
@@ -66,7 +65,7 @@ function load_events(){
                                 session.title,
                                 session.description, 
                                 session.session_id,
-                                session.owner);
+                                session.owner, session.area);
 		//log("setting "+slot_id+" as used");
 
             } else {
@@ -80,14 +79,15 @@ function load_events(){
 }
 
 
-function populate_events(js_room_id, title, description, session_id, owner){
-    var eTemplate =     event_template(title, description, session_id);
+function populate_events(js_room_id, title, description, session_id, owner, area){
+    var eTemplate =     event_template(title, description, session_id, area);
     var t = title+" "+description;
     insert_cell(js_room_id, eTemplate, false);
 }
 
-function event_template(event_title, description, session_id){
-    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th>"+event_title+"</th></tr>";
+function event_template(event_title, description, session_id, area){
+    //console.log("area:"+area)
+    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme'>"+event_title+"</th></tr>";
 }
 
 function check_free(inp){
@@ -103,7 +103,6 @@ function check_free(inp){
 	}
     }
     return true;
-
 }
 
 /* clears any background highlight colors of scheduled sessions */
@@ -175,7 +174,7 @@ var temp_1;
 function generate_info_table(inp){
     $("#info_grp").html(inp.group);
     $("#info_name").html(name_select_html);
-    $("#info_area").html(inp.area);
+    $("#info_area").html("<span class='"+inp.area.toUpperCase()+"-scheme'>"+inp.area+"</span>");
     $("#info_duration").html(inp.ts_duration);
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
@@ -242,13 +241,13 @@ function calculate_name_select_box(){
     mobj_array2 = mobj_array.sort(function(a,b) { return a.title.localeCompare(b.title); });
     temp_sorted =mobj_array;
     for(var i = 0; i < mobj_array.length; i++){
-	console.log(mobj_array[i]);
+	//console.log("select box mobj["+i+"]="+mobj_array[i]);
 	html=html+"<option value='"+mobj_array[i].slot_status_key;
         html=html+"' id='info_name_select_option_";
 	ts_id = "err";
 	try{
 	    ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
-	    console.log(ts_id);
+	    //console.log("ts_id="+ts_id);
 	}catch(err){
 	}
         html=html+ts_id+"'>";

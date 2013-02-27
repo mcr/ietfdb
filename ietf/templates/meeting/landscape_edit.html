@@ -5,6 +5,12 @@
 
 {% load dajaxice_templatetags %}
 
+{% block morecss %}
+{% for area in area_list %}
+.{{ area.upcase_acronym}}-scheme, .meeting_event th.{{ area.upcase_acronym}}-scheme, #{{ area.upcase_acronym }}-groups, #selector-{{ area.upcase_acronym }} { color:{{ area.fg_color }}; background-color: {{ area.bg_color }} }
+{% endfor %}
+{% endblock morecss %}
+
 {% block title %}IETF {{ meeting.number }} Meeting Agenda{% endblock %}
 {% load agenda_custom_tags %}
 {% block pagehead %}
@@ -40,9 +46,12 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in sessions %}
-    var e_obj = new event_obj( "{{ s.short_name }}","{{ s.group.name }}","{{s.id}}", "{{s.owner.owner}}");
-	//e_obj.slot_status_key = "blank{{s.timeslot.js_identifier}}"
-	$.extend(meeting_objs,{ "{{s.id}}":e_obj});
+    var e_obj = new event_obj( "{{ s.short_name }}",
+                               "{{ s.group.name }}",
+                               "{{s.id}}", 
+                               "{{s.owner.owner}}",
+                               "{{s.group.parent.acronym|upper}}");
+    $.extend(meeting_objs,{ "{{s.id}}":e_obj});
 {% endfor %}
 
 {% for s in scheduledsessions %}
@@ -151,13 +160,19 @@ console.log("{{timeslots|length}}");
   <div class="agenda_save_box">
     <div id="agenda_title"><b>Agenda name: </b><span>{{schedule.name}}</span></div>
     <div id="agenda_saveas">
-      {% comment %} redo this with a Form {% endcomment %}
-      <form action="/meeting/85/agenda" method="POST">
-        <input type="text" name="savename" value="unnamed">
+      <form action="{{saveasurl}}" method="post">{% csrf_token %}
+        {{ saveas.as_p }}
         <input type="submit" name="saveas" value="saveas">
       </form>
     </div>
   </div>
+
+  <div class="color_legend">
+{% for area in area_list %}
+    <span class="{{area.upcase_acronym}}-scheme">{{area.upcase_acronym}}</span>
+{% endfor %}
+  </div>
+
 </div>
 
 </div>

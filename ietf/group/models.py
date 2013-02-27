@@ -3,6 +3,7 @@
 from django.db import models
 from ietf.name.models import *
 from ietf.person.models import Email, Person
+from ietf.group.colors import fg_group_colors, bg_group_colors
 
 import datetime
 
@@ -51,6 +52,21 @@ class Group(GroupInfo):
         model = args[0] if args else GroupEvent
         e = model.objects.filter(group=self).filter(**filter_args).order_by('-time', '-id')[:1]
         return e[0] if e else None
+
+    # these are copied to Group because it is still proxied.
+    @property
+    def upcase_acronym(self):
+        return self.acronym.upper()
+    
+    @property
+    def fg_color(self):
+        return fg_group_colors[self.upcase_acronym]
+
+    @property
+    def bg_color(self):
+        return bg_group_colors[self.upcase_acronym]
+        
+    
 
 class GroupHistory(GroupInfo):
     group = models.ForeignKey(Group, related_name='history_set')

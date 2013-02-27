@@ -8,6 +8,7 @@ import tarfile
 
 from tempfile import mkstemp
 
+from django import forms
 from django.shortcuts import render_to_response, get_object_or_404
 from ietf.idtracker.models import IETFWG, IRTF, Area
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -20,6 +21,7 @@ from django.utils.decorators import decorator_from_middleware
 from ietf.ietfauth.decorators import group_required
 from django.middleware.gzip import GZipMiddleware
 from django.db.models import Max
+from ietf.group.colors import fg_group_colors, bg_group_colors
 
 import debug
 import urllib
@@ -36,7 +38,6 @@ from ietf.proceedings.models import Meeting as OldMeeting, WgMeetingSession, Mee
 from ietf.meeting.models import Meeting, TimeSlot, Session
 from ietf.meeting.models import Schedule, ScheduledSession
 from ietf.group.models import Group
-
 
 @decorator_from_middleware(GZipMiddleware)
 def show_html_materials(request, meeting_num=None, schedule_name=None):
@@ -252,8 +253,14 @@ def agenda_info(num=None, name=None):
 
     return ntimeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda
 
-def get_area_list(scheduledsessions, num):
+# get list of all areas, + IRTF.
+def get_areas():
+    return Group.objects.filter(Q(state="active",
+                                  name="IRTF")|
+                                Q(state="active", type="area")).order_by('acronym')
 
+# get list of areas that are referenced.
+def get_area_list_from_sessions(scheduledsessions, num):
     return scheduledsessions.filter(timeslot__type = 'Session',
                                     session__group__parent__isnull = False).order_by(
         'session__group__parent__acronym').distinct(
@@ -340,7 +347,7 @@ def html_agenda(request, num=None, schedule_name=None):
     scheduledsessions = get_scheduledsessions_from_schedule(schedule)
     modified = get_modified_from_scheduledsessions(scheduledsessions)
 
-    area_list = get_area_list(scheduledsessions, num)
+    area_list = get_areas()
     wg_list = get_wg_list(scheduledsessions)
     
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, False)
@@ -349,10 +356,16 @@ def html_agenda(request, num=None, schedule_name=None):
 
     return HttpResponse(render_to_string("meeting/agenda.html",
         {"scheduledsessions":scheduledsessions, "rooms":rooms, "time_slices":time_slices, "date_slices":date_slices  ,"modified": modified, "meeting":meeting,
-         "area_list": area_list, "wg_list": wg_list ,
+         "area_list": area_list, "wg_list": wg_list,
+         "fg_group_colors": fg_group_colors,
+         "bg_group_colors": bg_group_colors,
          "show_inline": set(["txt","htm","html"]) },
         RequestContext(request)), mimetype="text/html")
 
+
+class SaveAsForm(forms.Form):
+    savename = forms.CharField(max_length=100)
+    
 @group_required('Area_Director','Secretariat')
 def agenda_create(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
@@ -364,15 +377,26 @@ def agenda_create(request, num=None, schedule_name=None):
 
     # authorization was enforced by the @group_require decorator above.
 
-    # now validate the POST items.
-    if not ('savename' in request.POST and 'saveas' in request.POST and request.POST['saveas'] == 'saveas'):
+    saveasform = SaveAsForm(request.POST) 
+    if not saveasform.is_valid(): 
         return HttpResponse(status=404)
-    
-    # determine that there isn't already a meeting by this name.
-    
+
+    savedname = saveasform.cleaned_data['savename']
     
     # create the new schedule, and copy the scheduledsessions
-    newschedule = Schedule(name=request.POST['savename'],
+    try:
+        sched = meeting.schedule_set.get(name=savedname, owner=request.user.person)
+        if sched:
+            # XXX needs to record a session error and redirect to where?
+            return HttpResponseRedirect(
+                reverse(edit_agenda,
+                        args=[meeting.number, sched.name]))
+
+    except Schedule.DoesNotExist:
+        pass
+
+    # must be done
+    newschedule = Schedule(name=savedname,
                            owner=request.user.person,
                            meeting=meeting,
                            visible=False,
@@ -401,6 +425,9 @@ def agenda_create(request, num=None, schedule_name=None):
 @decorator_from_middleware(GZipMiddleware)
 def edit_agenda(request, num=None, schedule_name=None):
 
+    if request.method == 'POST':
+        return agenda_create(request, num, schedule_name)
+
     meeting = get_meeting(num)
     schedule = get_schedule(meeting, schedule_name)
 
@@ -411,7 +438,7 @@ def edit_agenda(request, num=None, schedule_name=None):
 
     ntimeslots = get_ntimeslots_from_ss(schedule, scheduledsessions)
 
-    area_list = get_area_list(scheduledsessions, num)
+    area_list = get_areas()
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
     
@@ -419,11 +446,15 @@ def edit_agenda(request, num=None, schedule_name=None):
 
     rooms = meeting.room_set
     rooms = rooms.all()
-    
+    saveas = SaveAsForm()
+    saveasurl=reverse(edit_agenda,
+                      args=[meeting.number, schedule.name])
     
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"timeslots":ntimeslots,
                                           "schedule":schedule,
+                                          "saveas": saveas,
+                                          "saveasurl": saveasurl,
                                           "rooms":rooms,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,
@@ -438,7 +469,6 @@ def edit_agenda(request, num=None, schedule_name=None):
 
 ###########################################################################################################################
 
-
 def iphone_agenda(request, num, name):
     timeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda = agenda_info(num, name)
 
@@ -448,7 +478,7 @@ def iphone_agenda(request, num, name):
 
     wgs = IETFWG.objects.filter(status=IETFWG.ACTIVE).filter(group_acronym__acronym__in = groups_meeting).order_by('group_acronym__acronym')
     rgs = IRTF.objects.all().filter(acronym__in = groups_meeting).order_by('acronym')
-    areas = Area.objects.filter(status=Area.ACTIVE).order_by('area_acronym__acronym')
+    areas = get_areas()
     template = "meeting/m_agenda.html"
     return render_to_response(template,
             {"timeslots":timeslots,
@@ -460,8 +490,7 @@ def iphone_agenda(request, num, name):
              "plenaryw_agenda":plenaryw_agenda,
              "plenaryt_agenda":plenaryt_agenda, 
              "wg_list" : wgs,
-             "rg_list" : rgs,
-             "area_list" : areas},
+             "rg_list" : rgs},
             context_instance=RequestContext(request))
 
  
@@ -686,7 +715,7 @@ def week_view(request, num=None):
     return render_to_response(template,
             {"timeslots":timeslots,"render_types":["Session","Other","Break","Plenary"]}, context_instance=RequestContext(request))
 
-def ical_agenda(request, num=None):
+def ical_agenda(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
 
     q = request.META.get('QUERY_STRING','') or ""
@@ -713,8 +742,11 @@ def ical_agenda(request, num=None):
             elif item[0] == '~':
                 include_types |= set([item[1:2].upper()+item[2:]])
 
-    timeslots = TimeSlot.objects.filter(Q(meeting__id = meeting.id),
-        Q(type__name__in = include_types) |
+    schedule = get_schedule(meeting, schedule_name)
+    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
+
+    scheduledsessions = scheduledsessions.filter(
+        Q(timeslot__type__name__in = include_types) |
         Q(session__group__acronym__in = filter) |
         Q(session__group__parent__acronym__in = filter)
         ).exclude(Q(session__group__acronym__in = exclude))
@@ -737,7 +769,7 @@ def ical_agenda(request, num=None):
         vtimezone = None
 
     return HttpResponse(render_to_string("meeting/agendaREDESIGN.ics",
-        {"timeslots":timeslots, "meeting":meeting, "vtimezone": vtimezone },
+        {"scheduledsessions":scheduledsessions, "meeting":meeting, "vtimezone": vtimezone },
         RequestContext(request)), mimetype="text/calendar")
 
 def csv_agenda(request, num=None, name=None):
