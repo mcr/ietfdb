@@ -59,6 +59,9 @@ function setup_slots(){
     //$.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
 {% endfor %}
 
+var s_obj= new slot_obj("Unassigned",true,"Unassigned",null,"Unassigned",null,null,"sortable-list");
+$.extend(slot_status, { "sortable-list" :[]});
+slot_status["sortable-list"].push(s_obj);
 console.log("setup_slots run");
 
 calculate_room_select_box();

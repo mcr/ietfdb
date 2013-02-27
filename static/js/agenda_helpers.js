@@ -50,6 +50,9 @@ function load_events(){
     $.each(slot_status, function(key) {
 
         ssid_arr = slot_status[key]
+	if(key == "sortable-list"){
+	    console.log("sortable list");
+	}else{
 	
 	for(var q = 0; q<ssid_arr.length; q++){
 	    ssid = ssid_arr[q];
@@ -71,6 +74,7 @@ function load_events(){
 		   
             }
 	}
+	}
     });
 
 }
@@ -90,6 +94,7 @@ function check_free(inp){
     var empty = false;
     slot = slot_status[inp.id];
     if(slot == null){
+//	console.log("\t from check_free, slot is null?", inp,inp.id, slot_status[inp.id]);
 	return false;
     }
     for(var i =0;i<slot.length; i++){
