@@ -81,7 +81,7 @@ function upperCaseWords(inp){
     
 }
 
-var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 
 function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
