@@ -39,8 +39,9 @@ function find_session_id(session_id){
 }
 
 
-/* this pushes every event into the calendars */
+/* this pushes every event into the agendas */
 function load_events(){
+    console.log("load events...");
     /* first delete all html items */
     $.each(slot_status, function(key) {
         ssid = slot_status[key];
@@ -60,7 +61,9 @@ function load_events(){
             session = meeting_objs[ssid.session_id];
             if (session != null) {
 	       	session.slot_status_key = key;
+
                 session.placed = true;
+		
                 populate_events(key,
                                 session.title,
                                 session.description, 
@@ -297,6 +300,35 @@ function insert_cell(js_room_id, text, replace){
 	log(err);
     } 
 }
+
+
+function find_empty_test(){
+    $.each(slot_status, function(key){
+	ss_arr = slot_status[key];
+	for(var i = 0; i < ss_arr.length; i++){
+	    if(ss_arr[i].scheduledsession_id == null || ss_arr[i].session_id == null){
+		console.log(ss_arr[i]);
+	    }
+	}
+    })
+
+}
+
+
+function find_meeting_no_room(){
+    $.each(meeting_objs, function(key){ 
+	if(meeting_objs[key].slot_status_key == null) {
+	    session = meeting_objs[key]
+	    session.slot_status_key = null;
+	    populate_events("sortable-list",
+                            session.title,
+                            session.description, 
+                            session.session_id,
+                            session.owner, session.area);
+	}
+    })
+}
+
 
 /*
  * Local Variables:

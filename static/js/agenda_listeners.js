@@ -78,7 +78,11 @@ var clicked_event;
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
-    clear_highlight(find_friends(current_item));
+    console.log("Meeting_event_click");
+    try{
+	clear_highlight(find_friends(current_item));
+    }catch(err){ }
+    
     $(last_item).css("background-color", '');
     
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
@@ -88,18 +92,30 @@ function meeting_event_click(event){
 
     slot = slot_status[slot_id];
     meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
-    if(slot) {
-	for(var i = 0; i<slot.length; i++){
-	    session_id = slot[i].session_id;
-	    if(session_id == meeting_event_id){
-		$("#session_"+session_id).css('background-color',highlight);
-		current_item = "#session_"+session_id;
-		current_timeslot = slot[i].timeslot_id;
-		empty_info_table();
-		dajaxice_fill_in_info(slot[i],slot_id);
-	    }
+    if(slot == null){ // not in a real slot...
+	var slot_obj = {   slot_id: meeting_event_id ,
+            scheduledsession_id:meeting_event_id,
+            timeslot_id: null,
+            session_id: meeting_event_id,
+         }
+        
+	dajaxice_fill_in_info(slot_obj,slot_id);
+	return
+    }
+	
+
+    for(var i = 0; i<slot.length; i++){
+	session_id = slot[i].session_id;
+	if(session_id == meeting_event_id){
+	    $("#session_"+session_id).css('background-color',highlight);
+	    current_item = "#session_"+session_id;
+	    
+	    current_timeslot = slot[i].timeslot_id;
+	    empty_info_table();
+	    dajaxice_fill_in_info(slot[i],slot_id);
 	}
     }
+    
 }
 
 var last_item = null; // used during location change. we make the background color
@@ -227,6 +243,7 @@ function droppable(){
 var arr_key_index = null;
 function update_to_slot(meeting_id, to_slot_id, force){
     console.log("\t----update_to_slot----");
+    
     var to_slot = slot_status[to_slot_id];
 //    console.log(to_slot, to_slot.length);
     var found = false;
@@ -261,22 +278,19 @@ function update_from_slot(meeting_id, from_slot_id){
     console.log("\t----update_from_slot-----");
     var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
     var found = false;
-//    console.log(from_slot, from_slot.length);
+//    console.log(from_slot_id, from_slot, from_slot.length);
     if(from_slot_id != null){ // it will be null if it's coming from a bucketlist
 	for(var k = 0; k<from_slot.length; k++){
 	    if(from_slot[k].session_id == meeting_id){
 		found = true;
 		from_slot[k].empty = true;
 		from_slot[k].session_id = null;
-
-//		console.log(meeting_objs[meeting_id].slot_status_key,slot_status[meeting_objs[meeting_id].slot_status_key]);
-//		console.log("found, updated, breaking");
 		return found;
 	    }
 	}
     }
     else{
-	console.log("\tfrom_slot_id is null!");
+	found = true; // this may be questionable. It deals with the fact that it's coming from a bucketlist. 
 	return found;
     }
     return found;

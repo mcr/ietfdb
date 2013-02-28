@@ -35,7 +35,7 @@ var color_droppable_empty_slot = 'rgb(0, 102, 153)';
 /* refactor this out into the html */
 $(document).ready(function() {
     initStuff();
-    //$("#CLOSE_IETF_MENUBAR").click();
+ //   $("#CLOSE_IETF_MENUBAR").click();
 
 });
 
@@ -50,11 +50,12 @@ function initStuff(){
     log("droppable() ran");
     load_events();
     log("load_events() ran");
-
+    find_meeting_no_room();
     listeners();
     static_listeners();
     log("listeners() ran");
     calculate_name_select_box();
+    
 }
 
 
