@@ -19,7 +19,7 @@
 var meeting_objs = {};    // contains a list of session objects
 var slot_status = {};     // the status of the slot, in format { room_year-month-day_hour: { free: t/f, timeslotid: id } }
 var days = [];
-
+var legend_status = {};   // agenda area colors.
 /********* colors ************************************/
 
 var highlight = "red"; // when we click something and want to highlight it.

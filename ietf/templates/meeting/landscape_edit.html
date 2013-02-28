@@ -77,6 +77,10 @@ calculate_room_select_box();
 
 console.log("{{timeslots|length}}");
 
+{% for area in area_list %}
+	legend_status["{{area.upcase_acronym}}"] = true;
+{% endfor %}
+
 }
 
 
@@ -169,7 +173,7 @@ console.log("{{timeslots|length}}");
 
   <div class="color_legend">
 {% for area in area_list %}
-    <span class="{{area.upcase_acronym}}-scheme">{{area.upcase_acronym}}</span>
+    <span class="{{area.upcase_acronym}}-scheme"><input class='color_checkboxes' type="checkbox" id="{{area.upcase_acronym}}" value="{{area.upcase_acronym}}-value" checked>{{area.upcase_acronym}}</span>
 {% endfor %}
   </div>
 

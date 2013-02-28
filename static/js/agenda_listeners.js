@@ -29,23 +29,48 @@ function listeners(){
 
     $('#info_name_select').unbind('change');
     $('#info_name_select').change(info_name_select_change);
+    
+//    $('span.APP-scheme').click(function(event){ console.log("click") });
+    $('.color_checkboxes').unbind('click');
+    $('.color_checkboxes').click(color_legend_click);
 
 }
+
 
 /* the functionality of these listeners will never change so they do not need to be run twice  */
 function static_listeners(){
     $('#CLOSE_IETF_MENUBAR').click(hide_ietf_menu_bar);
 }
 
-/* When one clicks something contained inside a 'meeting_event' we 
-   traverse up the dom looking for the thing that contained the 
-   .meeting_event class. In all cases, it should be a table with an 
-   id. From this ID we are able to get the json object from 'meeting_objs'
-   and from there ask django for more information
-*/
 
+function color_legend_click(event){
+    var clicked = $(event.toElement).attr('id');
+    if(legend_status[clicked]){
+	legend_status[clicked] = false;
+    }
+    else{
+	legend_status[clicked] = true;
+    }
+    set_transparent();
+    
+}
 
-
+function set_transparent(){
+    $.each(meeting_objs, function(key){
+	$.each(legend_status, function(k){
+	    if(meeting_objs[key].area == k){
+		if(legend_status[k] == true){
+		    $("#session_"+key).css('opacity','1');
+		    $("#session_"+key).draggable("option","cancel",null);
+		}
+		else{
+		    $("#session_"+key).css('opacity','0.1');
+		    $("#session_"+key).draggable("option","cancel",".meeting_event");
+		}
+	    }})
+	    
+    });
+}
 
 
 var clicked_event;
@@ -175,6 +200,7 @@ function droppable(){
 	    appendTo: "body",
 	    helper: "clone",
 	    drag: drag_drag,
+	    start: drag_start,
 	});
 
 	$( "#sortable-list").droppable({
@@ -365,75 +391,6 @@ function drop_drop(event, ui){
     console.log("moving complete.");
 }
 
-var drop_temp;
-/* what happens when we drop the session onto a timeslot. */
-function drop_drop2(event, ui){
-    console.log("------ drop drop --------");
-    var meeting_id = ui.draggable.attr('id'); // the meeting id. 
-    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this. 
-    var slot_idd = $(this).attr('id'); // where we are dragging it. 
-    
-    // make a json with the new values to inject into the event
-    var event_json = id_to_json(slot_idd); 
-    var session_obj = meeting_objs[meeting_id];
-
-
-    // find an empty slot.
-    slot = slot_status[slot_idd];
-    // slot_status[slot_idd] will be undefined if nothing can EVER be put there. 
-    if(!slot) return;
-   
-    var status_obj; 
-    var found = false;
-    for(var i = 0; i<slot.length; i++) {
-        if(slot[i].empty != false && slot[i].empty != "False") { // refactor to use check_free(inp.id)
-            found = true;
-            status_obj = slot[i];
-        }
-    }
-    /* no available slot */
-    if(!found) return;
-		
-    // we are good, the slot is empty.
-    status_obj.empty = false; // it's going to be full now....
-
-    status_obj.session_id = meeting_id;
-    drop_temp = status_obj;
-    console.log("session_obj:"); console.log(session_obj);
-    console.log("ss.id: "+status_obj.scheduledsession_id);
-    
-    if(meeting_objs[meeting_id].slot_status_key == null){ // we are coming from a bucket list
-        session_obj.slot_status_key = slot_idd;
-    } else {
-        // how do we deal with the case that there are two things in a slot?
-        status_obj.empty = true;
-	drop_temp = status_obj;
-        $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
-	
-        session_obj.slot_status_key = slot_idd;
-    }
-    
-    
-    var eTemplate = event_template(session_obj.title, session_obj.description,
-                                   session_obj.session_id, session_obj.area);
-    $(this).append(eTemplate);
-    ui.draggable.remove();
-    ui.draggable.css("background",""); // remove the old one. 	
-    $(this).css("background","");
-    
-    Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
-                                          {
-                                              'session_id':session_obj.session_id,
-                                              'scheduledsession_id': status_obj.scheduledsession_id,
-                                          });
-    
-    droppable();
-    listeners();
-
-}
-
-
-
 /* what happens when we drop the session onto the bucket list
    (thing named "unassigned events") */
 function drop_bucket(event,ui){
@@ -534,6 +491,13 @@ function drop_start(event,ui){
 }
 
 function drag_drag(event, ui){
+    
+
+    
+}
+function drag_start(event, ui){
+    console.log(ui);
+    return;
 }
 
 /* ??? */
