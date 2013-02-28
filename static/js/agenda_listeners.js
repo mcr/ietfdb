@@ -344,7 +344,7 @@ function drop_drop(event, ui){
     meeting_objs[meeting_id].slot_status_key = to_slot[arr_key_index].domid
     //*****  do dajaxice call here  ****** //
 
-    var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id);
+    var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id,meeting_objs[meeting_id].area);
     $(this).append(eTemplate)
     
     ui.draggable.remove();
