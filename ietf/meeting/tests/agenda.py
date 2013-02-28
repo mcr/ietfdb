@@ -107,6 +107,8 @@ class AgendaInfoTestCase(TestCase):
         self.assertEqual(slot3.time_desc, "1300-1450")
         events = slot3.scheduledsessions_at_same_time
         self.assertEqual(len(events), 3)
-        
+
+    def test_serialize_constraint(self):
+        self.assertEqual(True, False)
 
         

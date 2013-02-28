@@ -3,6 +3,7 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.views.generic.simple import redirect_to
 from ietf.meeting import views
+from ietf.meeting import ajax
 
 urlpatterns = patterns('',
     (r'^(?P<meeting_num>\d+)/materials.html$', views.show_html_materials),
@@ -31,6 +32,9 @@ urlpatterns = patterns('',
     (r'^(?P<num>\d+)/agenda/(?P<session>[A-Za-z0-9-]+)-drafts.pdf$', views.session_draft_pdf),
     (r'^(?P<num>\d+)/agenda/(?P<session>[A-Za-z0-9-]+)-drafts.tgz$', views.session_draft_tarfile),
     (r'^(?P<num>\d+)/agenda/(?P<session>[A-Za-z0-9-]+)/?$', views.session_agenda),
+    (r'^(?P<num>\d+)/session/(?P<sessionid>\d+)/constraints', views.session_constraints),
+    (r'^(?P<num>\d+)/session/(?P<sessionid>\d+)/constraints', views.session_constraints),
+    (r'^(?P<meeting_num>\d+).json$', ajax.meeting_json),
     (r'^$', views.current_materials),
 )
 

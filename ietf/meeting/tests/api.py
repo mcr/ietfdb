@@ -115,6 +115,22 @@ class ApiTestCase(TestCase):
         self.assertEqual(ss_one.session, None)
 
 
+    def test_anyoneGetConflictInfo(self):
+        from django.utils import simplejson 
+        s2157 = Session.objects.get(pk=2157)
+
+        # move this session from one timeslot to another.
+        resp = self.client.get('/meeting/83/session/2157/constraints')
+
+        print "json: %s" % (resp.content)
+        conflicts = simplejson.loads(resp.content)
+        print "conflicts: %s" % (conflicts)
+        self.assertNotNone(conflicts)
+
+    def test_getMeetingInfoJson(self):
+        resp = self.client.get('/meeting/83.json')
+
+
     def atest_iesgNoAuthWloUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)
         ts_two = TimeSlot.objects.get(pk=2372)
