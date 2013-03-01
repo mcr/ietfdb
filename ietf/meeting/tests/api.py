@@ -129,7 +129,8 @@ class ApiTestCase(TestCase):
 
     def test_getMeetingInfoJson(self):
         resp = self.client.get('/meeting/83.json')
-
+        mtginfo = simplejson.loads(resp.content)
+        self.assertNotNone(mtginfo)
 
     def atest_iesgNoAuthWloUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)

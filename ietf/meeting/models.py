@@ -17,12 +17,6 @@ countries.sort(lambda x,y: cmp(x[1], y[1]))
 timezones = [(name, name) for name in pytz.common_timezones]
 timezones.sort()
 
-# need so that .url() returns can be absolute, to improve RESTful-ness.
-# alternatives is that models depend upon views.  It would be nice if this
-# could be more DRY compared to urls.py.  Also, ignoring the request causes
-# the results to not be https: as appropriate.
-sitefqdn=settings.IDTRACKER_BASE_URL
-
 class Meeting(models.Model):
     # number is either the number for IETF meetings, or some other
     # identifier for interim meetings/IESG retreats/liaison summits/...
@@ -93,14 +87,12 @@ class Meeting(models.Model):
             return qs[0]
         return None
 
-    @property
-    def url(self):
+    def url(self, sitefqdn):
         return "%s/meeting/%s.json" % (sitefqdn, self.number)
 
-    @property
-    def json_dict(self):
+    def json_dict(self, sitefqdn):
         return {
-            'href':                 self.url,
+            'href':                 self.url(sitefqdn),
             'name':                 self.number,
             'submission_start_date':   self.get_submission_start_date(),
             'submission_cut_off_date': self.get_submission_cut_off_date(),

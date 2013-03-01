@@ -1,21 +1,11 @@
-from django.utils import simplejson
+from django.utils import simplejson as json
 from dajaxice.core import dajaxice_functions
 from dajaxice.decorators import dajaxice_register
 from ietf.ietfauth.decorators import group_required
+
 from ietf.meeting.views  import get_meeting
 
-from django.core.serializers import DjangoJSONEncoder
-
-json_encode = DjangoJSONEncoder(skipkeys=False,
-                                ensure_ascii=True,
-                                check_circular=True,
-                                allow_nan=True,
-                                indent=0,
-                                separators=None,
-                                encoding='utf-8',
-                                default=None,
-                                )
-
+from django.core import serializers
 
 # New models
 from ietf.meeting.models import Meeting, TimeSlot, Session, ScheduledSession, Room
@@ -30,7 +20,7 @@ log = logging.getLogger(__name__)
 
 @dajaxice_register
 def sayhello(request):
-    return json_encode.encode({'message':'Hello World'})
+    return json.dumps({'message':'Hello World'})
 
 @group_required('Area_Director','Secretariat') 
 @dajaxice_register
@@ -51,7 +41,7 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
     try:
         session = Session.objects.get(pk=session_id)
     except:
-        return json_encode.encode({'error':'invalid session'})
+        return json.dumps({'error':'invalid session'})
 
     for ss in session.scheduledsession_set.all():
         ss.session = None
@@ -63,9 +53,9 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         ss.session = session
         ss.save()
     except Exception as e:
-        return json_encode.encode({'error':'invalid scheduledsession'})
+        return json.dumps({'error':'invalid scheduledsession'})
         
-    return json_encode.encode({'message':'im happy!'})
+    return json.dumps({'message':'im happy!'})
 
 
 @dajaxice_register
@@ -79,7 +69,7 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
         return
 
   
-    return json_encode.encode({'active_slot_id':str(active_slot_id),
+    return json.dumps({'active_slot_id':str(active_slot_id),
                              'ss_id':str(scheduledsession_id),
                              'timeslot_id':str(timeslot_id),
                              'group':str(session.group.acronym),
@@ -98,7 +88,7 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)
-    return json_encode.encode(meeting.simplejson)
+    return json.dumps(meeting.json_dict(request.get_host()))
 
 # current dajaxice does not support GET, only POST.
 # it has almost no value for GET, particularly if the results are going to be
@@ -110,7 +100,7 @@ def session_constraints(request, num=None, sessionid=None):
     try:
         session = Session.objects.get(pk=int(sessionid))
     except Session.DoesNotExist:
-        return simplejson.dumps({"error":"no such session"})
+        return json.dumps({"error":"no such session"})
 
     constraints = []
     constraints.append(session.group.constraint_source_set.all())
@@ -129,8 +119,6 @@ def session_constraints(request, num=None, sessionid=None):
             ct1['target'] = contraint.target.url
         ct1['meeting'] = constraint.meeting.url
         constraint_list.append(ct1)
-           
-
-    return json_encode.encode(constraints)
+    return serializer.serialize("json", constraints)
 
 
