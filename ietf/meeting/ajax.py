@@ -2,6 +2,7 @@ from django.utils import simplejson as json
 from dajaxice.core import dajaxice_functions
 from dajaxice.decorators import dajaxice_register
 from ietf.ietfauth.decorators import group_required
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from ietf.meeting.views  import get_meeting
 
@@ -102,23 +103,17 @@ def session_constraints(request, num=None, sessionid=None):
     except Session.DoesNotExist:
         return json.dumps({"error":"no such session"})
 
-    constraints = []
-    constraints.append(session.group.constraint_source_set.all())
-    constraints.append(session.group.constraint_target_set.all())
     constraint_list = []
-    for constraint in contraints:
-        ct1 = dict()
-        ct1['constraint_id'] = constraint.id
-        ct1['href']          = constraint.url
-        ct1['name'] = constraint.name
-        if constraint.person is not None:
-            ct1['person'] = contraint.person.url
-        if constraint.source is not None:
-            ct1['source'] = contraint.source.url
-        if constraint.target is not None:
-            ct1['target'] = contraint.target.url
-        ct1['meeting'] = constraint.meeting.url
+    for constraint in session.group.constraint_source_set.all():
+        ct1 = constraint.json_dict(request.get_host())
         constraint_list.append(ct1)
-    return serializer.serialize("json", constraints)
+
+    for constraint in session.group.constraint_target_set.all():
+        ct1 = constraint.json_dict(request.get_host())
+        constraint_list.append(ct1)
+
+   #return HttpResponse(serializers.serialize("json", constraint_list),
+   #                    mimetype="text/json")
+
 
 

@@ -22,6 +22,11 @@ class UrlGenTestCase(TestCase):
         hostport = "http://datatracker.ietf.org"
         self.assertEqual(mtg83.url(hostport), "http://datatracker.ietf.org/meeting/83.json")
 
+    def test_constraintGeneratesUrl(self):
+        const1 = Constraint.objects.get(pk=21037)
+        hostport = "http://datatracker.ietf.org"
+        self.assertEqual(const1.url(hostport), "http://datatracker.ietf.org/meeting/83/constraint/21037.json")
+
     def test_groupGeneratesUrl(self):
         group1 = Group.objects.get(pk=1730)
         hostport = "http://datatracker.ietf.org"

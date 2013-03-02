@@ -17,6 +17,22 @@ countries.sort(lambda x,y: cmp(x[1], y[1]))
 timezones = [(name, name) for name in pytz.common_timezones]
 timezones.sort()
 
+
+# this is used in models to format dates, as the simplejson serializer
+# can not deal with them, and the django provided serializer is inaccessible.
+from django.utils import datetime_safe
+DATE_FORMAT = "%Y-%m-%d"
+TIME_FORMAT = "%H:%M:%S"
+
+def fmt_date(o):
+    d = datetime_safe.new_date(o)
+    return d.strftime(DATE_FORMAT)
+
+def fmt_datetime(o):
+    d = datetime_safe.new_date(o)
+    return d.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
+
+
 class Meeting(models.Model):
     # number is either the number for IETF meetings, or some other
     # identifier for interim meetings/IESG retreats/liaison summits/...
@@ -25,7 +41,7 @@ class Meeting(models.Model):
     # Date is useful when generating a set of timeslot for this meeting, but
     # is not used to determine date for timeslot instances thereafter, as
     # they have their own datetime field.
-    date = models.DateField()           
+    date = models.DateField()
     city = models.CharField(blank=True, max_length=255)
     country = models.CharField(blank=True, max_length=2, choices=countries)
     # We can't derive time-zone from country, as there are some that have
@@ -91,13 +107,15 @@ class Meeting(models.Model):
         return "%s/meeting/%s.json" % (sitefqdn, self.number)
 
     def json_dict(self, sitefqdn):
+        # unfortunately, using the datetime aware json encoder seems impossible,
+        # so the dates are formatted as strings here.
         return {
             'href':                 self.url(sitefqdn),
             'name':                 self.number,
-            'submission_start_date':   self.get_submission_start_date(),
-            'submission_cut_off_date': self.get_submission_cut_off_date(),
-            'submission_correction_date': self.get_submission_correction_date(),
-            'date':                    self.date,
+            'submission_start_date':   fmt_date(self.get_submission_start_date()),
+            'submission_cut_off_date': fmt_date(self.get_submission_cut_off_date()),
+            'submission_correction_date': fmt_date(self.get_submission_correction_date()),
+            'date':                    fmt_date(self.date),
             'city':                    self.city,
             'country':                 self.country,
             'time_zone':               self.time_zone,
@@ -365,6 +383,24 @@ class Constraint(models.Model):
 
     def __unicode__(self):
         return u"%s %s %s" % (self.source, self.name.name.lower(), self.target)
+
+    def url(self, sitefqdn):
+        return "%s/meeting/%s/constraint/%s.json" % (sitefqdn, self.meeting.number, self.id)
+
+    def json_dict(self, sitefqdn):
+        ct1 = dict()
+        ct1['constraint_id'] = self.id
+        ct1['href']          = self.url(sitefqdn)
+        ct1['name']          = self.name
+        if self.person is not None:
+            ct1['person'] = self.person.url(sitefqdn)
+        if self.source is not None:
+            ct1['source'] = self.source.url(sitefqdn)
+        if self.target is not None:
+            ct1['target'] = self.target.url(sitefqdn)
+        ct1['meeting'] = self.meeting.url(sitefqdn)
+
+
 
 class Session(models.Model):
     """Session records that a group should have a session on the
