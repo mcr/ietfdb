@@ -43,7 +43,7 @@ class Group(GroupInfo):
 
     acronym = models.SlugField(max_length=40, unique=True, db_index=True)
     charter = models.OneToOneField('doc.Document', related_name='chartered_group', blank=True, null=True)
-    
+
     def latest_event(self, *args, **filter_args):
         """Get latest event of optional Python type and with filter
         arguments, e.g. g.latest_event(type="xyz") returns a GroupEvent
@@ -57,7 +57,7 @@ class Group(GroupInfo):
     @property
     def upcase_acronym(self):
         return self.acronym.upper()
-    
+
     @property
     def fg_color(self):
         return fg_group_colors[self.upcase_acronym]

@@ -23,7 +23,7 @@ class ApiTestCase(TestCase):
 
         # confirm that it has old timeslot value
         self.assertEqual(ss_one.timeslot, ts_one)
-        
+
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
             'argv': '{"session_id":"2371","scheduledsession_id":"2372"}'
@@ -74,7 +74,7 @@ class ApiTestCase(TestCase):
         # confirm that it new scheduledsession object still has no value.
         ss_two = ScheduledSession.objects.get(pk=2372)
         self.assertEqual(ss_two.session, old_two_s)
-        
+
     def test_wloUpdateAgendaItem(self):
         s2157 = Session.objects.get(pk=2157)
         ss_one = ScheduledSession.objects.get(pk=2371)
@@ -117,7 +117,7 @@ class ApiTestCase(TestCase):
 
 
     def test_anyoneGetConflictInfo(self):
-        from django.utils import simplejson 
+        from django.utils import simplejson
         s2157 = Session.objects.get(pk=2157)
 
         # move this session from one timeslot to another.

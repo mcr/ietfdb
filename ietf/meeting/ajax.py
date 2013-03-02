@@ -15,7 +15,7 @@ import datetime
 
 import logging
 
-logging.basicConfig(filename='ajax.log',level=logging.DEBUG) # this is not okay for production, put the log somewhere useful. 
+logging.basicConfig(filename='ajax.log',level=logging.DEBUG) # this is not okay for production, put the log somewhere useful.
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 def sayhello(request):
     return json.dumps({'message':'Hello World'})
 
-@group_required('Area_Director','Secretariat') 
+@group_required('Area_Director','Secretariat')
 @dajaxice_register
 def update_timeslot(request, session_id=None, scheduledsession_id=None):
     if(session_id == None or scheduledsession_id == None):
@@ -55,13 +55,13 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         ss.save()
     except Exception as e:
         return json.dumps({'error':'invalid scheduledsession'})
-        
+
     return json.dumps({'message':'im happy!'})
 
 
 @dajaxice_register
 def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id=None, session_id=None):#, event):
-    
+
     try:
         session = Session.objects.get(pk=int(session_id))
     except Session.DoesNotExist:
@@ -69,7 +69,7 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
         # in this case we want to return empty the session information and perhaps indicate to the user there is a issue.
         return
 
-  
+
     return json.dumps({'active_slot_id':str(active_slot_id),
                              'ss_id':str(scheduledsession_id),
                              'timeslot_id':str(timeslot_id),

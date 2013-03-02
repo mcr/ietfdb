@@ -28,7 +28,7 @@ class AuthDataTestCase(TestCase):
         wnl = User.objects.filter(pk = 509)[0]
         self.assertIsNotNone(wnl)
         self.assertTrue(has_role(wnl, "Secretariat"))
-                               
+
     def test_housley_is_ad(self):
         rh = User.objects.filter(pk = 432)[0]
         self.assertIsNotNone(rh)
@@ -44,5 +44,5 @@ class AuthDataTestCase(TestCase):
         self.assertIsNotNone(jb)
         self.assertFalse(has_role(jb, "Area Director"))
         self.assertFalse(has_role(jb, "Secretariat"))
-                               
+
 

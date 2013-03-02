@@ -21,7 +21,7 @@ class EditTestCase(TestCase):
                                **auth_wlo)
         m = re.search(".*event_obj.*", resp.content)
         self.assertIsNotNone(m)
-        
+
     def test_schedule_lookup(self):
         from ietf.meeting.views import get_meeting
 
@@ -29,4 +29,4 @@ class EditTestCase(TestCase):
         mtg = get_meeting(83)
         sched83 = mtg.get_schedule_by_name("mtg:83")
         self.assertIsNotNone(sched83, "sched83 not found")
-        
+

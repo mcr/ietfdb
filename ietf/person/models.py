@@ -84,11 +84,11 @@ class PersonManager(models.Manager):
             return results[0]
         else:
             return None
-            
+
 class Person(PersonInfo):
     objects = PersonManager()
     user = models.OneToOneField(User, blank=True, null=True)
-    
+
     def person(self): # little temporary wrapper to help porting to new schema
         return self
 
@@ -108,7 +108,7 @@ class Person(PersonInfo):
 class PersonHistory(PersonInfo):
     person = models.ForeignKey(Person, related_name="history_set")
     user = models.ForeignKey(User, blank=True, null=True)
-    
+
 class Alias(models.Model):
     """This is used for alternative forms of a name.  This is the
     primary lookup point for names, and should always contain the
@@ -139,4 +139,4 @@ class Email(models.Model):
             return u'"%s" <%s>' % (self.person.plain_name(), self.address)
         else:
             return self.address
-            
+

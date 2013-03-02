@@ -177,7 +177,7 @@ class TimeSlot(models.Model):
         location = self.get_location()
         if not location:
             location = "(no location)"
-            
+
         return u"%s: %s-%s %s, %s" % (self.meeting.number, self.time.strftime("%m-%d %H:%M"), (self.time + self.duration).strftime("%H:%M"), self.name, location)
 
     def end_time(self):
@@ -191,16 +191,16 @@ class TimeSlot(models.Model):
             location = self.meeting.reg_area
         elif self.type_id == "break":
             location = self.meeting.break_area
-                
+
         if not self.show_location:
             location = ""
-            
+
         return location
 
     def session_name(self):
         if self.type_id not in ("session", "plenary"):
             return None
-        
+
         class Dummy(object):
             def __unicode__(self):
                 return self.session_name
@@ -214,11 +214,11 @@ class TimeSlot(models.Model):
             return ss.session
         else:
             return None
- 
+
     def scheduledsessions_at_same_time(self, agenda=None):
         if agenda is None:
             agenda = self.meeting.agenda
-            
+
         return agenda.scheduledsession_set.filter(timeslot__time=self.time, timeslot__type__in=("session", "plenary", "other"))
 
     @property
@@ -238,7 +238,7 @@ class TimeSlot(models.Model):
     @property
     def is_plenary_type(self, name, agenda=None):
         return self.scheduledsessions_at_same_time(agenda)[0].acronym == name
-    
+
 class Schedule(models.Model):
     """
     Each person may have multiple agendas saved.
@@ -258,7 +258,7 @@ class Schedule(models.Model):
 
     def __unicode__(self):
         return u"%s:%s(%s)" % (self.meeting, self.name, self.owner)
-    
+
 
 class ScheduledSession(models.Model):
     """
@@ -278,7 +278,7 @@ class ScheduledSession(models.Model):
     @property
     def room_name(self):
         return self.timeslot.location.name
-    
+
     @property
     def special_agenda_note(self):
         return self.session.agenda_note if self.session else ""
@@ -287,7 +287,7 @@ class ScheduledSession(models.Model):
     def acronym(self):
         if self.session and self.session.group:
             return self.session.group.acronym
-    
+
     @property
     def acronym_name(self):
         if not self.session:
@@ -304,7 +304,7 @@ class ScheduledSession(models.Model):
         if self.timeslot.type_id not in ("session", "plenary"):
             return None
         return self.timeslot.name
-        
+
     @property
     def area(self):
         if not self.session or not self.session.group:
@@ -325,7 +325,7 @@ class ScheduledSession(models.Model):
             if brk.time_desc[-4:] == now:
                 return brk
         return None
-    
+
     @property
     def area_name(self):
         if self.timeslot.type_id == "plenary":
@@ -458,7 +458,7 @@ class Session(models.Model):
         if self.group:
             return self.group.acronym
         return u"req#%u" % (id)
-        
+
     def constraints(self):
         return Constraint.objects.filter(source=self.group, meeting=self.meeting).order_by('name__name')
 

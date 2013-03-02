@@ -129,7 +129,7 @@ def html_agenda(request, num=None, schedule_name=None):
 
     area_list = get_areas()
     wg_list = get_wg_list(scheduledsessions)
-    
+
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, False)
 
     rooms = meeting.room_set
@@ -145,7 +145,7 @@ def html_agenda(request, num=None, schedule_name=None):
 
 class SaveAsForm(forms.Form):
     savename = forms.CharField(max_length=100)
-    
+
 @group_required('Area_Director','Secretariat')
 def agenda_create(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
@@ -157,12 +157,12 @@ def agenda_create(request, num=None, schedule_name=None):
 
     # authorization was enforced by the @group_require decorator above.
 
-    saveasform = SaveAsForm(request.POST) 
-    if not saveasform.is_valid(): 
+    saveasform = SaveAsForm(request.POST)
+    if not saveasform.is_valid():
         return HttpResponse(status=404)
 
     savedname = saveasform.cleaned_data['savename']
-    
+
     # create the new schedule, and copy the scheduledsessions
     try:
         sched = meeting.schedule_set.get(name=savedname, owner=request.user.person)
@@ -187,19 +187,19 @@ def agenda_create(request, num=None, schedule_name=None):
         return HttpResponse(status=500)
 
     print "newschedule id: %u" % (newschedule.id)
-    
+
     for ss in schedule.scheduledsession_set.all():
         # hack to copy the object, creating a new one
         # just reset the key, and save it again.
         ss.pk = None
         ss.schedule=newschedule
         ss.save()
-        
+
     # now redirect to this new schedule.
     return HttpResponseRedirect(
         reverse(edit_agenda,
                 args=[meeting.number, newschedule.name]))
-    
+
 
 ##########################################################################################################################
 @decorator_from_middleware(GZipMiddleware)
@@ -221,7 +221,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     area_list = get_areas()
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
-    
+
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
 
     rooms = meeting.room_set
@@ -229,7 +229,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     saveas = SaveAsForm()
     saveasurl=reverse(edit_agenda,
                       args=[meeting.number, schedule.name])
-    
+
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"timeslots":ntimeslots,
                                           "schedule":schedule,
@@ -268,12 +268,12 @@ def iphone_agenda(request, num, name):
              "venue":venue,
              "ads":ads,
              "plenaryw_agenda":plenaryw_agenda,
-             "plenaryt_agenda":plenaryt_agenda, 
+             "plenaryt_agenda":plenaryt_agenda,
              "wg_list" : wgs,
              "rg_list" : rgs},
             context_instance=RequestContext(request))
 
- 
+
 def text_agenda(request, num=None, name=None):
     timeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda = agenda_info(num, name)
     plenaryw_agenda = "   "+plenaryw_agenda.strip().replace("\n", "\n   ")
@@ -289,7 +289,7 @@ def text_agenda(request, num=None, name=None):
          "plenaryw_agenda":plenaryw_agenda,
          "plenaryt_agenda":plenaryt_agenda, },
         RequestContext(request)), mimetype="text/plain")
-    
+
 def session_agenda(request, num, session):
     d = Document.objects.filter(type="agenda", session__meeting__number=num)
     if session == "plenaryt":
@@ -387,7 +387,7 @@ def session_draft_tarfile(request, num, session):
     tarstream.add(mfn, "manifest.txt")
     tarstream.close()
     os.unlink(mfn)
-    return response    
+    return response
 
 def pdf_pages(file):
     try:
@@ -464,7 +464,7 @@ def ical_agenda(request, num=None, schedule_name=None):
 
     # Process the special flags.
     #   "-wgname" will remove a working group from the output.
-    #   "~Type" will add that type to the output. 
+    #   "~Type" will add that type to the output.
     #   "-~Type" will remove that type from the output
     # Current types are:
     #   Session, Other (default on), Break, Plenary (default on)
@@ -489,7 +489,7 @@ def ical_agenda(request, num=None, schedule_name=None):
         Q(session__group__parent__acronym__in = filter)
         ).exclude(Q(session__group__acronym__in = exclude))
         #.exclude(Q(session__group__isnull = False),
-        #Q(session__group__acronym__in = exclude) | 
+        #Q(session__group__acronym__in = exclude) |
         #Q(session__group__parent__acronym__in = exclude))
 
     if meeting.time_zone:

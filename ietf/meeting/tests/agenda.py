@@ -20,7 +20,7 @@ class AgendaInfoTestCase(TestCase):
         self.assertEqual(meeting.number,'83')
         self.assertEqual(venue.meeting_num, "83")
         # will change as more ADs are added to fixtures
-        self.assertEqual(len(ads), 2)   
+        self.assertEqual(len(ads), 2)
 
     def test_AgendaInfoReturnsSortedTimeSlots(self):
         from ietf.meeting.views import agenda_info
@@ -44,7 +44,7 @@ class AgendaInfoTestCase(TestCase):
             self.assertFalse(True)
         except Http404:
             pass
-            
+
 
     def test_TimeSlotHasRegistrationInfo(self):
         # find the registration slot, and confirm that it can find the registration
@@ -112,4 +112,4 @@ class AgendaInfoTestCase(TestCase):
     def test_serialize_constraint(self):
         self.assertEqual(True, False)
 
-        
+

@@ -18,11 +18,11 @@ class ViewTestCase(TestCase):
     def test_nameOfClueWg(self):
         clue_session = Session.objects.get(pk=2194)
         self.assertEqual(clue_session.short_name, "clue")
-        
+
     def test_nameOfIEPG(self):
         iepg_session = Session.objects.get(pk=2288)
         self.assertEqual(iepg_session.short_name, "IEPG Meeting")
-        
+
     def test_nameOfEdu1(self):
         edu1_session = Session.objects.get(pk=2274)
         self.assertEqual(edu1_session.short_name, "Tools for Creating Internet-Drafts Tutorial")
@@ -56,8 +56,8 @@ class ViewTestCase(TestCase):
         url = reverse(edit_agenda,
                       args=['83', 'fred'])
         self.assertEqual(url, "/meeting/83/schedule/fred/edit")
-    
 
-        
 
-        
+
+
+
