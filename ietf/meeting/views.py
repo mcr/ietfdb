@@ -26,7 +26,6 @@ from ietf.group.colors import fg_group_colors, bg_group_colors
 import debug
 import urllib
 
-from ietf.idtracker.models import InternetDraft
 from ietf.utils.pipe import pipe
 from ietf.doc.models import Document, State
 
@@ -41,7 +40,7 @@ from ietf.group.models import Group
 from ietf.meeting.helpers import NamedTimeSlot, get_ntimeslots_from_ss
 from ietf.meeting.helpers import get_ntimeslots_from_agenda, agenda_info
 from ietf.meeting.helpers import get_areas, get_area_list_from_sessions
-from ietf.meeting.helpers import build_all_agenda_slices
+from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list
 from ietf.meeting.helpers import get_scheduledsessions_from_schedule
 from ietf.meeting.helpers import get_modified_from_scheduledsessions
 from ietf.meeting.helpers import get_wg_list, session_draft_list

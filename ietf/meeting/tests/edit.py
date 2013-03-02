@@ -17,7 +17,7 @@ class EditTestCase(TestCase):
 
     def test_getEditData(self):
         # confirm that we can get edit data from the edit interface
-        resp = self.client.get('/meeting/83/agenda/edit',{},
+        resp = self.client.get('/meeting/83/schedule/edit',{},
                                **auth_wlo)
         m = re.search(".*event_obj.*", resp.content)
         self.assertIsNotNone(m)
