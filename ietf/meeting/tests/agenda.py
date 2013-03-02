@@ -6,6 +6,7 @@ from ietf.meeting.models  import TimeSlot, Session
 class AgendaInfoTestCase(TestCase):
     fixtures = [ 'names.xml',  # ietf/names/fixtures/names.xml for MeetingTypeName, and TimeSlotTypeName
                  'meeting83.json',
+                 'constraint83.json',
                  'workinggroups.json',
                  'person.json', 'users.json' ]
 

@@ -10,6 +10,7 @@ from auths import auth_joeblow, auth_wlo, auth_ietfchair, auth_ferrel
 class EditTestCase(TestCase):
     fixtures = [ 'names.xml',  # ietf/names/fixtures/names.xml for MeetingTypeName, and TimeSlotTypeName
                  'meeting83.json',
+                 'constraint83.json',
                  'workinggroups.json',
                  'groupgroup.json',
                  'person.json', 'users.json' ]

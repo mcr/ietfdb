@@ -65,8 +65,11 @@ class Group(GroupInfo):
     @property
     def bg_color(self):
         return bg_group_colors[self.upcase_acronym]
-        
-    
+
+    def url(self, sitefqdn):
+        return "%s/group/%s.json" % (sitefqdn, self.acronym)
+
+
 
 class GroupHistory(GroupInfo):
     group = models.ForeignKey(Group, related_name='history_set')

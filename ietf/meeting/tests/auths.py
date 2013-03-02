@@ -17,8 +17,9 @@ auth_ferrel = {'REMOTE_USER':''}
 
 
 class AuthDataTestCase(TestCase):
-    fixtures = [ 'names.xml',  
+    fixtures = [ 'names.xml',
                  'meeting83.json',
+                 'constraint83.json',
                  'workinggroups.json',
                  'groupgroup.json',
                  'person.json', 'users.json' ]
