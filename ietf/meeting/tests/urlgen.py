@@ -32,3 +32,8 @@ class UrlGenTestCase(TestCase):
         hostport = "http://datatracker.ietf.org"
         self.assertEqual(group1.url(hostport), "http://datatracker.ietf.org/group/roll.json")
 
+    def test_sessionGeneratesUrl(self):
+        sess1 = Session.objects.get(pk=22087)
+        hostport = "http://datatracker.ietf.org"
+        self.assertEqual(sess1.url(hostport), "http://datatracker.ietf.org/meeting/83/session/22087.json")
+

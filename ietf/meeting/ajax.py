@@ -58,7 +58,9 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
 
     return json.dumps({'message':'im happy!'})
 
-
+#
+# this get_info needs to be replaced once we figure out how to get rid of silly
+# ajax state we are passing through.
 @dajaxice_register
 def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id=None, session_id=None):#, event):
 
@@ -70,22 +72,25 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
         return
 
 
-    return json.dumps({'active_slot_id':str(active_slot_id),
-                             'ss_id':str(scheduledsession_id),
-                             'timeslot_id':str(timeslot_id),
-                             'group':str(session.group.acronym),
-                             'name':str(session.name),
-                             'short_name':str(session.name),
-                             'agenda_note':str(session.agenda_note),
-                             'attendees':str(session.attendees),
-                             'status': str(session.status),
-                             'requested_time': str(session.requested.strftime("%Y-%m-%d")),
-                             'requested_by': str(session.requested_by),
-                             'requested_duration': str(session.requested_duration),
-                             'area':str(session.group.parent.acronym),
-                             'responsible_ad':str(session.group.ad),
-                             'GroupInfo_state':str(session.group.state),
-                             })
+    sess1 = session.json_dict(request.get_host_protocol())
+    sess1['active_slot_id'] = str(active_slot_id)
+    sess1['ss_id']          = str(scheduledsession_id)
+    sess1['timeslot_id']    = str(timeslot_id)
+
+    return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
+                        mimetype="text/json")
+
+def session_json(request, meeting_num, session_id):
+    meeting = get_meeting(meeting_num)
+
+    try:
+        session = meeting.session_set.get(pk=int(session_id))
+    except Session.DoesNotExist:
+        return json.dumps({'error':"no such session %s" % session_id})
+
+    sess1 = session.json_dict(request.get_host_protocol())
+    return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
+                        mimetype="text/json")
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)

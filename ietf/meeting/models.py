@@ -483,3 +483,26 @@ class Session(models.Model):
             constraint_list.append(ct1)
         return constraint_list
 
+    def url(self, sitefqdn):
+        return "%s/meeting/%s/session/%s.json" % (sitefqdn, self.meeting.number, self.id)
+
+    def json_dict(self, sitefqdn):
+        sess1 = dict()
+        sess1['href']           = self.url(sitefqdn)
+        sess1['group_href']     = self.group.url(sitefqdn)
+        sess1['group']          = str(self.group.acronym)
+        sess1['group_acronym']  = str(self.group.acronym)
+        sess1['name']           = str(self.name)
+        sess1['short_name']     = str(self.name)
+        sess1['agenda_note']    = str(self.agenda_note)
+        sess1['attendees']      = str(self.attendees)
+        sess1['status']         = str(self.status)
+        sess1['requested_time'] = str(self.requested.strftime("%Y-%m-%d"))
+        sess1['requested_by']   = str(self.requested_by)
+        sess1['requested_duration']= str(self.requested_duration)
+        sess1['area']           = str(self.group.parent.acronym)
+        sess1['responsible_ad'] = str(self.group.ad)
+        sess1['GroupInfo_state']= str(self.group.state)
+        return sess1
+
+
