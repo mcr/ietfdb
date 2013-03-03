@@ -121,8 +121,9 @@ class ApiTestCase(TestCase):
         s2157 = Session.objects.get(pk=2157)
 
         # move this session from one timeslot to another.
-        resp = self.client.get('/meeting/83/session/2157/constraints')
+        resp = self.client.get('/meeting/83/session/2157/constraints.json')
         conflicts = json.loads(resp.content)
+        print "conflicts: %s" % (conflicts)
         self.assertNotEqual(conflicts, None)
 
     def test_getMeetingInfoJson(self):

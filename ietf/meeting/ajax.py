@@ -89,7 +89,9 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)
-    return HttpResponse(json.dumps(meeting.json_dict(request.get_host())),
+    #print "request is: %s\n" % (request.get_host_protocol())
+    return HttpResponse(json.dumps(meeting.json_dict(request.get_host_protocol()),
+                                   sort_keys=True, indent=2),
                         mimetype="text/json")
 
 # current dajaxice does not support GET, only POST.
@@ -105,9 +107,10 @@ def session_constraints(request, num=None, sessionid=None):
         return json.dumps({"error":"no such session"})
 
     #print "hello: %s" % (json.dumps(constraint_list))
-    constraint_list = session.constraints_dict(request.get_host())
+    constraint_list = session.constraints_dict(request.get_host_protocol())
 
-    return HttpResponse(json.dumps(constraint_list),
+    return HttpResponse(json.dumps(constraint_list,
+                                   sort_keys=True, indent=2),
                         mimetype="text/json")
 
 

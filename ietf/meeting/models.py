@@ -391,7 +391,7 @@ class Constraint(models.Model):
         ct1 = dict()
         ct1['constraint_id'] = self.id
         ct1['href']          = self.url(sitefqdn)
-        ct1['name']          = self.name
+        ct1['name']          = self.name.slug
         if self.person is not None:
             ct1['person'] = self.person.url(sitefqdn)
         if self.source is not None:
@@ -399,6 +399,7 @@ class Constraint(models.Model):
         if self.target is not None:
             ct1['target'] = self.target.url(sitefqdn)
         ct1['meeting'] = self.meeting.url(sitefqdn)
+        return ct1
 
 
 
