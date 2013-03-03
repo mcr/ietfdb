@@ -110,6 +110,9 @@ class AgendaInfoTestCase(TestCase):
         self.assertEqual(len(events), 3)
 
     def test_serialize_constraint(self):
-        self.assertEqual(True, False)
+        session1  = Session.objects.get(pk=2157)
+        sitefqdn  = "http://datatracker.ietf.org"
+        json_dict = session1.constraints_dict(sitefqdn)
+        self.assertEqual(len(json_dict), 25)
 
 

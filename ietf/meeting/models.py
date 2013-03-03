@@ -470,3 +470,15 @@ class Session(models.Model):
 
     def official_scheduledsession(self):
         return self.scheduledsession_for_agenda(self.meeting.agenda)
+
+    def constraints_dict(self, sitefqdn):
+        constraint_list = []
+        for constraint in self.group.constraint_source_set.filter(meeting=self.meeting):
+            ct1 = constraint.json_dict(sitefqdn)
+            constraint_list.append(ct1)
+
+        for constraint in self.group.constraint_target_set.filter(meeting=self.meeting):
+            ct1 = constraint.json_dict(sitefqdn)
+            constraint_list.append(ct1)
+        return constraint_list
+

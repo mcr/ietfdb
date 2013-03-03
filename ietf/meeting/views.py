@@ -185,8 +185,6 @@ def agenda_create(request, num=None, schedule_name=None):
     if newschedule is None:
         return HttpResponse(status=500)
 
-    print "newschedule id: %u" % (newschedule.id)
-
     for ss in schedule.scheduledsession_set.all():
         # hack to copy the object, creating a new one
         # just reset the key, and save it again.

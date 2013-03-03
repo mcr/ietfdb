@@ -89,7 +89,8 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)
-    return json.dumps(meeting.json_dict(request.get_host()))
+    return HttpResponse(json.dumps(meeting.json_dict(request.get_host())),
+                        mimetype="text/json")
 
 # current dajaxice does not support GET, only POST.
 # it has almost no value for GET, particularly if the results are going to be
@@ -97,23 +98,17 @@ def meeting_json(request, meeting_num):
 def session_constraints(request, num=None, sessionid=None):
     meeting = get_meeting(num)
 
-    print "Getting meeting=%s session contraints for %s" % (num, sessionid)
+    #print "Getting meeting=%s session contraints for %s" % (num, sessionid)
     try:
         session = Session.objects.get(pk=int(sessionid))
     except Session.DoesNotExist:
         return json.dumps({"error":"no such session"})
 
-    constraint_list = []
-    for constraint in session.group.constraint_source_set.all():
-        ct1 = constraint.json_dict(request.get_host())
-        constraint_list.append(ct1)
+    #print "hello: %s" % (json.dumps(constraint_list))
+    constraint_list = session.constraints_dict(request.get_host())
 
-    for constraint in session.group.constraint_target_set.all():
-        ct1 = constraint.json_dict(request.get_host())
-        constraint_list.append(ct1)
-
-   #return HttpResponse(serializers.serialize("json", constraint_list),
-   #                    mimetype="text/json")
+    return HttpResponse(json.dumps(constraint_list),
+                        mimetype="text/json")
 
 
 
