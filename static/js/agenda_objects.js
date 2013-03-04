@@ -96,8 +96,12 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
   var d = new Date(this.date);
   var t = d.getUTCDay();
   //console.log("short_string "+this.date+" gives "+t);
-  this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
-
+    if(this.room == "Unassigned"){
+	this.short_string = "Unassigned";
+    }
+    else{
+	this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
+    }
   if(domid) {
     this.domid = domid;
   } else {

@@ -34,24 +34,35 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
 
         return
 
+    # if(scheduledsession_id == "Unassigned"):
+        
+    #     return
     session_id = int(session_id)
-    ss_id = int(scheduledsession_id)
-    log.info("%s is updating scheduledsession_id=%u to session_id=%u" %
-             (request.user, ss_id, session_id))
+
+
+    # log.info("%s is updating scheduledsession_id=%u to session_id=%u" %
+    #          (request.user, ss_id, session_id))
+
 
     try:
-        session = Session.objects.get(pk=session_id)
+       session = Session.objects.get(pk=session_id)
     except:
         return json.dumps({'error':'invalid session'})
 
+    log.debug(session)
+    
+    ss_id = int(scheduledsession_id)
     for ss in session.scheduledsession_set.all():
         ss.session = None
         ss.save()
 
     try:
         # find the scheduledsession, assign the Session to it.
-        ss = ScheduledSession.objects.get(pk=ss_id)
-        ss.session = session
+        if(ss_id == 0):
+            ss.session = None
+        else:
+            ss = ScheduledSession.objects.get(pk=ss_id)
+            ss.session = session
         ss.save()
     except Exception as e:
         return json.dumps({'error':'invalid scheduledsession'})

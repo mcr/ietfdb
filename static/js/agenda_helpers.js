@@ -39,8 +39,9 @@ function find_session_id(session_id){
 }
 
 
-/* this pushes every event into the calendars */
+/* this pushes every event into the agendas */
 function load_events(){
+    console.log("load events...");
     /* first delete all html items */
     $.each(slot_status, function(key) {
         ssid = slot_status[key];
@@ -48,8 +49,10 @@ function load_events(){
     });
     
     $.each(slot_status, function(key) {
-        //log("loading event "+key)
         ssid_arr = slot_status[key]
+	if(key == "sortable-list"){
+	    console.log("sortable list");
+	}else{
 	
 	for(var q = 0; q<ssid_arr.length; q++){
 	    ssid = ssid_arr[q];
@@ -58,7 +61,9 @@ function load_events(){
             session = meeting_objs[ssid.session_id];
             if (session != null) {
 	       	session.slot_status_key = key;
+
                 session.placed = true;
+		
                 populate_events(key,
                                 session.title,
                                 session.description, 
@@ -70,6 +75,7 @@ function load_events(){
 		//log("ssid: "+key+" is null");
 		   
             }
+	}
 	}
     });
 
@@ -90,19 +96,42 @@ function event_template(event_title, description, session_id, area){
 function check_free(inp){
     var empty = false;
     slot = slot_status[inp.id];
-    //console.log(slot);
-    if(slot) {
-        empty = slot.empty;
+    if(slot == null){
+//	console.log("\t from check_free, slot is null?", inp,inp.id, slot_status[inp.id]);
+	return false;
     }
-    //console.log("inp.id "+inp.id + " returns "+empty + "slot: "+slot);
-    if(empty == false || empty == "False"){ // sometimes empty will be the string "False" instead of a boolean. 
-        return false;
+    for(var i =0;i<slot.length; i++){
+	if (slot[i].empty == false || slot[i].empty == "False"){
+	    return false;
+	}
     }
-    else{
-        return true;
-    }
+    return true;
 }
 
+/* clears any background highlight colors of scheduled sessions */
+function clear_highlight(inp_arr){ // @args: array from slot_status{}
+    if(inp_arr == null){
+	return false;
+    }
+    for(var i =0; i<inp_arr.length; i++){
+	$("#session_"+inp_arr[i].session_id).css('background-color','');
+    }
+    return true;
+
+}
+
+/* based on any meeting object, it finds any other objects inside the same timeslot. */
+function find_friends(inp){
+    var ts = $(inp).parent().attr('id');
+    var ss_arr = slot_status[ts];
+    if (ss_arr != null){
+	return ss_arr;
+    }
+    else{
+	console.log("find_friends("+inp+") did not find anything");
+	return null;
+    }
+}
 
 
 function json_to_id(j){
@@ -138,15 +167,6 @@ function empty_info_table(){
     $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
     $("#info_responsible").html("");
     $("#info_requestedby").html("");
-
-    // $("#info_location_select_option_"+inp.ss_id).css('background-color',highlight);
-
-//    listeners();
-    
-
-
-
-
 }
 
 
@@ -159,8 +179,6 @@ function generate_info_table(inp){
     $("#info_name").html(name_select_html);
     $("#info_area").html("<span class='"+inp.area.toUpperCase()+"-scheme'>"+inp.area+"</span>");
     $("#info_duration").html(inp.ts_duration);
-    //$("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room);
-//    $("#info_location").html(inp.ts_day_of_week+", "+inp.ts_time_hour+", "+inp.room + "," +generate_select_box());
 
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
@@ -245,24 +263,6 @@ function calculate_name_select_box(){
 	}
         html=html+"</option>";
     }
-    // for (n in sorted) {
-    //     var k1 = sorted[n];
-    //     var val_arr = slot_status[k1];
-		
-    //     /* k1 is the slot_status key */
-    //     /* v1 is the slot_obj */
-    // 	// for(var i = 0; i<val_arr.length; i++){
-    // 	    var v1 = val_arr[i];
-    //         html=html+"<option value='"+k1;
-    //         html=html+"' id='info_name_select_option_";
-    //         html=html+v1.timeslot_id+"'>";
-    // 	    try{
-    // 		html=html+meeting_objs[v1.session_id].title + " (" + meeting_objs[v1.session_id].description + ")";
-    // 	    } catch(err) {
-    // 		html=html+"ERRROR!!!";
-    // 	    }
-    //         html=html+"</option>";
-    // 	}
 
     html = html+"</select>";
     name_select_html = html;
@@ -281,8 +281,6 @@ function generate_select_box(){
 
 function insert_cell(js_room_id, text, replace){
     slot_id = ("#"+js_room_id);
-    //console.log(slot_id);
-    //log("Adding "+slot_id+" with "+text+" to "+ $(slot_id).attr('id'))
     try{
 	var found;
         if(replace) {
@@ -302,6 +300,35 @@ function insert_cell(js_room_id, text, replace){
 	log(err);
     } 
 }
+
+
+function find_empty_test(){
+    $.each(slot_status, function(key){
+	ss_arr = slot_status[key];
+	for(var i = 0; i < ss_arr.length; i++){
+	    if(ss_arr[i].scheduledsession_id == null || ss_arr[i].session_id == null){
+		console.log(ss_arr[i]);
+	    }
+	}
+    })
+
+}
+
+
+function find_meeting_no_room(){
+    $.each(meeting_objs, function(key){ 
+	if(meeting_objs[key].slot_status_key == null) {
+	    session = meeting_objs[key]
+	    session.slot_status_key = null;
+	    populate_events("sortable-list",
+                            session.title,
+                            session.description, 
+                            session.session_id,
+                            session.owner, session.area);
+	}
+    })
+}
+
 
 /*
  * Local Variables:
