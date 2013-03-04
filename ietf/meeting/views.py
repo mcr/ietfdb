@@ -527,3 +527,4 @@ def meeting_requests(request, num=None) :
         {"meeting": meeting, "sessions":sessions,
          "groups_not_meeting": groups_not_meeting},
         context_instance=RequestContext(request))
+

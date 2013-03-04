@@ -172,6 +172,34 @@ function dajaxice_fill_in_info(slot, slot_id){
                                    dajaxice_error );
 }
 
+// should be a method on event_obj.
+function retrieve_constraints_by_session(session_obj) {
+    var send_data = [];
+        
+    var oXMLHttpRequest = new XMLHttpRequest;
+    oXMLHttpRequest.open('GET', meeting_base_url+'/session/'+session_obj.title);
+    oXMLHttpRequest.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    oXMLHttpRequest.setRequestHeader("X-CSRFToken", Dajaxice.get_cookie('csrftoken'));
+    oXMLHttpRequest.onreadystatechange = function() {
+        if (this.readyState == XMLHttpRequest.DONE) {
+            try{
+                fill_in_constraints(session_obj, true,  JSON.parse(this.responseText));
+            }
+            catch(exception){
+                fill_in_constraints(session_obj, false, this.responseText);
+            }
+        } else {
+            fill_in_constraints(session_obj, false, "failed");
+        }
+    }
+    oXMLHttpRequest.send(send_data);
+}
+
+function fill_in_constraints(session_obj, success, constraint_list)
+{
+    
+}
+
 
 function dajaxice_error(a){
     console.log("dajaxice_error");

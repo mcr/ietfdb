@@ -110,13 +110,30 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
   }
 }
 
-function event_obj(title, description, session_id, owner, area){
+// really session_obj.
+function event_obj(title, description, session_id, owner, group_id, area) {
+    // this.slug = slug;
     this.title = title;
     this.description = description;
     this.session_id = session_id;
     this.owner = owner;
     this.area  = area;
+    this.group_id = group_id;
     this.last_timeslot_id = null;
     this.slot_status_key = null;
 }
+
+function session_conflict_obj(conflict_id, from_session_id, to_session_id, conflict_type) {
+    this.id                = conflict_id;
+    this.from_session_id   = from_session_id;
+    this.to_session_id     = to_session_id;
+    this.conflict_type     = conflict_type;
+}
+
+
+/*
+ * Local Variables:
+ * c-basic-offset:4
+ * End:
+ */
 

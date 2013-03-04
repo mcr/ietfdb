@@ -40,6 +40,8 @@ function my_js_callback(data){
 }<!-- dajaxice example --> {% endcomment %}
 
 
+var meeting_base_url = "{{ meeting_base_url }}";
+
 function setup_slots(){
 {% for day in time_slices %}
     days.push("{{day}}");
@@ -50,6 +52,7 @@ function setup_slots(){
                                "{{ s.group.name }}",
                                "{{s.id}}", 
                                "{{s.owner.owner}}",
+                               "{{s.group.id}}",
                                "{{s.group.parent.acronym|upper}}");
     $.extend(meeting_objs,{ "{{s.id}}":e_obj});
 {% endfor %}
