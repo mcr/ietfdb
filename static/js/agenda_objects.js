@@ -110,6 +110,7 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
   }
 }
 
+// SESSION OBJECTS
 // really session_obj.
 function event_obj(title, description, session_id, owner, group_id, area) {
     // this.slug = slug;
@@ -121,13 +122,54 @@ function event_obj(title, description, session_id, owner, group_id, area) {
     this.group_id = group_id;
     this.last_timeslot_id = null;
     this.slot_status_key = null;
+    this.href       = false;
+    this.group_obj  = false;
 }
 
-function session_conflict_obj(conflict_id, from_session_id, to_session_id, conflict_type) {
-    this.id                = conflict_id;
-    this.from_session_id   = from_session_id;
-    this.to_session_id     = to_session_id;
-    this.conflict_type     = conflict_type;
+event_obj.prototype.load_session_obj = function() {
+    if(!this.group_href) {
+        newobj = retrieve_session_by_id(this.session_id);
+        if(newobj) {
+            $.extend(this, newobj);
+        }
+    }
+}
+
+event_obj.prototype.group = function() {
+    this.load_session_obj();
+    if(!this.group_obj) {
+        console.log("looking for "+this.group_href);
+        this.group_obj = find_group_by_href(this.group_href);
+    }
+    // now have this.group_href.
+    return this.group_obj;
+}
+
+// GROUP OBJECTS
+function make_group_obj(obj) {
+}
+
+function find_group_by_href(href) {
+    if(!group_objs[href]) {
+        retrieve_group_by_href(href);
+    }
+    return group_objs[href];
+}
+
+// SESSION CONFLICT OBJECTS
+// take an object and add attribuets so that it becomes a session_conflict_obj.
+function make_session_conflict_obj(session, obj) {
+    obj.conflict_view = function() {
+        return "<div class='conflict-"+this.conflict_type+"' id='"+this.id+"'>"+this.othergroup.name+"</div>";
+    };
+
+    if(obj.source == session.href) {
+        obj.thisgroup  = session.group();
+        obj.othergroup = find_group_by_href(obj.target);
+    } else {
+        obj.thisgroup  = session.group();
+        obj.othergroup = find_group_by_href(obj.source);
+    }
 }
 
 

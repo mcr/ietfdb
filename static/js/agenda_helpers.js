@@ -175,7 +175,7 @@ var temp_1;
    takes in a json. 
 */
 function generate_info_table(inp){
-    $("#info_grp").html(inp.group);
+    $("#info_grp").html(inp.group_acronym);
     $("#info_name").html(name_select_html);
     $("#info_area").html("<span class='"+inp.area.toUpperCase()+"-scheme'>"+inp.area+"</span>");
     $("#info_duration").html(inp.ts_duration);
@@ -189,7 +189,7 @@ function generate_info_table(inp){
 
 
     $("#info_location_select").val(inp.timeslot_id);
-    console.log("git "+"#info_location_select_option_"+inp.timeslot_id);
+    //console.log("git "+"#info_location_select_option_"+inp.timeslot_id);
     $("#info_location_select").val($("#info_location_select_option_"+inp.timeslot_id).val());
 
     $("#"+inp.timeslot_id).css('background-color',highlight);

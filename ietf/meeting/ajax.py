@@ -90,13 +90,13 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
 
     return json.dumps(sess1, sort_keys=True, indent=2)
 
-def session_json(request, meeting_num, session_id):
-    meeting = get_meeting(meeting_num)
+def session_json(request, num, sessionid):
+    meeting = get_meeting(num)
 
     try:
-        session = meeting.session_set.get(pk=int(session_id))
+        session = meeting.session_set.get(pk=int(sessionid))
     except Session.DoesNotExist:
-        return json.dumps({'error':"no such session %s" % session_id})
+        return json.dumps({'error':"no such session %s" % sessionid})
 
     sess1 = session.json_dict(request.get_host_protocol())
     return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
@@ -115,18 +115,19 @@ def meeting_json(request, meeting_num):
 def session_constraints(request, num=None, sessionid=None):
     meeting = get_meeting(num)
 
-    #print "Getting meeting=%s session contraints for %s" % (num, sessionid)
+    print "Getting meeting=%s session contraints for %s" % (num, sessionid)
     try:
-        session = Session.objects.get(pk=int(sessionid))
+        session = meeting.session_set.get(pk=int(sessionid))
     except Session.DoesNotExist:
         return json.dumps({"error":"no such session"})
 
-    #print "hello: %s" % (json.dumps(constraint_list))
     constraint_list = session.constraints_dict(request.get_host_protocol())
 
-    return HttpResponse(json.dumps(constraint_list,
-                                   sort_keys=True, indent=2),
-                        mimetype="text/json")
+    json_str = json.dumps(constraint_list,
+                          sort_keys=True, indent=2),
+    #print "  gives: %s" % (json_str)
+
+    return HttpResponse(json_str, mimetype="text/json")
 
 
 

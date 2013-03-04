@@ -172,31 +172,91 @@ function dajaxice_fill_in_info(slot, slot_id){
                                    dajaxice_error );
 }
 
-// should be a method on event_obj.
-function retrieve_constraints_by_session(session_obj) {
-    var send_data = [];
-        
+function XMLHttpGetRequest(url, sync) {
     var oXMLHttpRequest = new XMLHttpRequest;
-    oXMLHttpRequest.open('GET', meeting_base_url+'/session/'+session_obj.title);
+    oXMLHttpRequest.open('GET', url, sync);
     oXMLHttpRequest.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     oXMLHttpRequest.setRequestHeader("X-CSRFToken", Dajaxice.get_cookie('csrftoken'));
-    oXMLHttpRequest.onreadystatechange = function() {
-        if (this.readyState == XMLHttpRequest.DONE) {
-            try{
-                fill_in_constraints(session_obj, true,  JSON.parse(this.responseText));
-            }
-            catch(exception){
-                fill_in_constraints(session_obj, false, this.responseText);
-            }
-        } else {
-            fill_in_constraints(session_obj, false, "failed");
+
+    return oXMLHttpRequest;
+}
+
+function retrieve_group_by_href(href) {
+    var oXMLHttpRequest = XMLHttpGetRequest(href, false);
+    oXMLHttpRequest.send();
+    if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
+        try{
+            //console.log("parsing: "+this.responseText);
+            last_json_txt = oXMLHttpRequest.responseText;
+            group_obj     = JSON.parse(oXMLHttpRequest.responseText);
+            //console.log("parsed: "+constraint_list);
+            last_json_reply = group_obj;
+            make_group_obj(group_obj);
+            group_objs[group_obj.href] = group_obj;
+        }
+        catch(exception){
+            console.log("retrieve group_by_href exception: "+exception);
         }
     }
-    oXMLHttpRequest.send(send_data);
+}
+
+function retrieve_session_by_id(session_id) {
+    var session_obj = {};
+    var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_id+".json", false);
+    oXMLHttpRequest.send();
+    if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
+        try{
+            //console.log("parsing: "+this.responseText);
+            last_json_txt = oXMLHttpRequest.responseText;
+            session_obj   = JSON.parse(oXMLHttpRequest.responseText);
+            //console.log("parsed: "+constraint_list);
+            last_json_reply = session_obj;
+        }
+        catch(exception){
+            console.log("retrieve_session_by_id("+session_id+") exception: "+exception);
+        }
+    }
+    return session_obj;
+}
+
+// should be a method on event_obj.
+function retrieve_constraints_by_session(session_obj) {
+
+    
+
+
+    var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
+    oXMLHttpRequest.onreadystatechange = function() {
+        console.log("state: "+this.readyState);
+        if (this.readyState == XMLHttpRequest.DONE) {
+            console.log("became ready");
+            try{
+                //console.log("parsing: "+this.responseText);
+                last_json_txt = this.responseText;
+                constraint_list = JSON.parse(this.responseText);
+                //console.log("parsed: "+constraint_list);
+                last_json_reply = constraint_list;
+                fill_in_constraints(session_obj, true,  constraint_list);
+            }
+            catch(exception){
+                console.log("exception: "+exception);
+                fill_in_constraints(session_obj, false, this.responseText);
+            }
+        } 
+    }
 }
 
 function fill_in_constraints(session_obj, success, constraint_list)
 {
+    if(!success || constraint_list['error']) {
+        console.log("failed to get constraints for session_id: "+session_obj.session_id);
+        return false;
+    }
+
+    console.log("got constraint list: "+constraint_list);
+
+    //$.each(constraint_list, function(key){
+    //       });
     
 }
 
@@ -206,9 +266,8 @@ function dajaxice_error(a){
 }
 
 function fill_in_info(inp){
-    console.log("fill_in_info");
-    console.log(inp);
-
+    //console.log("fill_in_info");
+    //console.log(inp);
     if(inp == null || inp == "None"){
 	console.log("null returned");
 	empty_info_table();

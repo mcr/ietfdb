@@ -103,8 +103,8 @@ class Meeting(models.Model):
             return qs[0]
         return None
 
-    def url(self, sitefqdn):
-        return "%s/meeting/%s.json" % (sitefqdn, self.number)
+    def url(self, sitefqdn, exten=".json"):
+        return "%s/meeting/%s%s" % (sitefqdn, self.number, exten)
 
     def json_dict(self, sitefqdn):
         # unfortunately, using the datetime aware json encoder seems impossible,
