@@ -69,7 +69,20 @@ class Group(GroupInfo):
     def url(self, sitefqdn):
         return "%s/group/%s.json" % (sitefqdn, self.acronym)
 
-
+    def json_dict(self, sitefqdn):
+        group1= dict()
+        group1['href'] = self.url(sitefqdn)
+        group1['acronym'] = self.acronym
+        group1['name']    = self.name
+        group1['state']   = self.state.slug
+        group1['type']    = self.type.slug
+        group1['parent']  = self.parent.url(sitefqdn)
+        group1['ad']      = self.ad.url(sitefqdn)
+        group1['list_email'] = self.list_email
+        group1['list_subscribe'] = self.list_subscribe
+        group1['list_archive'] = self.list_archive
+        group1['comments']     = self.comments
+        return group1
 
 class GroupHistory(GroupInfo):
     group = models.ForeignKey(Group, related_name='history_set')

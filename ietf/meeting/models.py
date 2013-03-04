@@ -490,7 +490,6 @@ class Session(models.Model):
         sess1 = dict()
         sess1['href']           = self.url(sitefqdn)
         sess1['group_href']     = self.group.url(sitefqdn)
-        sess1['group']          = str(self.group.acronym)
         sess1['group_acronym']  = str(self.group.acronym)
         sess1['name']           = str(self.name)
         sess1['short_name']     = str(self.name)

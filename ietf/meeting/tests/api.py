@@ -149,5 +149,10 @@ class ApiTestCase(TestCase):
         ss_one = ScheduledSession.objects.get(pk=2371)
         self.assertEqual(ss_one.timeslot, ts_two)
 
+    def test_getGroupInfoJson(self):
+        resp = self.client.get('/group/pkix.json')
+        mtginfo = simplejson.loads(resp.content)
+        self.assertNotNone(mtginfo)
+
 
 
