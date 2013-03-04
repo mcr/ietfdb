@@ -151,7 +151,8 @@ class ApiTestCase(TestCase):
 
     def test_getGroupInfoJson(self):
         resp = self.client.get('/group/pkix.json')
-        mtginfo = simplejson.loads(resp.content)
+        #print "json: %s" % (resp.content)
+        mtginfo = json.loads(resp.content)
         self.assertNotNone(mtginfo)
 
 
