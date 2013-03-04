@@ -88,8 +88,7 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
     sess1['ss_id']          = str(scheduledsession_id)
     sess1['timeslot_id']    = str(timeslot_id)
 
-    return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
-                        mimetype="text/json")
+    return json.dumps(sess1, sort_keys=True, indent=2)
 
 def session_json(request, meeting_num, session_id):
     meeting = get_meeting(meeting_num)
