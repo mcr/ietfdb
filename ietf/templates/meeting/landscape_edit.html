@@ -56,7 +56,6 @@ function setup_slots(){
 
 {% for s in scheduledsessions %}
     var s_obj= new slot_obj("{{s.id}}","{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
-	//console.log("adding: {{s.timeslot.js_identifier}}");
     if(slot_status["{{s.timeslot.js_identifier}}"] != null){ // the key so two sessions in the same timeslot
 
     }
@@ -64,15 +63,20 @@ function setup_slots(){
 	$.extend(slot_status, { "{{s.timeslot.js_identifier}}":[]});
     }
     slot_status["{{s.timeslot.js_identifier}}"].push(s_obj);
-    //$.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
-    //$.extend(slot_status, { "{{s.timeslot.js_identifier}}":s_obj });
 {% endfor %}
 
+var s_obj= new slot_obj("0",true,"Unassigned",null,"Unassigned",null,null,"sortable-list");
+$.extend(slot_status, { "sortable-list" :[]});
+slot_status["sortable-list"].push(s_obj);
 console.log("setup_slots run");
 
 calculate_room_select_box();
 
 console.log("{{timeslots|length}}");
+
+{% for area in area_list %}
+	legend_status["{{area.upcase_acronym}}"] = true;
+{% endfor %}
 
 }
 
@@ -166,7 +170,7 @@ console.log("{{timeslots|length}}");
 
   <div class="color_legend">
 {% for area in area_list %}
-    <span class="{{area.upcase_acronym}}-scheme">{{area.upcase_acronym}}</span>
+    <span class="{{area.upcase_acronym}}-scheme"><input class='color_checkboxes' type="checkbox" id="{{area.upcase_acronym}}" value="{{area.upcase_acronym}}-value" checked>{{area.upcase_acronym}}</span>
 {% endfor %}
   </div>
 
