@@ -112,22 +112,29 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
 
 // SESSION OBJECTS
 // really session_obj.
-function event_obj(title, description, session_id, owner, group_id, area) {
-    // this.slug = slug;
-    this.title = title;
-    this.description = description;
-    this.session_id = session_id;
-    this.owner = owner;
-    this.area  = area;
-    this.group_id = group_id;
+function Session() {
+    this.constraints = {};
     this.last_timeslot_id = null;
     this.slot_status_key = null;
     this.href       = false;
     this.group_obj  = false;
 }
 
-event_obj.prototype.load_session_obj = function() {
-    if(!this.group_href) {
+function event_obj(title, description, session_id, owner, group_id, area) {
+    session = new Session();
+
+    // this.slug = slug;
+    session.title = title;
+    session.description = description;
+    session.session_id = session_id;
+    session.owner = owner;
+    session.area  = area;
+    session.group_id = group_id;
+    return session;
+}
+
+Session.prototype.load_session_obj = function() {
+    if(!this.href) {
         newobj = retrieve_session_by_id(this.session_id);
         if(newobj) {
             $.extend(this, newobj);
@@ -135,7 +142,7 @@ event_obj.prototype.load_session_obj = function() {
     }
 }
 
-event_obj.prototype.group = function() {
+Session.prototype.group = function() {
     this.load_session_obj();
     if(!this.group_obj) {
         console.log("looking for "+this.group_href);
@@ -150,26 +157,48 @@ function make_group_obj(obj) {
 }
 
 function find_group_by_href(href) {
+    console.log("group href", href, group_objs[href]);
     if(!group_objs[href]) {
         retrieve_group_by_href(href);
     }
     return group_objs[href];
 }
 
+// Constraint Objects
+function Constraint() {
+}
+
+Constraint.prototype.conflict_view = function() {
+    return "<div class='conflict-"+this.conflict_type+"' id='"+this.id+"'>"+this.othergroup.name+"</div>";
+};
+
+
 // SESSION CONFLICT OBJECTS
-// take an object and add attribuets so that it becomes a session_conflict_obj.
-function make_session_conflict_obj(session, obj) {
-    obj.conflict_view = function() {
-        return "<div class='conflict-"+this.conflict_type+"' id='"+this.id+"'>"+this.othergroup.name+"</div>";
-    };
+// take an object and add attributes so that it becomes a session_conflict_obj.
+function make_session_constraint_obj(session, obj) {
+    // turn this into a Constraint object
+    obj.prototype = new Constraint();
+    obj.session   = session;
+
+    //console.log("session: ",JSON.stringify(session));
+    //console.log("constraint: ",JSON.stringify(obj));
 
     if(obj.source == session.href) {
         obj.thisgroup  = session.group();
+	console.log("session "+session.session_id,"target "+obj.target);
         obj.othergroup = find_group_by_href(obj.target);
     } else {
         obj.thisgroup  = session.group();
+	console.log("session "+session.session_id,"source "+obj.source);
         obj.othergroup = find_group_by_href(obj.source);
     }
+
+    var listname = obj.name;
+    if(session.constraints[listname]==undefined) {
+	session.constraints[listname]=[];
+    }
+	
+    session.constraints[listname].push(obj);
 }
 
 

@@ -182,22 +182,29 @@ function XMLHttpGetRequest(url, sync) {
 }
 
 function retrieve_group_by_href(href) {
+    console.log("group "+href);
+    if(href == undefined) {
+	return undefined;
+    }
     var oXMLHttpRequest = XMLHttpGetRequest(href, false);
     oXMLHttpRequest.send();
     if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
         try{
-            //console.log("parsing: "+this.responseText);
+            console.log("parsing: "+oXMLHttpRequest.responseText);
             last_json_txt = oXMLHttpRequest.responseText;
             group_obj     = JSON.parse(oXMLHttpRequest.responseText);
-            //console.log("parsed: "+constraint_list);
-            last_json_reply = group_obj;
-            make_group_obj(group_obj);
-            group_objs[group_obj.href] = group_obj;
+	    if(group_obj) {
+		//console.log("parsed: "+constraint_list);
+		last_json_reply = group_obj;
+		make_group_obj(group_obj);
+		group_objs[group_obj.href] = group_obj;
+	    }
         }
         catch(exception){
             console.log("retrieve group_by_href exception: "+exception);
         }
     }
+    return group_obj;
 }
 
 function retrieve_session_by_id(session_id) {
@@ -221,11 +228,7 @@ function retrieve_session_by_id(session_id) {
 
 // should be a method on event_obj.
 function retrieve_constraints_by_session(session_obj) {
-
-    
-
-
-    var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
+    var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", false);
     oXMLHttpRequest.onreadystatechange = function() {
         console.log("state: "+this.readyState);
         if (this.readyState == XMLHttpRequest.DONE) {
@@ -244,6 +247,7 @@ function retrieve_constraints_by_session(session_obj) {
             }
         } 
     }
+    oXMLHttpRequest.send();
 }
 
 function fill_in_constraints(session_obj, success, constraint_list)
@@ -255,9 +259,14 @@ function fill_in_constraints(session_obj, success, constraint_list)
 
     console.log("got constraint list: "+constraint_list);
 
-    //$.each(constraint_list, function(key){
-    //       });
-    
+    var i = 10;
+
+    $.each(constraint_list, function(key){
+	       thing = constraint_list[key];
+	       console.log("processing constraint: ", JSON.stringify(thing));
+	       make_session_constraint_obj(session_obj, thing);
+           });
+    console.log("session object: ",session_obj);
 }
 
 
