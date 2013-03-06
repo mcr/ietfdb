@@ -48,7 +48,7 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in sessions %}
-    var e_obj = new event_obj( "{{ s.short_name }}",
+    var e_obj = event_obj( "{{ s.short_name }}",
                                "{{ s.group.name }}",
                                "{{s.id}}", 
                                "{{s.owner.owner}}",
@@ -68,17 +68,17 @@ function setup_slots(){
     slot_status["{{s.timeslot.js_identifier}}"].push(s_obj);
 {% endfor %}
 
-var s_obj= new slot_obj("0",true,"Unassigned",null,"Unassigned",null,null,"sortable-list");
-$.extend(slot_status, { "sortable-list" :[]});
-slot_status["sortable-list"].push(s_obj);
-console.log("setup_slots run");
+   var s_obj= slot_obj("0",true,"Unassigned",null,"Unassigned",null,null,"sortable-list");
+   $.extend(slot_status, { "sortable-list" :[]});
+   slot_status["sortable-list"].push(s_obj);
+   console.log("setup_slots run");
 
-calculate_room_select_box();
+   calculate_room_select_box();
 
-console.log("{{timeslots|length}}");
+   console.log("{{timeslots|length}}");
 
 {% for area in area_list %}
-	legend_status["{{area.upcase_acronym}}"] = true;
+   legend_status["{{area.upcase_acronym}}"] = true;
 {% endfor %}
 
 }
