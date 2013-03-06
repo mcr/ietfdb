@@ -88,7 +88,7 @@ var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function ScheduledSlot() {}
 
 function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
-    ss = new ScheduleSlot();
+    ss = new ScheduledSlot();
     ss.scheduledsession_id = scheduledsession_id;
     ss.empty       = empty;
     ss.timeslot_id = timeslot_id;
@@ -145,30 +145,33 @@ function event_obj(title, description, session_id, owner, group_id, area) {
     session.area  = area;
     session.group_id = group_id;
     session.loaded = false;
-    session.href = meeting_base_url+'/session/'+scheduledtimeslot.session_id+".json";
+    session.href = meeting_base_url+'/session/'+session_id+".json";
     return session;
-}
+};
 
 
 Session.prototype.load_session_obj = function(andthen, arg) {
     if(!this.loaded) {
 	var oXMLHttpRequest = XMLHttpGetRequest(this.href, true);
+	var session = this; // because below, this==XMLHTTPRequest
 	oXMLHttpRequest.onreadystatechange = function() {
 	    if (this.readyState == XMLHttpRequest.DONE) {
 		try{
 		    last_json_txt = this.responseText;
 		    session_obj   = JSON.parse(this.responseText);
 		    //console.log("parsed: "+constraint_list);
-		    last_json_reply = constraint_list;
-		    $.extend(this, session_obj);
-		    this.loaded = true;
+		    last_json_reply = session_obj;
+		    $.extend(session, session_obj);
+		    session.loaded = true;
 		    if(andthen != undefined) {
-			andthen(this, true, arg);
+			andthen(session, true, arg);
 		    }
 		}
 		catch(exception){
 		    console.log("exception: "+exception);
-		    andthen(this, false, arg);
+		    if(andthen != undefined) {
+			andthen(session, false, arg);
+		    }
 		}
 	    }
 	};
@@ -178,6 +181,10 @@ Session.prototype.load_session_obj = function(andthen, arg) {
 	    andthen(this, true, arg);
 	}
     }
+};
+
+function andthen_alert(object, result, arg) {
+    alert("result: "+result+" on obj: "+object);
 };
 
 Session.prototype.generate_info_table = function(ss) {
