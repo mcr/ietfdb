@@ -77,7 +77,8 @@ class Group(GroupInfo):
         group1['state']   = self.state.slug
         group1['type']    = self.type.slug
         group1['parent']  = self.parent.url(sitefqdn)
-        group1['ad']      = self.ad.url(sitefqdn)
+        if self.ad is not None:
+            group1['ad']      = self.ad.url(sitefqdn)
         group1['list_email'] = self.list_email
         group1['list_subscribe'] = self.list_subscribe
         group1['list_archive'] = self.list_archive
