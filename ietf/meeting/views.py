@@ -222,6 +222,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
 
     meeting_base_url = meeting.url(request.get_host_protocol(), "")
+    site_base_url =request.get_host_protocol()
     rooms = meeting.room_set
     rooms = rooms.all()
     saveas = SaveAsForm()
@@ -234,6 +235,7 @@ def edit_agenda(request, num=None, schedule_name=None):
                                           "saveas": saveas,
                                           "saveasurl": saveasurl,
                                           "meeting_base_url": meeting_base_url,
+                                          "site_base_url": site_base_url,
                                           "rooms":rooms,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,
