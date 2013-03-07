@@ -199,17 +199,17 @@ function retrieve_session_by_id(session_id) {
 function fill_in_constraints(session_obj, success, constraint_list, andthen)
 {
     if(!success || constraint_list['error']) {
-        console.log("failed to get constraints for session_id: "+session_obj.session_id);
+        console.log("failed to get constraints for session_id: "+session_obj.session_id, constraint_list['error']);
         return false;
     }
 
-    console.log("got constraint list: "+constraint_list);
+    //console.log("got constraint list: "+constraint_list);
 
     var i = 10;
 
     $.each(constraint_list, function(key){
 	       thing = constraint_list[key];
-	       console.log("processing constraint: ", JSON.stringify(thing));
+	       //console.log("processing constraint: ", JSON.stringify(thing));
 	       session_obj.add_constraint_obj(thing);
            });
 
@@ -237,14 +237,21 @@ function fill_in_session_info(session, success, extra) {
 
 function group_name_or_empty(constraint) {
     if(constraint == undefined) {
-	return "empty";
+	return "";
     } else {
-	return constraint.othergroup.href;
+        //console.log("getting view for ", constraint);
+	return constraint.conflict_view();
     }
 }
 
 function draw_constraints(session) {
     //console.log("conflict", session.constraints.conflict);
+
+    $("#conflict_table_body").html("");
+
+    if(!"conflicts" in session) {
+        return;
+    }
 
     var conflict1_a = session.conflicts[1][0];
     var conflict1_b = session.conflicts[1][1];
@@ -253,7 +260,6 @@ function draw_constraints(session) {
     var conflict3_a = session.conflicts[3][0];
     var conflict3_b = session.conflicts[3][1];
 
-    $("#conflict_table_body").html("");
     for(var i=0; i<=session.conflict_half_count; i++) {
         $("#conflict_table_body").append("<tr><td class='conflict1'>"+
                                          group_name_or_empty(conflict1_a[i])+

@@ -220,58 +220,49 @@ Session.prototype.generate_info_table = function(ss) {
 Session.prototype.group = function(andthen) {
     if(!this.group_obj) {
 	this.group_obj = new Group();
-        console.log("looking for "+this.group_href);
+        //console.log("looking for "+this.group_href);
 	this.group_obj.load_group_obj(this.group_href);
     }
     return this.group_obj;
 };
 
 Session.prototype.retrieve_constraints_by_session = function(andthen) {
-    if(this.constraints) {
-       var session_obj = this;
-
-       var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
-
-       oXMLHttpRequest.onreadystatechange = function() {
-	   //console.log("state: "+this.readyState);
-	   if (this.readyState == XMLHttpRequest.DONE) {
-	       //console.log("became ready");
-	       try{
-		   //console.log("parsing: "+this.responseText);
-		   last_json_txt = this.responseText;
-		   constraint_list = JSON.parse(this.responseText);
-		   //console.log("parsed: "+constraint_list);
-		   last_json_reply = constraint_list;
-		   fill_in_constraints(session_obj, true,  constraint_list, andthen);
-	       }
-	       catch(exception){
-		   console.log("exception: "+exception);
-		   fill_in_constraints(session_obj, false, this.responseText, andthen);
-	       }
-	   }
-       }
-       oXMLHttpRequest.send();
-    } else {
+    if("constraints" in this && "conflicts" in this.constraints) {
+        console.log("constraints already loaded");
 	/* everything is good, call continuation function */
 	andthen(this);
-    }
+
+    } else {
+       var session_obj = this;
+
+       var href = meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json";
+       $.getJSON( href, "", function(constraint_list) {
+                      fill_in_constraints(session_obj, true,  constraint_list, andthen);
+                  });
+    } 
 };
 
 
 
 // GROUP OBJECTS
 function Group() {}
-Group.prototype.load_group_obj = function(href) {
-    this.href = href;
-
-    //console.log("group "+href);
+Group.prototype.load_group_obj = function(andthen) {
+    console.log("group ",this.href);
     var group_obj = this;
 
-    $.getJSON( href, "", function(newobj) {
-                   if(obj) {
-                       $.extend(group_obj, newobj);
-                       group_obj.loaded = true;
-                   }});
+    if(!this.loaded) {
+        this.loading = true;
+        $.getJSON( this.href, "", function(newobj) {
+                       if(newobj) {
+                           $.extend(group_obj, newobj);
+                           group_obj.loaded = true;
+                       }
+                       group_obj.loading = false;
+                       andthen(group_obj);
+               });
+    } else {
+        andthen(group_obj);
+    }
 }
 
 function find_group_by_href(href) {
@@ -279,9 +270,10 @@ function find_group_by_href(href) {
     if(!group_objs[href]) {
 	group_objs[href]=new Group();
     }
-    g = groups_objs[href];
+    g = group_objs[href];
     if(!g.loaded) {
-	g.load_group_obj(href);
+        g.href = href;
+	g.load_group_obj(function(obj) {});
     }
     return group_objs[href];
 }
@@ -290,8 +282,35 @@ function find_group_by_href(href) {
 function Constraint() {
 }
 
+Constraint.prototype.build_conflict_view = function() {
+    return "<div class='conflict-"+this.conflict_type+"' id='"+this.dom_id+"'>"+this.othergroup_name+"</div>";
+};
+
+Constraint.prototype.build_othername = function() {
+    this.othergroup_name = this.othergroup.acronym;
+};
+    
+
 Constraint.prototype.conflict_view = function() {
-    return "<div class='conflict-"+this.conflict_type+"' id='"+this.id+"'>"+this.othergroup.name+"</div>";
+    this.dom_id = "constraint_"+this.constraint_id;
+
+    var theconstraint = this;
+    if(!this.othergroup.loaded) {
+        console.log("loading group", this.othergroup);
+        this.othergroup_name = "...";
+        this.othergroup.load_group_obj(function (obj) {
+                                           theconstraint.othergroup = obj;
+                                           console.log("updating group", theconstraint.othergroup);
+                                           console.log("for constraint", theconstraint.dom_id);
+                                           theconstraint.build_othername();
+                                           $("#"+theconstraint.dom_id).html(theconstraint.build_conflict_view());
+                                       });
+    } else {
+        console.log("used loaded group", this.othergroup);
+        this.build_othername();
+    }
+        
+    return this.build_conflict_view();
 };
 
 
@@ -299,11 +318,14 @@ Constraint.prototype.conflict_view = function() {
 // take an object and add attributes so that it becomes a session_conflict_obj.
 Session.prototype.add_constraint_obj = function(obj) {
     // turn this into a Constraint object
-    obj.prototype = new Constraint();
-    obj.session   = this;
+    //console.log("session: ",JSON.stringify(this));
+    console.log("add_constraint: ",JSON.stringify(obj));
 
-    //console.log("session: ",JSON.stringify(session));
-    //console.log("constraint: ",JSON.stringify(obj));
+    obj2 = new Constraint();
+    $.extend(obj2, obj);
+
+    obj = obj2;
+    obj.session   = this;
 
     if(obj.source == this.group.href) {
         obj.thisgroup  = this.group();
@@ -332,7 +354,7 @@ function split_list_at(things, place) {
 	half1[i] = things[i];
     }
     for(;i<len; i++) {
-	half2[i] = things[i-place];
+	half2[i-place] = things[i];
     }
     return [half1, half2];
 }
