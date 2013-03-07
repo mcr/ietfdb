@@ -467,6 +467,7 @@ function drop_drop(event, ui){
     
     if(update_to_slot_worked){
 	if(update_from_slot(meeting_id, from_slot_id)){
+	    remove_duplicate(from_slot_id,meeting_id);
 	    // do something
 	}
 	else{

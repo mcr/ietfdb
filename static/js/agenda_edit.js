@@ -23,6 +23,8 @@ var group_objs = {};      // list of working groups
 
 var days = [];
 var legend_status = {};   // agenda area colors.
+
+var duplicate_sessions = {};
 /********* colors ************************************/
 
 var highlight = "red"; // when we click something and want to highlight it.
@@ -62,7 +64,7 @@ function initStuff(){
     static_listeners();
     log("listeners() ran");
     calculate_name_select_box();
-    
+    duplicate_sessions = find_double_timeslots();    
 }
 
 
