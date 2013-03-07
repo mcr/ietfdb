@@ -174,32 +174,6 @@ var temp_1;
 /* creates the 'info' table that is located on the right side. 
    takes in a json. 
 */
-function generate_info_table(inp){
-    $("#info_grp").html(inp.group_acronym);
-    $("#info_name").html(name_select_html);
-    $("#info_area").html("<span class='"+inp.area.toUpperCase()+"-scheme'>"+inp.area+"</span>");
-    $("#info_duration").html(inp.ts_duration);
-
-    $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
-
-    $("#info_name_select").val(inp.ss_id);
-    $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
-    temp_1 = $("#info_name_select_option_"+current_timeslot).val();
-    $("#info_name_select_option_"+inp.ss_id).css('background-color',highlight);
-
-
-    $("#info_location_select").val(inp.timeslot_id);
-    //console.log("git "+"#info_location_select_option_"+inp.timeslot_id);
-    $("#info_location_select").val($("#info_location_select_option_"+inp.timeslot_id).val());
-
-    $("#"+inp.timeslot_id).css('background-color',highlight);
-
-    listeners();
-    
-    $("#info_responsible").html(inp.responsible_ad);
-    $("#info_requestedby").html(inp.requested_by +" ("+inp.requested_time+")");
-}
-
 
 var room_select_html = "";
 function calculate_room_select_box() {

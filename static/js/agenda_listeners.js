@@ -92,6 +92,8 @@ function meeting_event_click(event){
 
     slot = slot_status[slot_id];
     meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
+    var session = meeting_objs[meeting_event_id];
+
     if(slot == null){ // not in a real slot...
 	var slot_obj = {   slot_id: meeting_event_id ,
             scheduledsession_id:meeting_event_id,
@@ -99,8 +101,8 @@ function meeting_event_click(event){
             session_id: meeting_event_id,
          }
         
-	dajaxice_fill_in_info(slot_obj,slot_id);
-	return
+	session.load_session_obj(fill_in_session_info, slot_obj);
+	return;
     }
 	
 
@@ -111,8 +113,9 @@ function meeting_event_click(event){
 	    current_item = "#session_"+session_id;
 	    
 	    current_timeslot = slot[i].timeslot_id;
+
 	    empty_info_table();
-	    dajaxice_fill_in_info(slot[i],slot_id);
+	    session.load_session_obj(fill_in_session_info, slot[i]);
 	}
     }
     
@@ -151,25 +154,18 @@ function info_name_select_change(){
     var slot_status_obj = slot_status[slot_id];
     current_item = "#session_"+slot_status_obj[0].session_id;
     current_timeslot = slot_status_obj[0].timeslot_id;
-    dajaxice_fill_in_info(slot_status_obj[0],slot_id);
+
+    ss = slot_status_obj[0];
     $(current_item).css('background-color',highlight);
-//    $('#'+$('#info_name_select').val()).css('background-color',highlight);
-}
+    // $('#'+$('#info_name_select').val()).css('background-color',highlight);
 
+    // now find the relevant session.  The session may be found by
+    // calling ss.session().
 
-function dajaxice_fill_in_info(slot, slot_id){
-    console.log("slot_id:",slot_id);
-    console.log("slot.scheduledsession_id:",slot.scheduledsession_id);
-    console.log("timeslot_id:", slot.timeslot_id);
-    console.log("session_id:", slot.session_id);
-    console.log(slot);
-    Dajaxice.ietf.meeting.get_info(fill_in_info,
-                                   {   "active_slot_id": slot_id,
-                                       "scheduledsession_id": slot.scheduledsession_id,
-                                       "timeslot_id": slot.timeslot_id,
-                                       "session_id": slot.session_id
-                                   },
-                                   dajaxice_error );
+    session = ss.session();
+
+    // now set up the call back that might have to retrieve info.
+    session.load_session_obj(fill_in_session_info, ss);
 }
 
 function XMLHttpGetRequest(url, sync) {
@@ -179,25 +175,6 @@ function XMLHttpGetRequest(url, sync) {
     oXMLHttpRequest.setRequestHeader("X-CSRFToken", Dajaxice.get_cookie('csrftoken'));
 
     return oXMLHttpRequest;
-}
-
-function retrieve_group_by_href(href) {
-    var oXMLHttpRequest = XMLHttpGetRequest(href, false);
-    oXMLHttpRequest.send();
-    if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
-        try{
-            //console.log("parsing: "+this.responseText);
-            last_json_txt = oXMLHttpRequest.responseText;
-            group_obj     = JSON.parse(oXMLHttpRequest.responseText);
-            //console.log("parsed: "+constraint_list);
-            last_json_reply = group_obj;
-            make_group_obj(group_obj);
-            group_objs[group_obj.href] = group_obj;
-        }
-        catch(exception){
-            console.log("retrieve group_by_href exception: "+exception);
-        }
-    }
 }
 
 function retrieve_session_by_id(session_id) {
@@ -221,10 +198,6 @@ function retrieve_session_by_id(session_id) {
 
 // should be a method on event_obj.
 function retrieve_constraints_by_session(session_obj) {
-
-    
-
-
     var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
     oXMLHttpRequest.onreadystatechange = function() {
         console.log("state: "+this.readyState);
@@ -244,6 +217,7 @@ function retrieve_constraints_by_session(session_obj) {
             }
         } 
     }
+    oXMLHttpRequest.send();
 }
 
 function fill_in_constraints(session_obj, success, constraint_list)
@@ -255,9 +229,15 @@ function fill_in_constraints(session_obj, success, constraint_list)
 
     console.log("got constraint list: "+constraint_list);
 
-    //$.each(constraint_list, function(key){
-    //       });
-    
+    var i = 10;
+
+    $.each(constraint_list, function(key){
+	       thing = constraint_list[key];
+	       console.log("processing constraint: ", JSON.stringify(thing));
+	       make_session_constraint_obj(session_obj, thing);
+           });
+    console.log("session object: ",session_obj);
+    // now draw the constraints on the screen.
 }
 
 
@@ -265,15 +245,14 @@ function dajaxice_error(a){
     console.log("dajaxice_error");
 }
 
-function fill_in_info(inp){
-    //console.log("fill_in_info");
-    //console.log(inp);
-    if(inp == null || inp == "None"){
+function fill_in_session_info(session, success, extra) {
+    if(session == null || session == "None" || !success){
 	console.log("null returned");
 	empty_info_table();
     }
-    $('#ss_info').html(generate_info_table(inp));
+    $('#ss_info').html(session.generate_info_table(extra));
 }
+
 var menu_bar_hidden = false;
 function hide_ietf_menu_bar(){
     $('#IETF_MENUBAR').toggle('slide',"",100);
