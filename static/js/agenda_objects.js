@@ -1,20 +1,20 @@
 /*
 ,----
-| 
+|
 |   FILE: agenda_objects.js
-|    
-|   AUTHOR: Justin Hornosty ( justin@credil.org ) 
+|
+|   AUTHOR: Justin Hornosty ( justin@credil.org )
 |     Orlando Project <-> Credil, 2012 ( credil.org )
-|   
-|   Description: 
-|      Contains the objects relating to django's models. 
+|
+|   Description:
+|      Contains the objects relating to django's models.
 |      Manulaption and helper functions are also located here.
 |      Display logic should be contained in credil_agenda.js ( this should be renamed )
 |
 |   Functions:
 |      - check_delimiter(inp)
 |      - upperCaseWords(inp)
-|      
+|
 |
 |      - event_obj:
 |          - short_string()
@@ -27,22 +27,22 @@
 function slot(){
 }
 
- 
+
 /* tests short_string */
 function test_ss(){
     e = meeting_objs['2656'];
     return e.short_string();
 }
 
-/* 
+/*
    check_delimiter(inp), where inp is a string.
-       returns char. 
+       returns char.
 
-   checks for what we should split a string by. 
+   checks for what we should split a string by.
    mainly we are checking for a '/' or '-' character
-   
+
    Maybe there is a js function for this. doing 'a' in "abcd" does not work.
- */ 
+ */
 function check_delimiter(inp){
     for(var i =0; i<inp.length; i++){
 	if(inp[i] == '/'){
@@ -56,29 +56,29 @@ function check_delimiter(inp){
 
 }
 
-/* 
+/*
    upperCaseWords(inp), where inp is a string.
        returns string
-       
-   turns the first letter of each word in a string to uppercase 
+
+   turns the first letter of each word in a string to uppercase
    a word is something considered be something defined by the function
    check_delimiter(). ( '/' , '-' , ' ' )
 */
 function upperCaseWords(inp){
     var newStr = "";
     var split = inp.split(check_delimiter(inp));
-    
+
 	for(i=0; i<split.length; i++){
 		newStr = newStr+split[i][0].toUpperCase();
 		newStr = newStr+split[i].slice(1,split[i].length);
-		
+
 		if(i+1 < split.length){ // so we don't get a extra space
 			newStr = newStr+" ";
 		}
     }
-    
+
 	return newStr;
-    
+
 }
 
 var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -96,7 +96,7 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
     ss.date        = date;
     ss.time        = time;
     ss.room        = room;
-    
+
     var d = new Date(ss.date);
     var t = d.getUTCDay();
     //console.log("short_string "+ss.date+" gives "+t);
@@ -211,7 +211,7 @@ Session.prototype.generate_info_table = function(ss) {
     $("#"+ss.timeslot_id).css('background-color',highlight);
 
     listeners();
-    
+
     $("#info_responsible").html(this.responsible_ad);
     $("#info_requestedby").html(this.requested_by +" ("+this.requested_time+")");
 };

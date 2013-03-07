@@ -3,25 +3,25 @@
 *
 *   Orlando Project: Credil 2013 ( http://credil.org/ )
 *   Author: Justin Hornosty ( justin@credil.org )
-* 
-*   
-*   This file should contain functions relating to 
+*
+*
+*   This file should contain functions relating to
 *   jquery ui droppable ( http://jqueryui.com/droppable/ )
-*   and other interactions. 
-* 
+*   and other interactions.
+*
 */
 
 
-// console = { 
+// console = {
 //     log: function(inp){
-	
-//     } 
+
+//     }
 // };
 
 
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
-    $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent. 
+    $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
     $('.meeting_event').click(meeting_event_click);
 
     $('#info_location_select').unbind('change');
@@ -29,7 +29,7 @@ function listeners(){
 
     $('#info_name_select').unbind('change');
     $('#info_name_select').change(info_name_select_change);
-    
+
 //    $('span.APP-scheme').click(function(event){ console.log("click") });
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
@@ -52,7 +52,7 @@ function color_legend_click(event){
 	legend_status[clicked] = true;
     }
     set_transparent();
-    
+
 }
 
 function set_transparent(){
@@ -68,7 +68,7 @@ function set_transparent(){
 		    $("#session_"+key).draggable("option","cancel",".meeting_event");
 		}
 	    }})
-	    
+
     });
 }
 
@@ -82,12 +82,12 @@ function meeting_event_click(event){
     try{
 	clear_highlight(find_friends(current_item));
     }catch(err){ }
-    
+
     $(last_item).css("background-color", '');
-    
+
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     var meeting_event_id = $(this).attr('id');
-   
+
     clicked_event = event;
 
     slot = slot_status[slot_id];
@@ -100,25 +100,25 @@ function meeting_event_click(event){
             timeslot_id: null,
             session_id: meeting_event_id,
          }
-        
+
 	session.load_session_obj(fill_in_session_info, slot_obj);
 	return;
     }
-	
+
 
     for(var i = 0; i<slot.length; i++){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
 	    $("#session_"+session_id).css('background-color',highlight);
 	    current_item = "#session_"+session_id;
-	    
+
 	    current_timeslot = slot[i].timeslot_id;
 
 	    empty_info_table();
 	    session.load_session_obj(fill_in_session_info, slot[i]);
 	}
     }
-    
+
 }
 
 var last_item = null; // used during location change. we make the background color
@@ -130,7 +130,7 @@ function info_location_select_change(){
 	$(last_item).css('background-color','');
     }
     last_item = '#'+$('#info_location_select').val();
-    console.log("last_item...");    
+    console.log("last_item...");
     //$('#'+$('#info_location_select').val()).css('background-color',highlight);
     $(last_item).css('background-color',highlight);
 }
@@ -143,11 +143,11 @@ function info_name_select_change(){
     if(last_name_item != null){
 	console.log(last_name_item);
 	$(last_name_item).css('background-color','');
-	
+
     }
     if(current_item != null){
 	$(current_item).css('background-color','');
-	
+
     }
     last_name_item = '#'+$('#info_name_select').val();
     var slot_id = last_name_item.substring(1,last_name_item.length);
@@ -339,7 +339,7 @@ function droppable(){
 var arr_key_index = null;
 function update_to_slot(meeting_id, to_slot_id, force){
     console.log("\t----update_to_slot----");
-    
+
     var to_slot = slot_status[to_slot_id];
 //    console.log(to_slot, to_slot.length);
     var found = false;
@@ -386,14 +386,14 @@ function update_from_slot(meeting_id, from_slot_id){
 	}
     }
     else{
-	found = true; // this may be questionable. It deals with the fact that it's coming from a bucketlist. 
+	found = true; // this may be questionable. It deals with the fact that it's coming from a bucketlist.
 	return found;
     }
     return found;
 }
 
 
-/* move_slot 
+/* move_slot
    @args: meeting_id - id of the thing we are moving
           from_slot_id - id of the slot it's moving from
 	  to_slot_id - id of the slot it's moving to
@@ -401,18 +401,18 @@ function update_from_slot(meeting_id, from_slot_id){
 	          This should happen with the bucket list as it should continously grow.
  */
 function move_slot(meeting_id,from_slot_id,to_slot_id,force){
-    
-    
+
+
 
 }
 
 
 function drop_drop(event, ui){
     console.log("------ drop drop --------");
-    var meeting_id = ui.draggable.attr('id'); // the meeting id. 
-    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this. 
-    
-    var to_slot_id = $(this).attr('id'); // where we are dragging it. 
+    var meeting_id = ui.draggable.attr('id'); // the meeting id.
+    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
+
+    var to_slot_id = $(this).attr('id'); // where we are dragging it.
     var to_slot = slot_status[to_slot_id]
 
     var from_slot_id = meeting_objs[meeting_id].slot_status_key;
@@ -428,14 +428,14 @@ function drop_drop(event, ui){
 //    console.log("to_slot_id",to_slot_id, slot_status[to_slot_id]);
 //    console.log("from_slot_id",from_slot_id, slot_status[from_slot_id]);
     var update_to_slot_worked = false;
-    
+
     if(bucket_list){
 	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, true);
     }
     else{
 	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id);
     }
-    
+
     if(update_to_slot_worked){
 	if(update_from_slot(meeting_id, from_slot_id)){
 	    // do something
@@ -456,7 +456,7 @@ function drop_drop(event, ui){
 
     var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id,meeting_objs[meeting_id].area);
     $(this).append(eTemplate)
-    
+
     ui.draggable.remove();
 
 
@@ -468,7 +468,7 @@ function drop_drop(event, ui){
     else{
 	$(this).css('background-color',none_color);
     }
-    
+
     if(check_free({id:from_slot_id}) ){
 	$("#"+from_slot_id).css('background-color', color_droppable_empty_slot)
     }
@@ -477,7 +477,7 @@ function drop_drop(event, ui){
     }
     $("#"+"sortable-list").css('background-color',none_color);
     /******************************************************/
-   
+
     var schedulesession_id = null;
     for(var i =0; i< to_slot.length; i++){
 	if (to_slot[i].session_id == meeting_id){
@@ -491,7 +491,7 @@ function drop_drop(event, ui){
 						  'session_id':meeting_objs[meeting_id].session_id,
 						  'scheduledsession_id': schedulesession_id,
                                               });
-	
+
     }
     else{
 	console.log("issue sending ajax call!!!");
@@ -507,11 +507,11 @@ function drop_bucket(event,ui){
     console.log("------ drop bucket --------");
 
     var meeting_id = ui.draggable.attr('id');
-    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this. 
+    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
 
     var to_slot_id = $(this).attr('id'); // where we are dragging it.
     var from_slot_id = meeting_objs[meeting_id].slot_status_key;
-    
+
     if(to_slot_id == "sortable-list"){ // it's being moved to the bucketlist so update where it's coming from.
 	console.log("sortable-list dest");
 	if (!update_from_slot(meeting_id, from_slot_id)){
@@ -530,14 +530,14 @@ function drop_bucket(event,ui){
 
     }
 
-    
+
     //*****  do dajaxice call here  ****** //
 
     var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id);
     $(this).append(eTemplate)
-    
+
     ui.draggable.remove();
-    
+
     droppable();
     listeners();
     console.log("moving complete.");
@@ -550,24 +550,24 @@ function drop_bucket2(event,ui){
     var temp_session_id = ui.draggable.attr('id'); // the django session id
     var idd = temp_session_id.substring(8,temp_session_id.length);
     var session_obj =  meeting_objs[idd];
-    
+
     slot_status[session_obj.slot_status_key].session_id = null;
     slot_status[session_obj.slot_status_key][0].empty = true;
     $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
     session_obj.placed = false;
     session_obj.slot_status_key = null;
-    
+
     var eTemplate = event_template(session_obj.title, session_obj.description,
                                    session_obj.session_id, session_obj.area);
     $(this).append(eTemplate);
-    
-    
+
+
     ui.draggable.remove();
-    // dajaxice call should say this session has no timeslot.  
-    // Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */ 
+    // dajaxice call should say this session has no timeslot.
+    // Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */
     droppable();
     listeners();
-    
+
 }
 
 /* first thing that happens when we grab a meeting_event */
@@ -601,9 +601,9 @@ function drop_start(event,ui){
 }
 
 function drag_drag(event, ui){
-    
 
-    
+
+
 }
 function drag_start(event, ui){
     console.log(ui);
