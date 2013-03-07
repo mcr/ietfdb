@@ -168,18 +168,24 @@ div.agenda_slot{
   position: relative;
 }
 
-.ss_info{
-  /* width:310px; */
-    float:left;
-    margin-top:3px;
-    margin-left:3px;
-
+.ss_info {
+  margin-top:3px;
+  margin-left:3px;
 }
 
-.ss_info_left table{
-    min-width:409px;
-    width:410px;
+.ss_info_left {
+  position: absolute;
+  left: 5px;
+  top: 15px;
+  width: 320px; 
+}
 
+.ss_info_right {
+  position: absolute;
+  left: 300px;
+  top: 15px;
+  min-width:409px;
+  width:410px;
 }
 
 .ss_info_box {
@@ -296,7 +302,7 @@ td.ss_info_name_short{
 
 div#conflict_table {
   position: absolute;
-  left: 690px;
+  left: 620px;
   top: 14px;
   margin-left: 10px;
   margin-top:  3px;
@@ -312,7 +318,7 @@ div#conflict_table {
 #conflict_table th.heading {
   font-size: 14pt;
   text-align: center;
-  min-width: 200px;
+  min-width: 170px;
   border-bottom: 2px solid #89D;
 }
 
