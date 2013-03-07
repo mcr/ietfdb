@@ -196,31 +196,7 @@ function retrieve_session_by_id(session_id) {
     return session_obj;
 }
 
-// should be a method on event_obj.
-function retrieve_constraints_by_session(session_obj) {
-    var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
-    oXMLHttpRequest.onreadystatechange = function() {
-        console.log("state: "+this.readyState);
-        if (this.readyState == XMLHttpRequest.DONE) {
-            console.log("became ready");
-            try{
-                //console.log("parsing: "+this.responseText);
-                last_json_txt = this.responseText;
-                constraint_list = JSON.parse(this.responseText);
-                //console.log("parsed: "+constraint_list);
-                last_json_reply = constraint_list;
-                fill_in_constraints(session_obj, true,  constraint_list);
-            }
-            catch(exception){
-                console.log("exception: "+exception);
-                fill_in_constraints(session_obj, false, this.responseText);
-            }
-        } 
-    }
-    oXMLHttpRequest.send();
-}
-
-function fill_in_constraints(session_obj, success, constraint_list)
+function fill_in_constraints(session_obj, success, constraint_list, andthen)
 {
     if(!success || constraint_list['error']) {
         console.log("failed to get constraints for session_id: "+session_obj.session_id);
@@ -234,10 +210,15 @@ function fill_in_constraints(session_obj, success, constraint_list)
     $.each(constraint_list, function(key){
 	       thing = constraint_list[key];
 	       console.log("processing constraint: ", JSON.stringify(thing));
-	       make_session_constraint_obj(session_obj, thing);
+	       session_obj.add_constraint_obj(thing);
            });
-    console.log("session object: ",session_obj);
+
+    //console.log("session object: ",session_obj);
+
+    session_obj.sort_constraints();
+
     // now draw the constraints on the screen.
+    andthen(session_obj);
 }
 
 
@@ -251,6 +232,55 @@ function fill_in_session_info(session, success, extra) {
 	empty_info_table();
     }
     $('#ss_info').html(session.generate_info_table(extra));
+    session.retrieve_constraints_by_session(draw_constraints);
+}
+
+function group_name_or_empty(constraint) {
+    if(constraint == undefined) {
+	return "empty";
+    } else {
+	return constraint.othergroup.href;
+    }
+}
+
+function draw_constraints(session) {
+    //console.log("conflict", session.constraints.conflict);
+
+    var conflict1_a = session.conflicts[1][0];
+    var conflict1_b = session.conflicts[1][1];
+    var conflict2_a = session.conflicts[2][0];
+    var conflict2_b = session.conflicts[2][1];
+    var conflict3_a = session.conflicts[3][0];
+    var conflict3_b = session.conflicts[3][1];
+
+    $("#conflict_table_body").html("");
+    for(var i=0; i<=session.conflict_half_count; i++) {
+        $("#conflict_table_body").append("<tr><td class='conflict1'>"+
+                                         group_name_or_empty(conflict1_a[i])+
+                                         "</td>"+
+                                         "<td class='conflict1'>"+
+                                         group_name_or_empty(conflict1_b[i])+
+                                         "</td><td class='border'></td>"+
+                                         "<td class='conflict2'>"+
+                                         group_name_or_empty(conflict2_a[i])+
+                                         "</td>"+
+                                         "<td class='conflict2'>"+
+                                         group_name_or_empty(conflict2_b[i])+
+                                         "</td><td class='border'></td>"+
+                                         "<td class='conflict3'>"+
+                                         group_name_or_empty(conflict3_a[i])+
+                                         "</td>"+
+                                         "<td class='conflict3'>"+
+                                         group_name_or_empty(conflict1_b[i])+
+                                         "</tr>");
+	console.log("draw", i,
+		    group_name_or_empty(conflict1_a[i]),
+		    group_name_or_empty(conflict1_b[i]),
+		    group_name_or_empty(conflict2_a[i]),
+		    group_name_or_empty(conflict2_b[i]),
+		    group_name_or_empty(conflict3_a[i]),
+		    group_name_or_empty(conflict3_b[i]));
+    }
 }
 
 var menu_bar_hidden = false;
@@ -292,7 +322,7 @@ function droppable(){
 	    drop : drop_drop,
 	    start: drop_start,
 	})
-    
+
 	$("#meetings td").droppable({
 	    over :drop_over,
 	    activate:drop_activate,
