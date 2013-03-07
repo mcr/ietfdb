@@ -222,19 +222,52 @@ Session.prototype.group = function(andthen) {
 	this.group_obj.load_group_obj(this.group_href);
     }
     return this.group_obj;
-}
+};
+
+Session.prototype.retrieve_constraints_by_session = function(andthen) {
+    if(this.constraints) {
+       var session_obj = this;
+
+       var oXMLHttpRequest = XMLHttpGetRequest(meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json", true);
+
+       oXMLHttpRequest.onreadystatechange = function() {
+	   //console.log("state: "+this.readyState);
+	   if (this.readyState == XMLHttpRequest.DONE) {
+	       //console.log("became ready");
+	       try{
+		   //console.log("parsing: "+this.responseText);
+		   last_json_txt = this.responseText;
+		   constraint_list = JSON.parse(this.responseText);
+		   //console.log("parsed: "+constraint_list);
+		   last_json_reply = constraint_list;
+		   fill_in_constraints(session_obj, true,  constraint_list, andthen);
+	       }
+	       catch(exception){
+		   console.log("exception: "+exception);
+		   fill_in_constraints(session_obj, false, this.responseText, andthen);
+	       }
+	   }
+       }
+       oXMLHttpRequest.send();
+    } else {
+	/* everything is good, call continuation function */
+	andthen(this);
+    }
+};
+
+
 
 // GROUP OBJECTS
 function Group() {}
 Group.prototype.load_group_obj = function(href) {
     this.href = href;
 
-    console.log("group "+href);
+    //console.log("group "+href);
 
     var oXMLHttpRequest = XMLHttpGetRequest(href, true);
     if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
         try{
-            console.log("parsing: "+oXMLHttpRequest.responseText);
+            //console.log("parsing: "+oXMLHttpRequest.responseText);
             last_json_txt = oXMLHttpRequest.responseText;
             group_obj     = JSON.parse(oXMLHttpRequest.responseText);
 	    if(group_obj) {
@@ -270,31 +303,100 @@ Constraint.prototype.conflict_view = function() {
 
 // SESSION CONFLICT OBJECTS
 // take an object and add attributes so that it becomes a session_conflict_obj.
-function make_session_constraint_obj(session, obj) {
+Session.prototype.add_constraint_obj = function(obj) {
     // turn this into a Constraint object
     obj.prototype = new Constraint();
-    obj.session   = session;
+    obj.session   = this;
 
     //console.log("session: ",JSON.stringify(session));
     //console.log("constraint: ",JSON.stringify(obj));
 
-    if(obj.source == session.href) {
-        obj.thisgroup  = session.group();
-	console.log("session "+session.session_id,"target "+obj.target);
+    if(obj.source == this.group.href) {
+        obj.thisgroup  = this.group();
+	console.log("session "+this.session_id,"target "+obj.target);
         obj.othergroup = find_group_by_href(obj.target);
     } else {
-        obj.thisgroup  = session.group();
-	console.log("session "+session.session_id,"source "+obj.source);
+        obj.thisgroup  = this.group();
+	console.log("session "+this.session_id,"source "+obj.source);
         obj.othergroup = find_group_by_href(obj.source);
     }
 
     var listname = obj.name;
-    if(session.constraints[listname]==undefined) {
-	session.constraints[listname]=[];
+    if(this.constraints[listname]==undefined) {
+	this.constraints[listname]=[];
     }
-	
-    session.constraints[listname].push(obj);
+
+    this.constraints[listname].push(obj);
+};
+
+function split_list_at(things, place) {
+    var half1 = [];
+    var half2 = [];
+    var len = things.length;
+    var i=0;
+    for(i=0; i<place; i++) {
+	half1[i] = things[i];
+    }
+    for(;i<len; i++) {
+	half2[i] = things[i-place];
+    }
+    return [half1, half2];
 }
+
+function constraint_compare(a, b)
+{
+    if(a==undefined) {
+	return -1;
+    }
+    if(b==undefined) {
+	return 1;
+    }
+    return (a.othergroup.href > b.othergroup.href ? 1 : -1);
+}
+
+// this sorts the constraints into two columns such that the number of rows
+// is half of the longest amount.
+Session.prototype.sort_constraints = function() {
+    // find longest amount
+    var big = 0;
+    if("conflicts" in this.constraints) {
+	big = this.constraints.conflict.length;
+    }
+
+    if("conflic2" in this.constraints) {
+	if(this.constraints.conflic2.length > big) {
+	    big = this.constraints.conflic2.length;
+	}
+    }
+
+    if("conflic3" in this.constraints) {
+	if(this.constraints.conflic3.length > big) {
+	    big = this.constraints.conflic3.length;
+	}
+    }
+
+    this.conflict_half_count = Math.floor((big+1)/2);
+    var half = this.conflict_half_count;
+
+    console.log("sort half", half);
+
+    this.conflicts = [];
+    this.conflicts[1]=[[],[]]
+    this.conflicts[2]=[[],[]]
+    this.conflicts[3]=[[],[]]
+
+    if("conflict" in this.constraints) {
+	this.conflicts[1] = split_list_at(this.constraints.conflict.sort(constraint_compare), half);
+    }
+
+    if("conflic2" in this.constraints) {
+	this.conflicts[2] = split_list_at(this.constraints.conflic2.sort(constraint_compare), half);
+    }
+
+    if("conflic3" in this.constraints) {
+	this.conflicts[3] = split_list_at(this.constraints.conflic3.sort(constraint_compare), half);
+    }
+};
 
 
 /*
