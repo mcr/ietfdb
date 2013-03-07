@@ -42,9 +42,8 @@ function static_listeners(){
     $('#CLOSE_IETF_MENUBAR').click(hide_ietf_menu_bar);
 }
 
-
 function color_legend_click(event){
-    var clicked = $(event.toElement).attr('id');
+    var clicked = $(event.target).attr('id');
     if(legend_status[clicked]){
 	legend_status[clicked] = false;
     }
@@ -55,22 +54,52 @@ function color_legend_click(event){
     
 }
 
+
 function set_transparent(){
-    $.each(meeting_objs, function(key){
+
+    // $.each(meeting_objs, function(key){
+    $.each(slot_status, function(key){
 	$.each(legend_status, function(k){
-	    if(meeting_objs[key].area == k){
-		if(legend_status[k] == true){
-		    $("#session_"+key).css('opacity','1');
-		    $("#session_"+key).draggable("option","cancel",null);
-		}
-		else{
-		    $("#session_"+key).css('opacity','0.1');
-		    $("#session_"+key).draggable("option","cancel",".meeting_event");
-		}
-	    }})
+	    for(var i = 0; i<slot_status[key].length; i++){
+
+		if(slot_status[key][i].session_id){
+		    var m_key = slot_status[key][i].session_id;
+		    
+		    if(meeting_objs[m_key].area == k){
+
+			if(legend_status[k] == true){
+			    $("#session_"+m_key).css({'opacity':1});
+			    $("#session_"+m_key).draggable("option","cancel",null);
+			}
+			else{
+			    $("#session_"+m_key).css({'opacity':0.1});
+			    $("#session_"+m_key).draggable("option","cancel",".meeting_event");
+			}
+			
+		    }
+		}}
+	});
 	    
     });
 }
+
+
+// function set_transparent(){
+//     $.each(meeting_objs, function(key){
+// 	$.each(legend_status, function(k){
+// 	    if(meeting_objs[key].area == k){
+// 		if(legend_status[k] == true){
+// 		    $("#session_"+key).css('opacity','1');
+// 		    $("#session_"+key).draggable("option","cancel",null);
+// 		}
+// 		else{
+// 		    $("#session_"+key).css('opacity','0.1');
+// 		    $("#session_"+key).draggable("option","cancel",".meeting_event");
+// 		}
+// 	    }})
+	    
+//     });
+// }
 
 
 var clicked_event;
