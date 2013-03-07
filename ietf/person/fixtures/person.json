@@ -83,6 +83,14 @@
 	"name": "ad",
 	"group": 1260,
 	"person": 19177,
-	"email": "stephen.farrell@cs.tcd.ie"}}
+	"email": "stephen.farrell@cs.tcd.ie"}},
+
+{"pk":19483, "model": "person.person", "fields": {
+	"name": "Sean Turner",
+	"time": "2012-02-26 00:04:11",
+	"user": 12345,
+	"affiliation": "",
+	"user": 492,
+	"ascii": "Sean Turner"}}
 
 ]
