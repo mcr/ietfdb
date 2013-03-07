@@ -498,7 +498,7 @@ class Session(models.Model):
         sess1['status']         = str(self.status)
         sess1['requested_time'] = str(self.requested.strftime("%Y-%m-%d"))
         sess1['requested_by']   = str(self.requested_by)
-        sess1['requested_duration']= str(self.requested_duration)
+        sess1['requested_duration']= "%.1f" % float(self.requested_duration.seconds) / 3600
         sess1['area']           = str(self.group.parent.acronym)
         sess1['responsible_ad'] = str(self.group.ad)
         sess1['GroupInfo_state']= str(self.group.state)
