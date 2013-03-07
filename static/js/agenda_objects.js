@@ -219,12 +219,18 @@ Session.prototype.generate_info_table = function(ss) {
 
 Session.prototype.group = function(andthen) {
     if(!this.group_obj) {
-	this.group_obj = new Group();
-        //console.log("looking for "+this.group_href);
-	this.group_obj.load_group_obj(this.group_href);
+	this.group_obj = find_group_by_href(this.group_href);
     }
     return this.group_obj;
 };
+
+function load_all_groups() {
+    $.each(meeting_objs, function(key) {
+	       session = meeting_objs[key];
+	       // load the group object
+	       session.group();
+	   });
+}
 
 Session.prototype.retrieve_constraints_by_session = function(andthen) {
     if("constraints" in this && "conflicts" in this.constraints) {
@@ -327,7 +333,7 @@ Session.prototype.add_constraint_obj = function(obj) {
     obj = obj2;
     obj.session   = this;
 
-    if(obj.source == this.group.href) {
+    if(obj.source == this.group().href) {
         obj.thisgroup  = this.group();
 	console.log("session "+this.session_id,"target "+obj.target);
         obj.othergroup = find_group_by_href(obj.target);

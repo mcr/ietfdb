@@ -53,6 +53,8 @@ $(document).ready(function() {
 */
 function initStuff(){
     log("initstuff() ran");
+    load_all_groups();        // should be in a single big block.
+    log("groups loaded");
     setup_slots();
     log("setup_slots() ran");
     droppable();
@@ -80,7 +82,9 @@ function get_ss(){
 }
 
 
-
-
-
+/*
+ * Local Variables:
+ * c-basic-offset:4
+ * End:
+ */
 
