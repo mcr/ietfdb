@@ -145,11 +145,13 @@ function event_obj(title, description, session_id, owner, group_id, area) {
     session.area  = area;
     session.group_id = group_id;
     session.loaded = false;
-    session.href = meeting_base_url+'/session/'+session_id+".json";
+    session.href       = meeting_base_url+'/session/'+session_id+".json";
+    session.group_href = site_base_url+'/group/'+title+".json";
     return session;
 };
 
 
+// augument to jQuery.getJSON( url, [data], [callback] )
 Session.prototype.load_session_obj = function(andthen, arg) {
     if(!this.loaded) {
 	var oXMLHttpRequest = XMLHttpGetRequest(this.href, true);
@@ -188,8 +190,8 @@ function andthen_alert(object, result, arg) {
 };
 
 Session.prototype.generate_info_table = function(ss) {
-    $("#info_grp").html(this.group_acronym);
-    $("#info_name").html(name_select_html);
+    $("#info_grp").html(name_select_html);
+    $("#info_name").html(this.description);
     $("#info_area").html("<span class='"+this.area.toUpperCase()+"-scheme'>"+this.area+"</span>");
     $("#info_duration").html(this.requested_duration);
 
@@ -263,31 +265,23 @@ Group.prototype.load_group_obj = function(href) {
     this.href = href;
 
     //console.log("group "+href);
+    var group_obj = this;
 
-    var oXMLHttpRequest = XMLHttpGetRequest(href, true);
-    if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
-        try{
-            //console.log("parsing: "+oXMLHttpRequest.responseText);
-            last_json_txt = oXMLHttpRequest.responseText;
-            group_obj     = JSON.parse(oXMLHttpRequest.responseText);
-	    if(group_obj) {
-		//console.log("parsed: "+constraint_list);
-		last_json_reply = group_obj;
-		$.extend(this, group_obj);
-	    }
-        }
-        catch(exception){
-            console.log("retrieve group_by_href exception: "+exception);
-        }
-    }
-    oXMLHttpRequest.send();
+    $.getJSON( href, "", function(newobj) {
+                   if(obj) {
+                       $.extend(group_obj, newobj);
+                       group_obj.loaded = true;
+                   }});
 }
 
 function find_group_by_href(href) {
     console.log("group href", href, group_objs[href]);
     if(!group_objs[href]) {
 	group_objs[href]=new Group();
-	group_objs[href].load_group_obj(href);
+    }
+    g = groups_objs[href];
+    if(!g.loaded) {
+	g.load_group_obj(href);
     }
     return group_objs[href];
 }
