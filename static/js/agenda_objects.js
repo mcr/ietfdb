@@ -269,13 +269,15 @@ function find_group_by_href(href) {
     console.log("group href", href, group_objs[href]);
     if(!group_objs[href]) {
 	group_objs[href]=new Group();
+        g.loaded = false;
+        g.loading= false;
     }
     g = group_objs[href];
     if(!g.loaded) {
         g.href = href;
 	g.load_group_obj(function(obj) {});
     }
-    return group_objs[href];
+    return g;
 }
 
 // Constraint Objects
