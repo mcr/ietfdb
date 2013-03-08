@@ -53,10 +53,10 @@ $(document).ready(function() {
 */
 function initStuff(){
     log("initstuff() ran");
-    load_all_groups();        // should be in a single big block.
-    log("groups loaded");
     setup_slots();
     log("setup_slots() ran");
+    load_all_groups();        // should be in a single big block.
+    log("groups loaded");
     droppable();
     log("droppable() ran");
     load_events();
