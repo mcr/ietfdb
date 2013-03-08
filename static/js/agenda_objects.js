@@ -218,7 +218,8 @@ Session.prototype.generate_info_table = function(ss) {
 
 
 Session.prototype.group = function(andthen) {
-    if(!this.group_obj) {
+    if(this.group_obj == undefined) {
+	console.log("finding session", this.group_href);
 	this.group_obj = find_group_by_href(this.group_href);
     }
     return this.group_obj;
@@ -227,6 +228,7 @@ Session.prototype.group = function(andthen) {
 function load_all_groups() {
     $.each(meeting_objs, function(key) {
 	       session = meeting_objs[key];
+	       // console.log("all_groups session", session);
 	       // load the group object
 	       session.group();
 	   });
@@ -253,7 +255,7 @@ Session.prototype.retrieve_constraints_by_session = function(andthen) {
 // GROUP OBJECTS
 function Group() {}
 Group.prototype.load_group_obj = function(andthen) {
-    console.log("group ",this.href);
+    //console.log("group ",this.href);
     var group_obj = this;
 
     if(!this.loaded) {
@@ -272,8 +274,8 @@ Group.prototype.load_group_obj = function(andthen) {
 }
 
 function find_group_by_href(href) {
-    console.log("group href", href, group_objs[href]);
-    if(!group_objs[href]) {
+    //console.log("group href", href, group_objs[href]);
+    if(group_objs[href] == undefined) {
 	group_objs[href]=new Group();
     }
     g = group_objs[href];
@@ -302,17 +304,17 @@ Constraint.prototype.conflict_view = function() {
 
     var theconstraint = this;
     if(!this.othergroup.loaded) {
-        console.log("loading group", this.othergroup);
+        //console.log("loading group", this.othergroup);
         this.othergroup_name = "...";
         this.othergroup.load_group_obj(function (obj) {
                                            theconstraint.othergroup = obj;
-                                           console.log("updating group", theconstraint.othergroup);
-                                           console.log("for constraint", theconstraint.dom_id);
+                                           //console.log("updating group", theconstraint.othergroup);
+                                           //console.log("for constraint", theconstraint.dom_id);
                                            theconstraint.build_othername();
                                            $("#"+theconstraint.dom_id).html(theconstraint.build_conflict_view());
                                        });
     } else {
-        console.log("used loaded group", this.othergroup);
+        //console.log("used loaded group", this.othergroup);
         this.build_othername();
     }
         
@@ -325,7 +327,7 @@ Constraint.prototype.conflict_view = function() {
 Session.prototype.add_constraint_obj = function(obj) {
     // turn this into a Constraint object
     //console.log("session: ",JSON.stringify(this));
-    console.log("add_constraint: ",JSON.stringify(obj));
+    //console.log("add_constraint: ",JSON.stringify(obj));
 
     obj2 = new Constraint();
     $.extend(obj2, obj);
@@ -335,14 +337,15 @@ Session.prototype.add_constraint_obj = function(obj) {
 
     if(obj.source == this.group().href) {
         obj.thisgroup  = this.group();
-	console.log("session "+this.session_id,"target "+obj.target);
+	//console.log("session "+this.session_id,"target "+obj.target);
         obj.othergroup = find_group_by_href(obj.target);
     } else {
         obj.thisgroup  = this.group();
-	console.log("session "+this.session_id,"source "+obj.source);
+	//console.log("session "+this.session_id,"source "+obj.source);
         obj.othergroup = find_group_by_href(obj.source);
     }
 
+    //console.log("ogroupname", ogroupname);
     var listname = obj.name;
     if(this.constraints[listname]==undefined) {
 	this.constraints[listname]=[];
@@ -399,8 +402,6 @@ Session.prototype.sort_constraints = function() {
 
     this.conflict_half_count = Math.floor((big+1)/2);
     var half = this.conflict_half_count;
-
-    console.log("sort half", half);
 
     this.conflicts = [];
     this.conflicts[1]=[[],[]]
