@@ -49,13 +49,12 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in sessions %}
-    var e_obj = event_obj( "{{ s.short_name }}",
+    meeting_objs["{{s.id}}"]=event_obj( "{{ s.short_name }}",
                                "{{ s.group.name }}",
                                "{{s.id}}", 
                                "{{s.owner.owner}}",
                                "{{s.group.id}}",
                                "{{s.group.parent.acronym|upper}}");
-    $.extend(meeting_objs,{ "{{s.id}}":e_obj});
 {% endfor %}
 
 {% for s in scheduledsessions %}
