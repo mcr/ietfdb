@@ -291,7 +291,11 @@ function Constraint() {
 }
 
 Constraint.prototype.build_conflict_view = function() {
-    return "<div class='conflict-"+this.conflict_type+"' id='"+this.dom_id+"'>"+this.othergroup_name+"</div>";
+    var bothways = "&nbsp;&nbsp;&nbsp;";
+    if(this.bothways) {
+	bothways=" &lt;-&gt;";
+    }
+    return "<div class='conflict-"+this.conflict_type+"' id='"+this.dom_id+"'>"+this.othergroup_name+bothways+"</div>";
 };
 
 Constraint.prototype.build_othername = function() {
@@ -335,35 +339,45 @@ Session.prototype.add_constraint_obj = function(obj) {
     obj = obj2;
     obj.session   = this;
 
-    if(obj.source == this.group().href) {
+    var ogroupname;
+    if(obj.source == this.group_href) {
         obj.thisgroup  = this.group();
 	//console.log("session "+this.session_id,"target "+obj.target);
         obj.othergroup = find_group_by_href(obj.target);
+	ogroupname = obj.target;
     } else {
         obj.thisgroup  = this.group();
 	//console.log("session "+this.session_id,"source "+obj.source);
         obj.othergroup = find_group_by_href(obj.source);
+	ogroupname = obj.source;
     }
 
     //console.log("ogroupname", ogroupname);
     var listname = obj.name;
+    obj.conflict_type = listname;
     if(this.constraints[listname]==undefined) {
-	this.constraints[listname]=[];
+	this.constraints[listname]={};
     }
 
-    this.constraints[listname].push(obj);
+    if(this.constraints[listname][ogroupname]) {
+	this.constraints[listname][ogroupname].bothways = true;
+    } else {
+	this.constraints[listname][ogroupname]=obj;
+    }
 };
 
-function split_list_at(things, place) {
+function split_list_at(things, keys, place) {
     var half1 = [];
     var half2 = [];
-    var len = things.length;
+    var len = keys.length;
     var i=0;
     for(i=0; i<place; i++) {
-	half1[i] = things[i];
+	var key  = keys[i];
+	half1[i] = things[key];
     }
     for(;i<len; i++) {
-	half2[i-place] = things[i];
+	var key  = keys[i];
+	half2[i-place] = things[key];
     }
     return [half1, half2];
 }
@@ -379,24 +393,41 @@ function constraint_compare(a, b)
     return (a.othergroup.href > b.othergroup.href ? 1 : -1);
 }
 
+function split_constraint_list_at(things, place) {
+    var keys = Object.keys(things);
+    console.log("things", keys);
+    var keys1 = keys.sort(function(a,b) {
+				     return constraint_compare(things[a],things[b]);
+				 });
+    console.log("sorted", keys1);
+    var sorted_conflicts = split_list_at(things, keys1, place);
+    return sorted_conflicts;
+}
+
 // this sorts the constraints into two columns such that the number of rows
 // is half of the longest amount.
 Session.prototype.sort_constraints = function() {
     // find longest amount
     var big = 0;
     if("conflicts" in this.constraints) {
-	big = this.constraints.conflict.length;
+	big = Object.keys(this.constraints.conflict).length;
+	console.log("conflic1", big);
     }
 
     if("conflic2" in this.constraints) {
-	if(this.constraints.conflic2.length > big) {
-	    big = this.constraints.conflic2.length;
+	var c2 = Object.keys(this.constraints.conflic2).length;
+	console.log("conflic2", c2, big);
+	if(c2 > big) {
+	    big = c2;
 	}
     }
 
     if("conflic3" in this.constraints) {
-	if(this.constraints.conflic3.length > big) {
-	    big = this.constraints.conflic3.length;
+	var c3 = Object.keys(this.constraints.conflic3).length;
+	console.log("conflic3", c3, big);
+	if(c3 > big) {
+	    big = c3;
+	    console.log("conflic3", big);
 	}
     }
 
@@ -409,15 +440,18 @@ Session.prototype.sort_constraints = function() {
     this.conflicts[3]=[[],[]]
 
     if("conflict" in this.constraints) {
-	this.conflicts[1] = split_list_at(this.constraints.conflict.sort(constraint_compare), half);
+	var list1 = this.constraints.conflict;
+	this.conflicts[1] = split_constraint_list_at(list1, half);
     }
 
     if("conflic2" in this.constraints) {
-	this.conflicts[2] = split_list_at(this.constraints.conflic2.sort(constraint_compare), half);
+	var sort2 = this.constraints.conflic2;
+	this.conflicts[2] = split_constraint_list_at(sort2, half);
     }
 
     if("conflic3" in this.constraints) {
-	this.conflicts[3] = split_list_at(this.constraints.conflic3.sort(constraint_compare), half);
+	var sort3 = this.constraints.conflic3;
+	this.conflicts[3] = split_constraint_list_at(sort3, half);
     }
 };
 
