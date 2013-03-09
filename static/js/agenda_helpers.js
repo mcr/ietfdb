@@ -42,11 +42,15 @@ function find_session_id(session_id){
 /* this pushes every event into the agendas */
 function load_events(){
     console.log("load events...");
-    /* first delete all html items */
+
+    /* first delete all html items that might have gotten saved if
+     * user save-as and went offline.
+     */
     $.each(slot_status, function(key) {
         ssid = slot_status[key];
         insert_cell(ssid.domid, "", true);
     });
+
     
     $.each(slot_status, function(key) {
         ssid_arr = slot_status[key]
@@ -63,6 +67,9 @@ function load_events(){
 	       	session.slot_status_key = key;
 
                 session.placed = true;
+
+		// connect to the group.
+		session.group();
 		
                 populate_events(key,
                                 session.title,
@@ -70,6 +77,12 @@ function load_events(){
                                 session.session_id,
                                 session.owner, session.area);
 		//log("setting "+slot_id+" as used");
+
+		// note in the group, what the class of column is.
+		// this is an array, as the group might have multiple
+		// sessions.
+		group = session.group();
+		group.add_column_class(ssid.column_class);
 
             } else {
 		//log("ssid: "+key+" is null");
