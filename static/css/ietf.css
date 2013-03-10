@@ -333,6 +333,21 @@ div#conflict_table {
   background-color: #89D;
 }
 
+#conflict_table div.conflict {
+  text-align: left;
+}
+#conflict_table div.conflict1 {
+}
+#conflict_table div.conflict1 {
+}
+#conflict_table div.conflict1 {
+}
+
+.agenda_column_2012-03-30__1120 {
+  background-color: red;
+  text-decoration: line-through;
+  
+}
 
 /* ::-webkit-scrollbar{ */
 /*     width:3px; */

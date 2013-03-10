@@ -97,6 +97,8 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
     ss.time        = time;
     ss.room        = room;
 
+    ss.column_class= ".agenda-column-"+date+"-"+time;
+
     var d = new Date(ss.date);
     var t = d.getUTCDay();
     //console.log("short_string "+ss.date+" gives "+t);
@@ -131,7 +133,7 @@ function Session() {
     this.last_timeslot_id = null;
     this.slot_status_key = null;
     this.href       = false;
-    this.group_obj  = false;
+    this.group_obj  = undefined;
 }
 
 function event_obj(title, description, session_id, owner, group_id, area) {
@@ -273,6 +275,13 @@ Group.prototype.load_group_obj = function(andthen) {
     }
 }
 
+Group.prototype.add_column_class = function(column_class) {
+    if(this.column_class == undefined) {
+	this.column_class = [];
+    }
+    this.column_class.push(column_class);
+};
+
 function find_group_by_href(href) {
     //console.log("group href", href, group_objs[href]);
     if(group_objs[href] == undefined) {
@@ -292,12 +301,57 @@ function find_group_by_href(href) {
 function Constraint() {
 }
 
+var conflict_classes = {};
+
+function clear_conflict_classes() {
+    $.each(conflict_classes, function(key) {
+	       constraint = conflict_classes[key];
+	       constraint.clear_conflict_view();
+	   });
+    conflict_classes = {};
+}
+function find_conflict(domid) {
+    return conflict_classes[domid];
+}
+
+Constraint.prototype.column_class = function() {
+    return this.othergroup.column_class;
+};
+
+// red is arbitrary here... There should be multiple shades of red for
+// multiple types of conflicts.
+Constraint.prototype.show_conflict_view = function() {
+    //console.log("show conflict", this.constraint_id);
+    classes=this.column_class()
+    for(ccn in classes) {
+	cc = classes[ccn];
+	//console.log("show class", cc);
+	$(cc).css("background", "red");
+    }
+};
+Constraint.prototype.clear_conflict_view = function() {
+    classes=this.column_class()
+    for(ccn in classes) {
+	cc = classes[ccn];
+	//console.log("clear class", cc);
+	$(cc).css("background", "");
+    }
+};
+
+
 Constraint.prototype.build_conflict_view = function() {
     var bothways = "&nbsp;&nbsp;&nbsp;";
     if(this.bothways) {
 	bothways=" &lt;-&gt;";
     }
-    return "<div class='conflict-"+this.conflict_type+"' id='"+this.dom_id+"'>"+this.othergroup_name+bothways+"</div>";
+    //this.checked="checked";
+
+    var checkbox_id = "conflict_"+this.dom_id;
+    conflict_classes[checkbox_id] = this;
+    return "<div class='conflict conflict-"+this.conflict_type+"' id='"+this.dom_id+
+           "'><input class='conflict_checkboxes' type='checkbox' id='"+checkbox_id+
+           "' value='"+this.checked+"'>"+this.othergroup_name+bothways+"</div>";
+
 };
 
 Constraint.prototype.build_othername = function() {

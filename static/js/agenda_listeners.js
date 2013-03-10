@@ -51,6 +51,24 @@ function color_legend_click(event){
 	legend_status[clicked] = true;
     }
     set_transparent();
+}
+
+var conflict_status = {};
+
+function conflict_click(event){
+    var clicked = $(event.target).attr('id');
+    var constraint = find_conflict(clicked);
+    //console.log("clicked", clicked);
+    //console.log("constraint for", constraint.othergroup.name);
+    if(conflict_status[clicked]){
+	conflict_status[clicked] = false;
+	constraint.clear_conflict_view();
+	constraint.checked = "checked";
+    }
+    else{
+	conflict_status[clicked] = true;
+	constraint.show_conflict_view();
+    }
 
 }
 
@@ -113,6 +131,9 @@ function meeting_event_click(event){
     }catch(err){ }
 
     $(last_item).css("background-color", '');
+
+    /* clear set ot conflict views */
+    clear_conflict_classes();
 
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     var meeting_event_id = $(this).attr('id');
@@ -316,6 +337,11 @@ function draw_constraints(session) {
 		    group_name_or_empty(conflict3_a[i]),
 		    group_name_or_empty(conflict3_b[i]));
     }
+
+    // setup check boxes for conflicts
+    $('.conflict_checkboxes').unbind('click');
+    $('.conflict_checkboxes').click(conflict_click);
+
 }
 
 var menu_bar_hidden = false;

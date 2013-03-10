@@ -58,7 +58,14 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in scheduledsessions %}
-    var s_obj= new slot_obj("{{s.id}}","{{s.empty_str}}", "{{s.timeslot.id}}", "{{s.session.id}}", "{{s.timeslot.location|slugify}}" ,"{{ s.timeslot.time|date:'Hi' }}", "{{s.timeslot.time|date:'Y-m-d'}}", "{{s.timeslot.js_identifier}}");
+    var s_obj= new slot_obj("{{s.id}}",
+                            "{{s.empty_str}}",
+			    "{{s.timeslot.id}}",
+			    "{{s.session.id}}",
+			    "{{s.timeslot.location|slugify}}",
+			    "{{s.timeslot.time|date:'Hi' }}",
+			    "{{s.timeslot.time|date:'Y-m-d'}}",
+			    "{{s.timeslot.js_identifier}}");
     if(slot_status["{{s.timeslot.js_identifier}}"] != null){ // the key so two sessions in the same timeslot
 
     }
@@ -132,7 +139,7 @@ function setup_slots(){
     <th class="vert_time">{{r}}</th>
     {% for day in time_slices %}
       {% for slot in date_slices|lookup:day %}
-        <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda_slot {% cycle 'alt' '' %}" ></td>
+        <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda-column-{{day}}-{{slot.0|date:'Hi'}} agenda_slot {% cycle 'alt' '' %}" ></td>
       {% endfor %}
     {% endfor %}
   </tr>
