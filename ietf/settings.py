@@ -13,6 +13,9 @@ except ImportError:
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# a place to put logs if necessary.
+LOG_DIR  = '/var/log/dataracker'
+
 import sys
 sys.path.append(os.path.abspath(BASE_DIR + "/.."))
 sys.path.append(os.path.abspath(BASE_DIR + "/../redesign"))
