@@ -316,12 +316,14 @@ Constraint.prototype.column_class = function() {
     return this.othergroup.column_class;
 };
 
+// red is arbitrary here... There should be multiple shades of red for
+// multiple types of conflicts.
 Constraint.prototype.show_conflict_view = function() {
-    console.log("show conflict", this.constraint_id);
+    //console.log("show conflict", this.constraint_id);
     classes=this.column_class()
     for(ccn in classes) {
 	cc = classes[ccn];
-	console.log("show class", cc);
+	//console.log("show class", cc);
 	$(cc).css("background", "red");
     }
 };
@@ -329,7 +331,7 @@ Constraint.prototype.clear_conflict_view = function() {
     classes=this.column_class()
     for(ccn in classes) {
 	cc = classes[ccn];
-	console.log("clear class", cc);
+	//console.log("clear class", cc);
 	$(cc).css("background", "");
     }
 };

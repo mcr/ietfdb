@@ -58,8 +58,8 @@ var conflict_status = {};
 function conflict_click(event){
     var clicked = $(event.target).attr('id');
     var constraint = find_conflict(clicked);
-    console.log("clicked", clicked);
-    console.log("constraint for", constraint.othergroup.name);
+    //console.log("clicked", clicked);
+    //console.log("constraint for", constraint.othergroup.name);
     if(conflict_status[clicked]){
 	conflict_status[clicked] = false;
 	constraint.clear_conflict_view();
@@ -131,6 +131,9 @@ function meeting_event_click(event){
     }catch(err){ }
 
     $(last_item).css("background-color", '');
+
+    /* clear set ot conflict views */
+    clear_conflict_classes();
 
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     var meeting_event_id = $(this).attr('id');
