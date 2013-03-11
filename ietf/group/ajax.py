@@ -8,8 +8,8 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from ietf.group.models import Group
 import datetime
 import logging
-
-logging.basicConfig(filename='ajax.log',level=logging.DEBUG) # this is not okay for production, put the log somewhere useful.
+import sys
+from ietf.settings import LOG_DIR
 
 log = logging.getLogger(__name__)
 
