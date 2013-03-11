@@ -15,6 +15,7 @@ from django.db.models import Max, Q
 import debug
 import urllib
 
+from django.shortcuts import get_object_or_404
 from ietf.idtracker.models import InternetDraft
 from ietf.utils.history import find_history_active_at
 from ietf.doc.models import Document, State
