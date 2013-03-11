@@ -286,6 +286,7 @@ function find_group_by_href(href) {
     //console.log("group href", href, group_objs[href]);
     if(group_objs[href] == undefined) {
 	group_objs[href]=new Group();
+	g = group_objs[href];
         g.loaded = false;
         g.loading= false;
     }
