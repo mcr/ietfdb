@@ -144,6 +144,7 @@ function meeting_event_click(event){
     var session = meeting_objs[meeting_event_id];
 
     if(slot == null){ // not in a real slot...
+	console.log("not a real slot");
 	var slot_obj = {   slot_id: meeting_event_id ,
             scheduledsession_id:meeting_event_id,
             timeslot_id: null,

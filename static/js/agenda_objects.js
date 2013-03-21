@@ -136,7 +136,7 @@ function Session() {
     this.group_obj  = undefined;
 }
 
-function event_obj(title, description, session_id, owner, group_id, area) {
+function event_obj(title, description, session_id, owner, group_id, area,duration) {
     session = new Session();
 
     // this.slug = slug;
@@ -149,6 +149,7 @@ function event_obj(title, description, session_id, owner, group_id, area) {
     session.loaded = false;
     session.href       = meeting_base_url+'/session/'+session_id+".json";
     session.group_href = site_base_url+'/group/'+title+".json";
+    session.duration = duration;
     return session;
 };
 
@@ -200,13 +201,19 @@ Session.prototype.generate_info_table = function(ss) {
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
+    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic. 
     $("#info_name_select").val(ss.timeslot_id);
     $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
 
     var temp_1 = $("#info_name_select_option_"+current_timeslot).val();
     $("#info_name_select_option_"+ss.scheduledsession_id).css('background-color',highlight);
+    console.log("calling...", ss.timeslot_id, ss);
 
-    $("#info_location_select").val(ss.timeslot_id);
+    if(ss.timeslot_id == null){
+	$("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
+    }else{	
+	$("#info_location_select").val(ss.timeslot_id); // ***
+    }
     //console.log("git "+"#info_location_select_option_"+this.timeslot_id);
     $("#info_location_select").val($("#info_location_select_option_"+ss.timeslot_id).val());
 

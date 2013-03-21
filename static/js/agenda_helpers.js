@@ -103,7 +103,7 @@ function populate_events(js_room_id, title, description, session_id, owner, area
 
 function event_template(event_title, description, session_id, area){
     //console.log("area:"+area)
-    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme'>"+event_title+"</th></tr>";
+    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme'>"+event_title+"<span> ("+meeting_objs[session_id].duration+")</span>"+"</th></tr>";
 }
 
 function check_free(inp){

@@ -54,7 +54,8 @@ function setup_slots(){
                                "{{s.id}}", 
                                "{{s.owner.owner}}",
                                "{{s.group.id}}",
-                               "{{s.group.parent.acronym|upper}}");
+                               "{{s.group.parent.acronym|upper}}",
+                               "{{s.requested_duration.seconds|durationFormat}}");
 {% endfor %}
 
 {% for s in scheduledsessions %}
