@@ -202,10 +202,17 @@ Session.prototype.generate_info_table = function(ss) {
 
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
     // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic. 
-    $("#info_name_select").val(ss.timeslot_id);
-    $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
+    // if(ss.timeslot_id == null){
+	console.log( "#info_name_select_option_"+ss.session_id);
+    console.log(ss);
+	$("#info_name_select").val(ss.session_id);
+//    }
+    // else{
+    // 	$("#info_name_select").val(ss.timeslot_id);
+    //	$("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
+    // }
 
-    var temp_1 = $("#info_name_select_option_"+current_timeslot).val();
+    //var temp_1 = $("#info_name_select_option_"+current_timeslot).val();
     $("#info_name_select_option_"+ss.scheduledsession_id).css('background-color',highlight);
     console.log("calling...", ss.timeslot_id, ss);
 

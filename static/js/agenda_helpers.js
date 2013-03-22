@@ -233,13 +233,20 @@ function calculate_name_select_box(){
     temp_sorted =mobj_array;
     for(var i = 0; i < mobj_array.length; i++){
 	//console.log("select box mobj["+i+"]="+mobj_array[i]);
-	html=html+"<option value='"+mobj_array[i].slot_status_key;
+	// html=html+"<option value='"+mobj_array[i].slot_status_key;
+	html=html+"<option value='"+mobj_array[i].session_id;
         html=html+"' id='info_name_select_option_";
 	ts_id = "err";
+	console.log(mobj_array[i].session_id);
 	try{
-	    ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
+	    //ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
+	    ts_id = mobj_array[i].session_id
+	    
+	    
 	    //console.log("ts_id="+ts_id);
 	}catch(err){
+	    console.log(err); // bucket list items.
+	    
 	}
         html=html+ts_id+"'>";
     

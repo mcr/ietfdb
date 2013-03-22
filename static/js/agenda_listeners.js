@@ -191,31 +191,41 @@ function info_name_select_change(){
     $(last_item).css("background-color", '');
     $(current_item).css('background-color','');
     if(last_name_item != null){
-	console.log(last_name_item);
 	$(last_name_item).css('background-color','');
-
     }
     if(current_item != null){
 	$(current_item).css('background-color','');
-
     }
     last_name_item = '#'+$('#info_name_select').val();
     var slot_id = last_name_item.substring(1,last_name_item.length);
-    var slot_status_obj = slot_status[slot_id];
-    current_item = "#session_"+slot_status_obj[0].session_id;
-    current_timeslot = slot_status_obj[0].timeslot_id;
+    console.log("slot_id:",slot_id);
+    var ssk = meeting_objs[slot_id].slot_status_key
+    current_item = "#session_"+slot_id; //slot_status_obj[0].session_id;
+    if(ssk != null){
+	var slot_status_obj = slot_status[ssk];
+	console.log("current_item:", current_item);
 
-    ss = slot_status_obj[0];
+	current_timeslot = slot_status_obj[0].timeslot_id;
+	
+	ss = slot_status_obj[0];
+	session = ss.session();
+	
+	// now set up the call back that might have to retrieve info.
+	session.load_session_obj(fill_in_session_info, ss);
+
+    }
+    else{
+	console.log("else");
+	console.log(meeting_objs[slot_id]);
+	ss = meeting_objs[slot_id];
+	ss.load_session_obj(fill_in_session_info,ss);
+    }
     $(current_item).css('background-color',highlight);
     // $('#'+$('#info_name_select').val()).css('background-color',highlight);
 
     // now find the relevant session.  The session may be found by
     // calling ss.session().
 
-    session = ss.session();
-
-    // now set up the call back that might have to retrieve info.
-    session.load_session_obj(fill_in_session_info, ss);
 }
 
 function XMLHttpGetRequest(url, sync) {
