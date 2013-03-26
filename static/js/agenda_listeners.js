@@ -339,13 +339,13 @@ function draw_constraints(session) {
                                          "<td class='conflict3'>"+
                                          group_name_or_empty(conflict1_b[i])+
                                          "</tr>");
-	console.log("draw", i,
-		    group_name_or_empty(conflict1_a[i]),
-		    group_name_or_empty(conflict1_b[i]),
-		    group_name_or_empty(conflict2_a[i]),
-		    group_name_or_empty(conflict2_b[i]),
-		    group_name_or_empty(conflict3_a[i]),
-		    group_name_or_empty(conflict3_b[i]));
+	// console.log("draw", i,
+	// 	    group_name_or_empty(conflict1_a[i]),
+	// 	    group_name_or_empty(conflict1_b[i]),
+	// 	    group_name_or_empty(conflict2_a[i]),
+	// 	    group_name_or_empty(conflict2_b[i]),
+	// 	    group_name_or_empty(conflict3_a[i]),
+	// 	    group_name_or_empty(conflict3_b[i]));
     }
 
     // setup check boxes for conflicts
@@ -557,13 +557,16 @@ function drop_drop(event, ui){
 	    break;
 	}
     }
-    if(schedulesession_id != null){
+    if(schedulesession_id != null){ 
+	start_spin();
+	console.log("start!");
+	
 	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
-                                              {
+					      {
 						  'session_id':meeting_objs[meeting_id].session_id,
 						  'scheduledsession_id': schedulesession_id,
-                                              });
-
+					      });
+	
     }
     else{
 	console.log("issue sending ajax call!!!");

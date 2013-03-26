@@ -25,10 +25,10 @@
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.draggable.js'></script>
 {% dajaxice_js_import %}
 
+<script type='text/javascript' src='/js/spin.js'></script>
 <script type='text/javascript' src='/js/agenda_edit.js'></script>
 <script type='text/javascript' src='/js/agenda_helpers.js'></script>
 <script type='text/javascript' src='/js/agenda_objects.js'></script>
-
 <script type='text/javascript' src='/js/agenda_listeners.js'></script>
 
 
@@ -118,12 +118,12 @@ function setup_slots(){
 <div class="agenda_div">
 
 <table id="meetings" class="ietf-navbar" style="width:100%">
-  <th class="schedule_title">name: {{schedule.name}}</th>
+  <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span><div id="spinner"><!-- spinney goes here --></div></th>
 {% for day in time_slices %} 
   <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class="agenda_slot_title">{{day|date:'D'}}&nbsp;({{day}})  </th>
 {% endfor %}
     <tr>
-      <th><div id="spinner"><!-- spinney goes here --></div></th>
+      <th></th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
 	      <th class="room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>

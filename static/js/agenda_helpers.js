@@ -394,6 +394,80 @@ function auto_remove(){
 }
 
 
+/* for the spinnner */
+
+/* spinner code from:  
+       http://fgnass.github.com/spin.js/   
+       
+       ex: $("#spinner").spin()      < start the spin
+           $("#spinner").spin(false) < stop the spin
+    
+       http://gist.github.com/itsflorida   < jquery functionality. 
+
+       lines: 30,            // The number of lines to draw
+       length: 7,            // The length of each line
+       width: 1,             // The line thickness
+       radius: 20,           // The radius of the inner circle
+       corners: 1,           // Corner roundness (0..1)
+       rotate: 0,            // The rotation offset
+       color: '#000',        // #rgb or #rrggbb
+       speed: 1,             // Rounds per second
+       trail: 60,            // Afterglow percentage
+       shadow: false,        // Whether to render a shadow
+       hwaccel: true,        // Whether to use hardware acceleration
+       className: 'spinner', // The CSS class to assign to the spinner
+       zIndex: 2e9,          // The zindex (defaults to 2000000000)
+       top: 'auto',          // Top position relative to parent in px
+       left: 'auto'          // Left position relative to parent in px
+
+*/
+
+(function($) {
+    $.fn.spin = function(opts, color) {
+        if (Spinner) {
+           return this.each(function() {
+               var $this = $(this),
+               data = $this.data();
+                               
+               if (data.spinner) {
+                   data.spinner.stop();
+                   delete data.spinner;
+               }
+               if (opts !== false) {
+                   if (typeof opts === "string") {
+                       if (opts in presets) {
+                           opts = presets[opts];
+                       } else {
+                           opts = {};
+                       }
+                       if (color) {
+                           opts.color = color;
+                       }
+                   }
+                   data.spinner = new Spinner($.extend({color: $this.css('color')}, opts)).spin(this);
+               }
+           });
+       } else {
+           throw "Spinner class not available.";
+       }
+    };
+})(jQuery);
+
+
+function start_spin(opts){
+//spinner
+    // $("#schedule_name").hide();
+    $("#spinner").show();
+    $("#spinner").spin({lines:16, radius:8, length:16, width:4});
+    
+}
+function stop_spin(){
+//spinner
+    $("#schedule_name").show();
+    $("#spinner").hide();
+    $("#spinner").spin(false);
+}
+
 /*
  * Local Variables:
  * c-basic-offset:4

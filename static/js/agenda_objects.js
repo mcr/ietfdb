@@ -157,6 +157,7 @@ function event_obj(title, description, session_id, owner, group_id, area,duratio
 // augument to jQuery.getJSON( url, [data], [callback] )
 Session.prototype.load_session_obj = function(andthen, arg) {
     if(!this.loaded) {
+	start_spin();
 	var oXMLHttpRequest = XMLHttpGetRequest(this.href, true);
 	var session = this; // because below, this==XMLHTTPRequest
 	oXMLHttpRequest.onreadystatechange = function() {
@@ -171,6 +172,7 @@ Session.prototype.load_session_obj = function(andthen, arg) {
 		    if(andthen != undefined) {
 			andthen(session, true, arg);
 		    }
+		    stop_spin();
 		}
 		catch(exception){
 		    console.log("exception: "+exception);
@@ -466,11 +468,11 @@ function constraint_compare(a, b)
 
 function split_constraint_list_at(things, place) {
     var keys = Object.keys(things);
-    console.log("things", keys);
+    // console.log("things", keys);
     var keys1 = keys.sort(function(a,b) {
 				     return constraint_compare(things[a],things[b]);
 				 });
-    console.log("sorted", keys1);
+    // console.log("sorted", keys1);
     var sorted_conflicts = split_list_at(things, keys1, place);
     return sorted_conflicts;
 }
