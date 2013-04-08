@@ -23,6 +23,9 @@
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.sortable.js'></script>
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.accordion.js'></script>
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.draggable.js'></script>
+
+
+
 {% dajaxice_js_import %}
 
 <script type='text/javascript' src='/js/spin.js'></script>
@@ -120,14 +123,24 @@ function setup_slots(){
 <table id="meetings" class="ietf-navbar" style="width:100%">
   <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span><div id="spinner"><!-- spinney goes here --></div></th>
 {% for day in time_slices %} 
-  <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class="agenda_slot_title">{{day|date:'D'}}&nbsp;({{day}})  </th>
+  <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class="agenda_slot_title">{{day|date:'D'}}&nbsp;({{day}})  
+  
+  </th>
+  <th class="spacer {{day|date:'Y-m-d'}}-spacer" id="">
+<div class="ui-widget-content ui-resizable" id="resize-{{day|date:'Y-m-d'}}-spacer">
+		  <div class="spacer_grip ui-resizable-handle ui-resizable-e"></div> 
+</th>
 {% endfor %}
     <tr>
       <th></th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
 	      <th class="room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
+
 	  {% endfor %}
+              <th class="spacer {{day|date:'Y-m-d'}}-spacer">
+		  <!-- <div class="spacer_grip ui-resizable-handle ui-resizable-w" style="float:right">(</div> -->
+	      </div></th>
 
     {% endfor %}
 
@@ -142,6 +155,7 @@ function setup_slots(){
       {% for slot in date_slices|lookup:day %}
         <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda-column-{{day}}-{{slot.0|date:'Hi'}} agenda_slot {% cycle 'alt' '' %}" ></td>
       {% endfor %}
+        <td class="spacer {{day|date:'Y-m-d'}}-spacer"></td>
     {% endfor %}
   </tr>
   {% endfor %}
@@ -211,6 +225,7 @@ function setup_slots(){
 	    <td class="conflict3 empty"></td>
 	    <td class="conflict3 empty"></td>
 	  </tr>
+
 	</tbody>
       </table>
     </div>
@@ -240,4 +255,3 @@ function setup_slots(){
 
 
 {% endblock %}
-

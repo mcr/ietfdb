@@ -356,6 +356,40 @@ div#conflict_table {
   /* margin-bottom:50%; */
 }
 
+
+.spacer{
+    background-color:#edf5ff;
+    
+}
+.spacer_grip{
+   /* background-color:green; */
+   min-width:4px;
+   width:4px;
+   min-height:40px;
+   height:100%;
+   /* border:1px solid red; */
+   float:right;
+   margin-left:-100%;
+   padding:0px;
+   /* cursor:se-resize; */
+
+background: #99beff; /* Old browsers */
+background: -moz-linear-gradient(left, #99beff 0%, #1e5799 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,#99beff), color-stop(100%,#1e5799)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left, #99beff 0%,#1e5799 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left, #99beff 0%,#1e5799 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left, #99beff 0%,#1e5799 100%); /* IE10+ */
+background: linear-gradient(to right, #99beff 0%,#1e5799 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', endColorstr='#1e5799',GradientType=1 ); /* IE6-9 */
+}
+
+.ui-resizable-e{
+    cursor: w-resize;
+}
+.ui-resizable-w{
+    cursor: e-resize;
+    
+}
 /* ::-webkit-scrollbar{ */
 /*     width:3px; */
 /* } */

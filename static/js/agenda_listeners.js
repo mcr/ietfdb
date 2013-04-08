@@ -20,6 +20,7 @@
 
 
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
+var global_e = null;
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
     $('.meeting_event').click(meeting_event_click);
@@ -34,8 +35,36 @@ function listeners(){
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
 
+    for(i = 0; i<days.length;i++){  
+        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10, 
+						   handles: "e, s",
+						   minWidth:4,
+						   
+						  });
+        
+    }
+    // $('.spacer').click(function(event) {
+    //     var target = $($(event).attr('toElement')).attr('class');
+    //     target = "."+target.split(' ')[1];
+    //     console.log(target);
+    //     // expand_spacer(target);
+    //     // $(target).resizable({alsoResize: ".spacer"});
+    // });
 }
 
+
+
+function expand_spacer(target) {
+    console.log(target);
+    var current_width = $(target).css('min-width');
+    current_width = current_width.substr(0,current_width.search("px"));
+    console.log(current_width);
+    current_width = parseInt(current_width) + 20;
+    console.log(current_width);
+    $(target).css('min-width',current_width);
+    $(target).css('width',current_width);
+ 
+}
 
 /* the functionality of these listeners will never change so they do not need to be run twice  */
 function static_listeners(){
@@ -78,12 +107,22 @@ function set_transparent(){
 	$.each(legend_status, function(k){
 	    if(meeting_objs[key].area == k){
 		if(legend_status[k] == true){
-		    $("#session_"+key).css({'opacity':1});
-		    $("#session_"+key).draggable("option","cancel",null);
+		    if(meeting_objs[key].slot_status_key == null){
+			$("#session_"+key).show();
+		    }
+		    else{
+			$("#session_"+key).css({'opacity':1});
+			$("#session_"+key).draggable("option","cancel",null);
+		    }
 		}
 		else{
-		    $("#session_"+key).css({'opacity':0.1});
-		    $("#session_"+key).draggable("option","cancel",".meeting_event");
+		    if(meeting_objs[key].slot_status_key == null){
+			$("#session_"+key).hide();
+		    }
+		    else{
+			$("#session_"+key).css({'opacity':0.1});
+			$("#session_"+key).draggable("option","cancel",".meeting_event");
+		    }
 		}
 	    }
 	    
