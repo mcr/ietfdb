@@ -127,8 +127,9 @@ function setup_slots(){
   
   </th>
   <th class="spacer {{day|date:'Y-m-d'}}-spacer" id="">
-<div class="ui-widget-content ui-resizable" id="resize-{{day|date:'Y-m-d'}}-spacer">
-		  <div class="spacer_grip ui-resizable-handle ui-resizable-e"></div> 
+    <div class="ui-widget-content ui-resizable" id="resize-{{day|date:'Y-m-d'}}-spacer">
+      <div class="spacer_grip ui-resizable-handle ui-resizable-e"></div>
+    </div>
 </th>
 {% endfor %}
     <tr>
@@ -139,7 +140,6 @@ function setup_slots(){
 
 	  {% endfor %}
               <th class="spacer {{day|date:'Y-m-d'}}-spacer">
-		  <!-- <div class="spacer_grip ui-resizable-handle ui-resizable-w" style="float:right">(</div> -->
 	      </div></th>
 
     {% endfor %}
@@ -168,6 +168,7 @@ function setup_slots(){
 
 <div id="session-info" class="ui-droppable bucket-list room_title">
   <div class="agenda_slot_title"><b>Session Information:</b></div>
+
   <div class="ss_info_box">
     <div class="ss_info ss_info_left">
       <table>
@@ -176,6 +177,7 @@ function setup_slots(){
 	<tr><td class="ss_info_name_short">Area:</td><td id="info_area"></td></tr>
       </table>
     </div>
+
     <div class="ss_info ss_info_right">
       <table>
 	<tr><td class="ss_info_name_long">Duration:</td><td id="info_duration"></td></tr>
@@ -188,11 +190,11 @@ function setup_slots(){
     <div id="conflict_table">
       <table>
 	<tr>
-	  <th class="heading" colspan=2>conflict 1</th>
+	  <th class="heading" colspan=2>conflict 1 <span class="small right cb_all_conflict">show all<input id="cb_conflict1" type="checkbox"></span></th>
 	  <th class="border"></th>
-	  <th class="heading" colspan=2>conflict 2</th>
+	  <th class="heading" colspan=2>conflict 2<span class="small right cb_all_conflict">show all<input id="cb_conflict2" type="checkbox"></span></th>
 	  <th class="border"></th>
-	  <th class="heading" colspan=2>conflict 3</th>
+	  <th class="heading" colspan=2>conflict 3<span class="small right cb_all_conflict">show all<input id="cb_conflict3" type="checkbox"></span></th>
 	</tr>
 	<tbody id="conflict_table_body">
 	  <tr id="row01">
@@ -229,6 +231,7 @@ function setup_slots(){
 	</tbody>
       </table>
     </div>
+    <div class="agenda_find_free"><button id="find_free">Find Free</button></div>
     <div class="color_legend">
       {% for area in area_list %}
       <span class="{{area.upcase_acronym}}-scheme"><input class='color_checkboxes' type="checkbox" id="{{area.upcase_acronym}}" value="{{area.upcase_acronym}}-value" checked>{{area.upcase_acronym}}</span>
