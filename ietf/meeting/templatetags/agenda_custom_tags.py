@@ -30,11 +30,16 @@ def get_col_width(dict, index):
         return len(dict[index])
     return 0
 
-# used because html id's should not have spaces in them.
-@register.filter(name='nospace')
-def nospace(inp):
-    return str(inp).replace(' ','_')
-    
+# Replaces characters that are not acceptable html ID's. ' ','&','/','\' to '_'
+@register.filter(name='to_acceptable_id')
+def to_acceptable_id(inp):
+    out = str(inp)
+    out = out.replace(' ','_')
+    out = out.replace('&','_')
+    out = out.replace('/','_')
+    out = out.replace('\\','_')
+    return out
+
     
 @register.filter(name='durationFormat')
 def durationFormat(inp):
