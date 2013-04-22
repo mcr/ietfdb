@@ -38,6 +38,9 @@ function find_session_id(session_id){
     });
 }
 
+function style_empty_slots(){
+    
+}
 
 /* this pushes every event into the agendas */
 function load_events(){
@@ -55,13 +58,14 @@ function load_events(){
     $.each(slot_status, function(key) {
         ssid_arr = slot_status[key]
 	if(key == "sortable-list"){
-	    console.log("sortable list");
+	    //console.log("sortable list");
 	}else{
 	
 	for(var q = 0; q<ssid_arr.length; q++){
 	    ssid = ssid_arr[q];
             slot_id = ("#"+ssid.domid);
-            $(slot_id).css('background-color',color_droppable_empty_slot ); //'#006699'
+//            $(slot_id).css('background-color',color_droppable_empty_slot ); //'#006699'
+	    $(slot_id).addClass('free_slot');
             session = meeting_objs[ssid.session_id];
             if (session != null) {
 	       	session.slot_status_key = key;
@@ -128,6 +132,7 @@ function clear_highlight(inp_arr){ // @args: array from slot_status{}
 	return false;
     }
     for(var i =0; i<inp_arr.length; i++){
+	$("#session_"+inp_arr[i].session_id).removeClass('free_slot');
 	$("#session_"+inp_arr[i].session_id).css('background-color','');
     }
     return true;
@@ -285,6 +290,7 @@ function insert_cell(js_room_id, text, replace){
 	    
         }
         $(slot_id).css('background','');
+	$(slot_id).removeClass('free_slot');
         if(found.length == 0){
             // do something here, if length was zero... then?
         }

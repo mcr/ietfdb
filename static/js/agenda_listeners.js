@@ -11,16 +11,7 @@
 *
 */
 
-
-// console = {
-//     log: function(inp){
-
-//     }
-// };
-
-
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
-var global_e = null;
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
     $('.meeting_event').click(meeting_event_click);
@@ -31,36 +22,72 @@ function listeners(){
     $('#info_name_select').unbind('change');
     $('#info_name_select').change(info_name_select_change);
 
-//    $('span.APP-scheme').click(function(event){ console.log("click") });
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
 
     for(i = 0; i<days.length;i++){  
         $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10, 
 						   handles: "e, s",
-						   minWidth:4,
+						   minWidth:2,
 						   
 						  });
         
     }
-    // $('.spacer').click(function(event) {
-    //     var target = $($(event).attr('toElement')).attr('class');
-    //     target = "."+target.split(' ')[1];
-    //     console.log(target);
-    //     // expand_spacer(target);
-    //     // $(target).resizable({alsoResize: ".spacer"});
-    // });
+
+    /* listener for when one clicks the 'show all' checkbox */
+    $('.cb_all_conflict').unbind('click');
+    $('.cb_all_conflict').click(function(event){
+	var conflict_clicked = $(event.target).attr('id');
+	try{
+	    var conflict_clicked = conflict_clicked.substr(3);
+	}catch(err){
+	    
+	}
+	$("."+conflict_clicked+" input").click();
+    })
+
+    $('#find_free').unbind('click');
+    $('#find_free').click(function(event){
+	find_free();
+    });
+
+
+}
+
+function find_empty_slot(){
+    var free_slots = []
+    $.each($(".free_slot"), function(index,item){
+	if(!$(item).hasClass("show_conflict_view_highlight")){
+	    free_slots.push(item);
+	}
+    });
+    
+    if(free_slots.length > 0){
+	return free_slots[0]; // just return the first one. 
+    }
+    else{
+	return null;
+    }
+
+}
+
+function find_free(){
+    var empty_slot = find_empty_slot();
+    if(empty_slot != null){
+	$(empty_slot).effect("highlight", {},3000);
+	if(current_item != null){
+	    $(current_item).addClass('ui-effects-transfer');
+	    $(current_item).effect("transfer", {to: $(empty_slot) }, 1000);
+	}
+	$(current_item).removeClass('ui-effects-transfer');
+    }
 }
 
 
-
 function expand_spacer(target) {
-    console.log(target);
     var current_width = $(target).css('min-width');
     current_width = current_width.substr(0,current_width.search("px"));
-    console.log(current_width);
     current_width = parseInt(current_width) + 20;
-    console.log(current_width);
     $(target).css('min-width',current_width);
     $(target).css('width',current_width);
  
@@ -87,8 +114,6 @@ var conflict_status = {};
 function conflict_click(event){
     var clicked = $(event.target).attr('id');
     var constraint = find_conflict(clicked);
-    //console.log("clicked", clicked);
-    //console.log("constraint for", constraint.othergroup.name);
     if(conflict_status[clicked]){
 	conflict_status[clicked] = false;
 	constraint.clear_conflict_view();
@@ -132,20 +157,21 @@ function set_transparent(){
 }
 
 var clicked_event;
-
+var __DEBUG__SESSION_OBJ;
+var __DEBUG__SLOT_OBJ;
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
-    console.log("Meeting_event_click");
     try{
 	clear_highlight(find_friends(current_item));
     }catch(err){ }
 
     $(last_item).css("background-color", '');
+    $(last_item).removeClass('free_slot');
 
     /* clear set ot conflict views */
     clear_conflict_classes();
-
+    conflict_classes = {};
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     var meeting_event_id = $(this).attr('id');
 
@@ -156,13 +182,11 @@ function meeting_event_click(event){
     var session = meeting_objs[meeting_event_id];
 
     if(slot == null){ // not in a real slot...
-	console.log("not a real slot");
 	var slot_obj = {   slot_id: meeting_event_id ,
             scheduledsession_id:meeting_event_id,
             timeslot_id: null,
             session_id: meeting_event_id,
          }
-
 	session.load_session_obj(fill_in_session_info, slot_obj);
 	return;
     }
@@ -179,6 +203,8 @@ function meeting_event_click(event){
 	    empty_info_table();
 	    session.load_session_obj(fill_in_session_info, slot[i]);
 	}
+	__DEBUG__SLOT_OBJ = slot[i];
+	__DEBUG__SESSION_OBJ = session;
     }
 
 }
@@ -186,20 +212,15 @@ function meeting_event_click(event){
 var last_item = null; // used during location change. we make the background color
 // of the timeslot highlight because it is being set into that slot.
 function info_location_select_change(){
-    console.log("last_item...");
     if(last_item != null){
-	console.log(last_item);
 	$(last_item).css('background-color','');
     }
     last_item = '#'+$('#info_location_select').val();
-    console.log("last_item...");
-    //$('#'+$('#info_location_select').val()).css('background-color',highlight);
     $(last_item).css('background-color',highlight);
 }
 
 var last_name_item = null;
 function info_name_select_change(){
-    console.log(last_item);
     $(last_item).css("background-color", '');
     $(current_item).css('background-color','');
     if(last_name_item != null){
@@ -207,28 +228,21 @@ function info_name_select_change(){
     }
     if(current_item != null){
 	$(current_item).css('background-color','');
-    }
+     }
     last_name_item = '#'+$('#info_name_select').val();
     var slot_id = last_name_item.substring(1,last_name_item.length);
-    console.log("slot_id:",slot_id);
     var ssk = meeting_objs[slot_id].slot_status_key
     current_item = "#session_"+slot_id; //slot_status_obj[0].session_id;
     if(ssk != null){
 	var slot_status_obj = slot_status[ssk];
-	console.log("current_item:", current_item);
-
 	current_timeslot = slot_status_obj[0].timeslot_id;
-	
 	ss = slot_status_obj[0];
 	session = ss.session();
-	
 	// now set up the call back that might have to retrieve info.
 	session.load_session_obj(fill_in_session_info, ss);
 
     }
     else{
-	console.log("else");
-	console.log(meeting_objs[slot_id]);
 	ss = meeting_objs[slot_id];
 	ss.load_session_obj(fill_in_session_info,ss);
     }
@@ -255,10 +269,8 @@ function retrieve_session_by_id(session_id) {
     oXMLHttpRequest.send();
     if(oXMLHttpRequest.readyState == XMLHttpRequest.DONE) {
         try{
-            //console.log("parsing: "+this.responseText);
             last_json_txt = oXMLHttpRequest.responseText;
             session_obj   = JSON.parse(oXMLHttpRequest.responseText);
-            //console.log("parsed: "+constraint_list);
             last_json_reply = session_obj;
         }
         catch(exception){
@@ -275,18 +287,11 @@ function fill_in_constraints(session_obj, success, constraint_list, andthen)
         return false;
     }
 
-    //console.log("got constraint list: "+constraint_list);
-
     var i = 10;
-
     $.each(constraint_list, function(key){
 	       thing = constraint_list[key];
-	       //console.log("processing constraint: ", JSON.stringify(thing));
 	       session_obj.add_constraint_obj(thing);
            });
-
-    //console.log("session object: ",session_obj);
-
     session_obj.sort_constraints();
 
     // now draw the constraints on the screen.
@@ -300,7 +305,6 @@ function dajaxice_error(a){
 
 function fill_in_session_info(session, success, extra) {
     if(session == null || session == "None" || !success){
-	console.log("null returned");
 	empty_info_table();
     }
     $('#ss_info').html(session.generate_info_table(extra));
@@ -311,14 +315,11 @@ function group_name_or_empty(constraint) {
     if(constraint == undefined) {
 	return "";
     } else {
-        //console.log("getting view for ", constraint);
 	return constraint.conflict_view();
     }
 }
 
 function draw_constraints(session) {
-    //console.log("conflict", session.constraints.conflict);
-
     $("#conflict_table_body").html("");
 
     if(!"conflicts" in session) {
@@ -388,7 +389,6 @@ function hide_ietf_menu_bar(){
 
 /* create the droppable */
 function droppable(){
-    console.log("droppable called");
     $(function() {
 	/* the thing that is draggable */
 	$( ".meeting_event").draggable({
@@ -421,16 +421,14 @@ function droppable(){
 
 var arr_key_index = null;
 function update_to_slot(meeting_id, to_slot_id, force){
-    console.log("\t----update_to_slot----");
-
     var to_slot = slot_status[to_slot_id];
-//    console.log(to_slot, to_slot.length);
+
     var found = false;
     for(var i=0; i<to_slot.length; i++){
 	if(to_slot[i].empty == "True" || to_slot[i].empty == true){ // we found a empty place to put it.
 	    // setup slot_status info.
 	    to_slot[i].session_id = meeting_id;
-	    console.log(meeting_id);
+
 	    to_slot[i].empty = false;
 
 	    // update meeting_obj
@@ -439,11 +437,11 @@ function update_to_slot(meeting_id, to_slot_id, force){
 	    meeting_objs[meeting_id].placed = true;
 	    found = true;
 	    // update from_slot
-//	    console.log("work is done, breaking");
+
 	    return found;
 	}
     }
-    console.log("\tsomething was not found...");
+
     if(!found && force){
 	to_slot.push(new slot_obj(to_slot[0].scheduledsession_id, to_slot[0].empty, to_slot[0].timeslot_id,meeting_id,to_slot[0].room, to_slot[0].time,to_slot[0].date,to_slot[0].domid));
 	found = true;
@@ -454,10 +452,10 @@ function update_to_slot(meeting_id, to_slot_id, force){
 
 
 function update_from_slot(meeting_id, from_slot_id){
-    console.log("\t----update_from_slot-----");
+
     var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
     var found = false;
-//    console.log(from_slot_id, from_slot, from_slot.length);
+
     if(from_slot_id != null){ // it will be null if it's coming from a bucketlist
 	for(var k = 0; k<from_slot.length; k++){
 	    if(from_slot[k].session_id == meeting_id){
@@ -484,14 +482,14 @@ function update_from_slot(meeting_id, from_slot_id){
 	          This should happen with the bucket list as it should continously grow.
  */
 function move_slot(meeting_id,from_slot_id,to_slot_id,force){
-
+    // not implemented.
 
 
 }
 
 
 function drop_drop(event, ui){
-    console.log("------ drop drop --------");
+
     var meeting_id = ui.draggable.attr('id'); // the meeting id.
     meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
 
@@ -508,8 +506,6 @@ function drop_drop(event, ui){
 	    return
 	}
     }
-//    console.log("to_slot_id",to_slot_id, slot_status[to_slot_id]);
-//    console.log("from_slot_id",from_slot_id, slot_status[from_slot_id]);
     var update_to_slot_worked = false;
 
     if(bucket_list){
@@ -548,18 +544,23 @@ function drop_drop(event, ui){
     /* set colors */
     if(check_free({id:to_slot_id}) ){
 	$(this).css('background-color', color_droppable_empty_slot)
+	$(this).addClass('free_slot')
     }
     else{
 	$(this).css('background-color',none_color);
+	$(this).removeClass('free_slot')
     }
 
     if(check_free({id:from_slot_id}) ){
 	$("#"+from_slot_id).css('background-color', color_droppable_empty_slot)
+	$("#"+from_slot_id).addClass('free_slot');
     }
     else{
 	$("#"+from_slot_id).css('background-color',none_color);
+	$("#"+from_slot_id).removeClass('free_slot');
     }
     $("#"+"sortable-list").css('background-color',none_color);
+    $("#"+"sortable-list").removeClass('free_slot');
     /******************************************************/
 
     var schedulesession_id = null;
@@ -571,8 +572,6 @@ function drop_drop(event, ui){
     }
     if(schedulesession_id != null){ 
 	start_spin();
-	console.log("start!");
-	
 	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
 					      {
 						  'session_id':meeting_objs[meeting_id].session_id,
@@ -585,13 +584,11 @@ function drop_drop(event, ui){
     }
     droppable();
     listeners();
-    console.log("moving complete.");
 }
 
 /* what happens when we drop the session onto the bucket list
    (thing named "unassigned events") */
 function drop_bucket(event,ui){
-    console.log("------ drop bucket --------");
 
     var meeting_id = ui.draggable.attr('id');
     meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
@@ -600,7 +597,7 @@ function drop_bucket(event,ui){
     var from_slot_id = meeting_objs[meeting_id].slot_status_key;
 
     if(to_slot_id == "sortable-list"){ // it's being moved to the bucketlist so update where it's coming from.
-	console.log("sortable-list dest");
+
 	if (!update_from_slot(meeting_id, from_slot_id)){
 	    console.log(slot_status[from_slot_id]);
 	    console.log("issue updating from_slot");
@@ -608,7 +605,7 @@ function drop_bucket(event,ui){
 	}
     }
     else{ // moving from bucket list to a slot, so update it's dest.
-	console.log("moving from bucket_list");
+
 	if (!update_to_slot(meeting_id, to_slot_id)){
 	    console.log("issue updating to_slot");
 	    return;
@@ -627,13 +624,13 @@ function drop_bucket(event,ui){
 
     droppable();
     listeners();
-    console.log("moving complete.");
+
 }
 
 
 
 function drop_bucket2(event,ui){
-    console.log("drop_bucket called");
+
     var temp_session_id = ui.draggable.attr('id'); // the django session id
     var idd = temp_session_id.substring(8,temp_session_id.length);
     var session_obj =  meeting_objs[idd];
@@ -676,6 +673,7 @@ function drop_over(event, ui){
 function drop_out(event, ui){
     if(check_free(this)){
 	$(this).css("background",color_droppable_empty_slot);
+	$(this).addClass("free_slot");
     }
 }
 
@@ -688,12 +686,9 @@ function drop_start(event,ui){
 }
 
 function drag_drag(event, ui){
-
-
-
 }
+
 function drag_start(event, ui){
-    console.log(ui);
     return;
 }
 
