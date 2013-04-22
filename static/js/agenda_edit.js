@@ -37,6 +37,7 @@ var color_droppable_empty_slot = 'rgb(0, 102, 153)';
 var last_json_txt   = "";   // last txt from a json call.
 var last_json_reply = [];   // last parsed content
 
+var hidden_rooms = [];
 /****************************************************/
 
 

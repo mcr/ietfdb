@@ -52,6 +52,30 @@ function listeners(){
     });
 
 
+    /* hiding rooms */
+    $(".close").unbind('click');
+    $(".close").click(function(event){
+	var close_room = $(event.target).attr('id');
+	close_room =  close_room.substr(6);
+	console.log(close_room);
+	$("#"+close_room).toggle();
+	hidden_rooms.push("#"+close_room);
+	$("#hidden_rooms").html(hidden_rooms.length);
+    });
+
+    $("#show_hidden_rooms").unbind('click');
+    $("#show_hidden_rooms").click(function (event){
+	$.each(hidden_rooms, function(index,room){
+	    $(room).show();
+	});
+	hidden_rooms = [];
+	$("#hidden_rooms").html(hidden_rooms.length);
+	    
+    });
+
+
+    /* hiding days */
+    
 }
 
 function find_empty_slot(){

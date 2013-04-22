@@ -133,7 +133,7 @@ function setup_slots(){
 </th>
 {% endfor %}
     <tr>
-      <th></th>
+      <th><span class="very_small left">hidden rooms:<span id="hidden_rooms">0</span></span><span class="right"><button class="small_button" id="show_hidden_rooms">Show</button></span></th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
 	      <th class="room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
@@ -149,8 +149,13 @@ function setup_slots(){
 
 
   {% for r in rooms %} 
-  <tr id="{{r|nospace}}" class="agenda_slot"> 
-    <th class="vert_time">{{r}}</th>
+  <tr id="{{r|to_acceptable_id}}" class="agenda_slot"> 
+    <th class="vert_time">
+      <table class="minimal_table">
+	<tr><td><div class="close very_small" id="close_{{r|to_acceptable_id}}">X</div></td><td></td></tr>
+	<tr><td></td><td>{{r}}</td></tr>
+      </table>
+      <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->
     {% for day in time_slices %}
       {% for slot in date_slices|lookup:day %}
         <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="agenda-column-{{day}}-{{slot.0|date:'Hi'}} agenda_slot {% cycle 'alt' '' %}" ></td>
