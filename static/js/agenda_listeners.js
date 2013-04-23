@@ -53,28 +53,48 @@ function listeners(){
 
 
     /* hiding rooms */
-    $(".close").unbind('click');
-    $(".close").click(function(event){
+    $(".close_room").unbind('click');
+    $(".close_room").click(function(event){
 	var close_room = $(event.target).attr('id');
 	close_room =  close_room.substr(6);
 	console.log(close_room);
-	$("#"+close_room).toggle();
+	$("#"+close_room).hide("fast");
 	hidden_rooms.push("#"+close_room);
-	$("#hidden_rooms").html(hidden_rooms.length);
+	$("#hidden_rooms").html((hidden_rooms.length.toString()+"/"+total_rooms.toString()));
     });
 
     $("#show_hidden_rooms").unbind('click');
     $("#show_hidden_rooms").click(function (event){
 	$.each(hidden_rooms, function(index,room){
-	    $(room).show();
+	    $(room).show("fast");
 	});
 	hidden_rooms = [];
-	$("#hidden_rooms").html(hidden_rooms.length);
+	$("#hidden_rooms").html(hidden_rooms.length.toString()+"/"+total_rooms.toString());
 	    
     });
 
 
     /* hiding days */
+    $(".close_day").unbind('click');
+    $(".close_day").click(function(event){
+	var close_day = $(event.target).attr('id');
+	close_day = close_day.substr(6);
+	close_day = ".day_"+close_day;
+	$(close_day).hide("slow");
+	hidden_days.push(close_day);
+	$("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
+    });
+
+
+    $("#show_hidden_days").unbind('click');
+    $("#show_hidden_days").click(function (event){
+	$.each(hidden_days, function(index,room){
+	    $(room).show("fast");
+	});
+	hidden_days = [];
+	$("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString);
+	    
+    });
     
 }
 

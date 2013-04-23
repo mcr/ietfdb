@@ -38,6 +38,9 @@ var last_json_txt   = "";   // last txt from a json call.
 var last_json_reply = [];   // last parsed content
 
 var hidden_rooms = [];
+var total_rooms = 0; // the number of rooms
+var hidden_days = [];
+var total_days = 0; // the number of days
 /****************************************************/
 
 

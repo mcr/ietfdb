@@ -33,6 +33,7 @@ body {
   background-color:#2647A0;
   overflow-x: hidden;
   padding: 7px 3px;
+  position:relative;
 }
 
 .bucket-list .agenda_slot_title {
@@ -288,6 +289,7 @@ td.ss_info_name_short{
   /* margin-bottom:3px; */
   padding: 5px;
   max-width:  150px;
+  min-height:97px;
 }
 
 .schedule_title {
@@ -452,6 +454,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 
 }
+.top_left{
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+
 
 .close{
     cursor:pointer;
@@ -463,8 +472,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     min-height:11px;
     height:11px;
     max-height:11px;
-
+    border: 1px solid black;
     border-radius: 50%;
+
 }
 
 .minimal_table{
@@ -475,9 +485,31 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 
 .small_button{
-    /* padding-top:1px; */
-    /* padding-bottom:1px; */
     font-size:8px;
-    background-color:white;
     cursor:pointer;
+}
+
+
+.show_hidden_things{
+    
+    position: absolute;
+    right:    200px;
+    bottom:   5px;
+    border: 1px solid #89D;
+    font-size: 11px;
+    background-color: #EDF5FF;
+    margin: 3px; 
+    padding: 5px;
+    max-width:  150px;
+    min-height:97px;
+    min-width:150px;
+}
+
+
+.hide_buttons{
+    margin:4px;
+    float:left;
+    min-width:150px;
+    border-bottom:1px solid #89D;
+
 }
