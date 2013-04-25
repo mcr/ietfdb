@@ -25,6 +25,16 @@
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.draggable.js'></script>
 
 
+{% if server_mode %}
+	{% ifnotequal server_mode "production" %} 
+	<script src="https://towtruck.mozillalabs.com/towtruck.js"></script>
+	{% endifnotequal %}
+{% endif %}
+
+
+
+
+
 
 {% dajaxice_js_import %}
 
@@ -181,7 +191,7 @@ function setup_slots(){
       <table>
 	<tr><td class="ss_info_name_short">Group:</td><td id="info_grp"></td></tr>
 	<tr><td class="ss_info_name_short">Name:</td><td id="info_name"></td></tr>
-	<tr><td class="ss_info_name_short">Area:</td><td id="info_area"></td></tr>
+	<tr><td class="ss_info_name_short">Area:</td><td><span id="info_area"></span><button id="show_all_area" class="right">Show All</button></td></tr>
       </table>
     </div>
 
@@ -274,8 +284,9 @@ function setup_slots(){
 
 </div>
 
-
-
-
-
+{% if server_mode %}
+	{% ifnotequal server_mode "production" %} 
+	<button onclick="TowTruck(this); return false;">Start TowTruck</button>
+	{% endifnotequal %}
+{% endif %}
 {% endblock %}
