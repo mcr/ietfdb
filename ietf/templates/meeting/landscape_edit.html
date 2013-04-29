@@ -118,7 +118,7 @@ function setup_slots(){
 
 {% block noTable %}
 </tr></table></div>
-<div class="wrapper">
+<div class="wrapper custom_text_stuff">
 <div style="ui-icon ui-icon-arrow-1-w" id="CLOSE_IETF_MENUBAR">
 <
 
@@ -165,7 +165,7 @@ function setup_slots(){
   <tr id="{{r|to_acceptable_id}}" class="agenda_slot"> 
     <th class="vert_time">
       <div class="close very_small close_room top_left small_button" id="close_{{r|to_acceptable_id}}">X</div>
-      <div style="margin-left:12px;" class="right">{{r}}</div>
+      <div class="right room_name">{{r}}</div>
       
       <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->
     {% for day in time_slices %}

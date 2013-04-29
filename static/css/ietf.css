@@ -1,11 +1,19 @@
-body {
+/* body { */
+/*     margin-top: 40px; */
+/*     /\* text-align: center; *\/ */
+/*     font-size: 14px; */
+/*     font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif; */
+/*     vertical-align:text-top; */
+/* } */
+
+/* we had previously overwritten the tag covering the entire body. */
+.custom_text_stuff{
     margin-top: 40px;
     text-align: center;
     font-size: 14px;
     font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
     vertical-align:text-top;
 }
-
 
 .room_title{
     border:1px solid black;
@@ -511,5 +519,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     float:left;
     min-width:150px;
     border-bottom:1px solid #89D;
+
+}
+
+.room_name{
+    margin-left:12px;
+    margin-right:4px;
 
 }
