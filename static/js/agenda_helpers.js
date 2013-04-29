@@ -9,10 +9,11 @@
 *   
 */
 
-/* logging helper function */
+
 function log(text){
     console.log(text);
 }
+
 
 
 function print_all(){
@@ -36,6 +37,17 @@ function find_session_id(session_id){
 	    console.log(meeting_objs[key]);
 	}
     });
+}
+
+function find_same_area(area){
+    var areas = []
+    area = area.toUpperCase();
+    $.each(meeting_objs, function(index,obj){
+	if(obj.area == area){
+	    areas.push({id:index,slot_status_key:obj.slot_status_key})
+	    }
+    });
+    return areas
 }
 
 function style_empty_slots(){

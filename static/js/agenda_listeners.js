@@ -36,67 +36,114 @@ function listeners(){
 
     /* listener for when one clicks the 'show all' checkbox */
     $('.cb_all_conflict').unbind('click');
-    $('.cb_all_conflict').click(function(event){
-	var conflict_clicked = $(event.target).attr('id');
-	try{
-	    var conflict_clicked = conflict_clicked.substr(3);
-	}catch(err){
-	    
-	}
-	$("."+conflict_clicked+" input").click();
-    })
+    $('.cb_all_conflict').click(cb_all_conflict);
 
     $('#find_free').unbind('click');
-    $('#find_free').click(function(event){
-	find_free();
-    });
+    $('#find_free').click(function(event){ find_free(); });
 
 
     /* hiding rooms */
     $(".close_room").unbind('click');
-    $(".close_room").click(function(event){
-	var close_room = $(event.target).attr('id');
-	close_room =  close_room.substr(6);
-	console.log(close_room);
-	$("#"+close_room).hide("fast");
-	hidden_rooms.push("#"+close_room);
-	$("#hidden_rooms").html((hidden_rooms.length.toString()+"/"+total_rooms.toString()));
-    });
+    $(".close_room").click(close_room)
 
     $("#show_hidden_rooms").unbind('click');
-    $("#show_hidden_rooms").click(function (event){
-	$.each(hidden_rooms, function(index,room){
-	    $(room).show("fast");
-	});
-	hidden_rooms = [];
-	$("#hidden_rooms").html(hidden_rooms.length.toString()+"/"+total_rooms.toString());
-	    
-    });
+    $("#show_hidden_rooms").click(show_hidden_rooms);
 
 
     /* hiding days */
     $(".close_day").unbind('click');
-    $(".close_day").click(function(event){
-	var close_day = $(event.target).attr('id');
-	close_day = close_day.substr(6);
-	close_day = ".day_"+close_day;
-	$(close_day).hide("slow");
-	hidden_days.push(close_day);
-	$("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
-    });
+    $(".close_day").click(close_day);
 
 
     $("#show_hidden_days").unbind('click');
-    $("#show_hidden_days").click(function (event){
-	$.each(hidden_days, function(index,room){
-	    $(room).show("fast");
-	});
-	hidden_days = [];
-	$("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString);
-	    
-    });
+    $("#show_hidden_days").click(show_hidden_days);
+
+
+    $("#show_all_area").unbind('click');
+    $("#show_all_area").click(show_all_area);
+
     
 }
+
+
+/************ click functions *********************************************************************/
+function cb_all_conflict(event){
+    var conflict_clicked = $(event.target).attr('id');
+    try{
+	var conflict_clicked = conflict_clicked.substr(3);
+    }catch(err){
+	
+    }
+    $("."+conflict_clicked+" input").click();
+    
+
+}
+
+function close_room(event){
+    var close_room = $(event.target).attr('id');
+    close_room =  close_room.substr(6);
+    console.log(close_room);
+    $("#"+close_room).hide("fast");
+    hidden_rooms.push("#"+close_room);
+    $("#hidden_rooms").html((hidden_rooms.length.toString()+"/"+total_rooms.toString()));
+}
+
+function show_hidden_rooms(event){
+    $.each(hidden_rooms, function(index,room){
+	$(room).show("fast");
+    });
+    hidden_rooms = [];
+    $("#hidden_rooms").html(hidden_rooms.length.toString()+"/"+total_rooms.toString());
+}
+
+function close_day(event){
+    var close_day = $(event.target).attr('id');
+    close_day = close_day.substr(6);
+    close_day = ".day_"+close_day;
+    $(close_day).hide("slow");
+    hidden_days.push(close_day);
+    $("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
+}
+
+function show_hidden_days(event){
+    $.each(hidden_days, function(index,room){
+	$(room).show("fast");
+    });
+    hidden_days = [];
+    $("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
+    
+}
+
+function show_all_area(event){
+    var areas = find_same_area($("#info_area").children().text());
+    console.log(areas);
+    $.each(areas, function(index,obj){
+	
+	var selector = $("#"+obj.slot_status_key);
+	if(slot_item_hidden(selector) ){
+	    $("#"+obj.slot_status_key).effect("highlight", {color:"lightcoral"}, 2000);
+	}
+    });
+}
+
+
+/************ END click functions *********************************************************************/
+
+function slot_item_hidden(selector){
+// checking if the thing we will visually display is hidden. (performing effects will break the previous hide)
+    var show = true;
+    
+    $.each(hidden_days, function(index,value){ 
+	if(selector.hasClass(value.substr(1))){
+	    show=false;
+	    return show;
+	}
+    });    
+    return show;
+}
+
+
+
 
 function find_empty_slot(){
     var free_slots = []

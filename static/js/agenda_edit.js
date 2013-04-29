@@ -43,10 +43,6 @@ var hidden_days = [];
 var total_days = 0; // the number of days
 /****************************************************/
 
-
-
-
-
 /////////////-END-GLOBALS-///////////////////////////////////////
 
 /* refactor this out into the html */
