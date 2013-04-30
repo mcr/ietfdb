@@ -234,8 +234,6 @@ def edit_agenda(request, num=None, schedule_name=None):
     scheduledsessions = get_scheduledsessions_from_schedule(schedule)
     modified = get_modified_from_scheduledsessions(scheduledsessions)
 
-    ntimeslots = get_ntimeslots_from_ss(schedule, scheduledsessions)
-
     area_list = get_areas()
     wg_name_list = get_wg_name_list(scheduledsessions)
     wg_list = get_wg_list(wg_name_list)
@@ -251,8 +249,7 @@ def edit_agenda(request, num=None, schedule_name=None):
                       args=[meeting.number, schedule.name])
 
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
-                                         {"timeslots":ntimeslots,
-                                          "schedule":schedule,
+                                         {"schedule":schedule,
                                           "saveas": saveas,
                                           "saveasurl": saveasurl,
                                           "meeting_base_url": meeting_base_url,
