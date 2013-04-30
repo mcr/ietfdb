@@ -15,6 +15,60 @@ function log(text){
 }
 
 
+/* move_slot
+   Moves a meeting(from) to a slot (to).
+   No checks are done to see if the slot it's moving to is free,
+   this can be considered a method of forcing a slot to a place. 
+   
+   @params:
+   'from' - meeting key (searching in meeting_objs[])
+   'to'   - slot_status key (searching in slot_status[])
+
+*/
+
+
+
+
+function move_slot(from,to){
+    console.log("!!!");
+    var meeting = meeting_objs[from];
+    var from_slot = meeting_objs[from].slot_status_key;
+    
+    var to_slot = slot_status[to];
+
+    console.log(meeting_objs[from]);
+    console.log(from_slot);
+
+    var result = update_to_slot(from, to, true); // true if the job succeeded
+    
+    if(result){
+	if(update_from_slot(from,from_slot)){
+	    console.log("success");
+	}else{
+	    console.log("fail");
+	    }
+    }
+
+    meeting_objs[from].slot_status_key = to;
+    //*****  do dajaxice call here  ****** //
+
+    var eTemplate = event_template(meeting_objs[from].title, meeting_objs[from].description, meeting_objs[from].session_id,meeting_objs[from].area);
+
+
+    $("#"+to).append(eTemplate);
+    // $(this).append(eTemplate
+    // 		  )
+    
+    
+  //  console.log(result);
+    // console.log(meeting);
+    console.log(from_slot);
+    // console.log(to_slot);
+    
+    
+    
+    
+}
 
 function print_all(){
     console.log("all");
