@@ -565,19 +565,6 @@ function update_from_slot(meeting_id, from_slot_id){
 }
 
 
-/* move_slot
-   @args: meeting_id - id of the thing we are moving
-          from_slot_id - id of the slot it's moving from
-	  to_slot_id - id of the slot it's moving to
-	  force - if there isn't a free slot here, should we 'force' it in?
-	          This should happen with the bucket list as it should continously grow.
- */
-function move_slot(meeting_id,from_slot_id,to_slot_id,force){
-    // not implemented.
-
-
-}
-
 
 function drop_drop(event, ui){
 
