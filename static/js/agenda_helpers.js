@@ -308,7 +308,7 @@ function calculate_name_select_box(){
 	html=html+"<option value='"+mobj_array[i].session_id;
         html=html+"' id='info_name_select_option_";
 	ts_id = "err";
-	console.log(mobj_array[i].session_id);
+	//console.log(mobj_array[i].session_id);
 	try{
 	    //ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
 	    ts_id = mobj_array[i].session_id
