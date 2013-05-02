@@ -123,36 +123,44 @@ var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // ScheduledSession is DJANGO name for this object, but needs to be renamed.
 // It represents a TimeSlot that can be assigned in this schedule.
-function ScheduledSlot() {}
+//   { "scheduledsession_id": "{{s.id}}",
+//     "empty": "{{s.empty_str}}",
+//     "timeslot_id":"{{s.timeslot.id}}",
+//     "session_id" :"{{s.session.id}}",
+//     "room"       :"{{s.timeslot.location|slugify}}",
+//     "time"       :"{{s.timeslot.time|date:'Hi' }}",
+//     "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
+//     "domid"      :"{{s.timeslot.js_identifier}}"}
 
-function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
-    ss = new ScheduledSlot();
-    ss.scheduledsession_id = scheduledsession_id;
-    ss.empty       = empty;
-    ss.timeslot_id = timeslot_id;
-    ss.session_id  = session_id;
-    ss.date        = date;
-    ss.time        = time;
-    ss.room        = room;
+function ScheduledSlot(){
+}
 
-    ss.column_class= ".agenda-column-"+date+"-"+time;
+ScheduledSlot.prototype.initialize = function(json) {
+    for(var key in json) {
+	this[key]=json[key];
+    }
+    this.column_class= ".agenda-column-"+this.date+"-"+this.time;
 
-    var d = new Date(ss.date);
+    var d = new Date(this.date);
     var t = d.getUTCDay();
-    if(ss.room == "Unassigned"){
-	ss.short_string = "Unassigned";
+    if(this.room == "Unassigned"){
+	this.short_string = "Unassigned";
     }
     else{
-	ss.short_string = daysofweek[t] + ", "+ ss.time + ", " + upperCaseWords(ss.room);
+	this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
     }
-    if(domid) {
-	ss.domid = domid;
-    } else {
-	ss.domid = json_to_id(this);
-//	console.log("gen "+timeslot_id+" is domid: "+ss.domid);
+    if(!this.domid) {
+	this.domid = json_to_id(this);
+	//console.log("gen "+timeslot_id+" is domid: "+this.domid);
     }
-    return ss;
-}
+    //console.log("extend "+this.domid+" with "+JSON.stringify(this));
+
+    // the key so two sessions in the same timeslot
+    if(slot_status[this.domid] == null) { 
+	slot_status[this.domid]=[];
+    }
+    slot_status[this.domid].push(this);
+};
 
 ScheduledSlot.prototype.session = function() {
     if(this.session_id != undefined) {
@@ -161,6 +169,11 @@ ScheduledSlot.prototype.session = function() {
 	return undefined;
     }
 };
+
+function make_ss(json) {
+    var ss = new ScheduledSlot();
+    ss.initialize(json);
+}
 
 
 // SESSION OBJECTS

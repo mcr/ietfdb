@@ -73,26 +73,25 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in scheduledsessions %}
-    var s_obj= new slot_obj("{{s.id}}",
-                            "{{s.empty_str}}",
-			    "{{s.timeslot.id}}",
-			    "{{s.session.id}}",
-			    "{{s.timeslot.location|slugify}}",
-			    "{{s.timeslot.time|date:'Hi' }}",
-			    "{{s.timeslot.time|date:'Y-m-d'}}",
-			    "{{s.timeslot.js_identifier}}");
-    if(slot_status["{{s.timeslot.js_identifier}}"] != null){ // the key so two sessions in the same timeslot
-
-    }
-    else{ // doesn't exist so we create it.
-	$.extend(slot_status, { "{{s.timeslot.js_identifier}}":[]});
-    }
-    slot_status["{{s.timeslot.js_identifier}}"].push(s_obj);
+   make_ss({ "scheduledsession_id": "{{s.id}}",
+     "empty": "{{s.empty_str}}",
+     "timeslot_id":"{{s.timeslot.id}}",
+     "session_id" :"{{s.session.id}}",
+     "room"       :"{{s.timeslot.location|slugify}}",
+     "time"       :"{{s.timeslot.time|date:'Hi' }}",
+     "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
+     "domid"      :"{{s.timeslot.js_identifier}}"});
 {% endfor %}
 
-   var s_obj= slot_obj("0",true,"Unassigned",null,"Unassigned",null,null,"sortable-list");
-   $.extend(slot_status, { "sortable-list" :[]});
-   slot_status["sortable-list"].push(s_obj);
+   make_ss({ "scheduledsession_id": 0,
+     "empty": true,
+     "timeslot_id":"Unassigned",
+     "session_id" :null,
+     "room"       :"Unassigned",
+     "time"       :null,
+     "date"       :null,
+     "domid"      :"sortable-list"});
+
    console.log("setup_slots run");
 
    calculate_room_select_box();
