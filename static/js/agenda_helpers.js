@@ -3,10 +3,10 @@
 *
 *   Orlando Project: Credil 2013 ( http://credil.org/ )
 *   Author: Justin Hornosty ( justin@credil.org )
-* 
+*
 *   Should contain miscellaneous commonly used functions.
-*   
-*   
+*
+*
 */
 
 
@@ -18,8 +18,8 @@ function log(text){
 /* move_slot
    Moves a meeting(from) to a slot (to).
    No checks are done to see if the slot it's moving to is free,
-   this can be considered a method of forcing a slot to a place. 
-   
+   this can be considered a method of forcing a slot to a place.
+
    @params:
    'from' - meeting key (searching in meeting_objs[])
    'to'   - slot_status key (searching in slot_status[])
@@ -33,14 +33,14 @@ function move_slot(from,to){
     console.log("!!!");
     var meeting = meeting_objs[from];
     var from_slot = meeting_objs[from].slot_status_key;
-    
+
     var to_slot = slot_status[to];
 
     console.log(meeting_objs[from]);
     console.log(from_slot);
 
     var result = update_to_slot(from, to, true); // true if the job succeeded
-    
+
     if(result){
 	if(update_from_slot(from,from_slot)){
 	    console.log("success");
@@ -58,16 +58,16 @@ function move_slot(from,to){
     $("#"+to).append(eTemplate);
     // $(this).append(eTemplate
     // 		  )
-    
-    
+
+
   //  console.log(result);
     // console.log(meeting);
     console.log(from_slot);
     // console.log(to_slot);
-    
-    
-    
-    
+
+
+
+
 }
 
 function print_all(){
@@ -105,7 +105,7 @@ function find_same_area(area){
 }
 
 function style_empty_slots(){
-    
+
 }
 
 /* this pushes every event into the agendas */
@@ -124,13 +124,13 @@ function load_events(){
 	}
     });
 
-    
+
     $.each(slot_status, function(key) {
         ssid_arr = slot_status[key]
 	if(key == "sortable-list"){
 	    //console.log("sortable list");
 	}else{
-	
+
 	for(var q = 0; q<ssid_arr.length; q++){
 	    ssid = ssid_arr[q];
             slot_id = ("#"+ssid.domid);
@@ -150,10 +150,10 @@ function load_events(){
 
 		// connect to the group.
 		session.group();
-		
+
                 populate_events(key,
                                 session.title,
-                                session.description, 
+                                session.description,
                                 session.session_id,
                                 session.owner, session.area);
 		//log("setting "+slot_id+" as used");
@@ -166,7 +166,7 @@ function load_events(){
 
             } else {
 		//log("ssid: "+key+" is null");
-		   
+
             }
 	}
 	}
@@ -244,14 +244,14 @@ function id_to_json(id){
 }
 
 
-/* returns a the html for a row in a table 
+/* returns a the html for a row in a table
    as: <tr><td>title</td><td>data</td></tr>
 */
 function gen_tr_td(title,data){
     return "<tr><td>"+title+"</td><td>"+data+"</td></tr>";
 }
 
-/* Mainly for the case where we didn't get any data back from the server */ 
+/* Mainly for the case where we didn't get any data back from the server */
 function empty_info_table(){
     $("#info_grp").html("");
     $("#info_name").html("");
@@ -266,8 +266,8 @@ function empty_info_table(){
 
 
 var temp_1;
-/* creates the 'info' table that is located on the right side. 
-   takes in a json. 
+/* creates the 'info' table that is located on the right side.
+   takes in a json.
 */
 
 var room_select_html = "";
@@ -287,7 +287,7 @@ function calculate_room_select_box() {
     for (n in sorted) {
         var k1 = sorted[n];
         var val_arr = slot_status[k1];
-		
+
         /* k1 is the slot_status key */
         /* v1 is the slot_obj */
 	for(var i = 0; i<val_arr.length; i++){
@@ -301,7 +301,7 @@ function calculate_room_select_box() {
     }
     html = html+"</select>";
     room_select_html = html;
-    
+
 }
 var name_select_html = "";
 var temp_sorted = null;
@@ -322,15 +322,15 @@ function calculate_name_select_box(){
 	try{
 	    //ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
 	    ts_id = mobj_array[i].session_id
-	    
-	    
+
+
 	    //console.log("ts_id="+ts_id);
 	}catch(err){
 	    console.log(err); // bucket list items.
-	    
+
 	}
         html=html+ts_id+"'>";
-    
+
 
 	try{
 	    html=html+mobj_array[i].title; // + " (" + mobj_array[i].description + ")";
@@ -342,7 +342,7 @@ function calculate_name_select_box(){
 
     html = html+"</select>";
     name_select_html = html;
- 
+
 
 }
 
@@ -363,19 +363,19 @@ function insert_cell(js_room_id, text, replace){
 	    found = $(slot_id).html(text);
         } else {
             found = $(slot_id).append($(text));
-	    
+
         }
         $(slot_id).css('background','');
 	$(slot_id).removeClass('free_slot');
         if(found.length == 0){
             // do something here, if length was zero... then?
         }
-	
+
     }
     catch(err){
 	log("error");
 	log(err);
-    } 
+    }
 }
 
 
@@ -393,13 +393,13 @@ function find_empty_test(){
 
 
 function find_meeting_no_room(){
-    $.each(meeting_objs, function(key){ 
+    $.each(meeting_objs, function(key){
 	if(meeting_objs[key].slot_status_key == null) {
 	    session = meeting_objs[key]
 	    session.slot_status_key = null;
 	    populate_events("sortable-list",
                             session.title,
-                            session.description, 
+                            session.description,
                             session.session_id,
                             session.owner, session.area);
 	}
@@ -408,10 +408,10 @@ function find_meeting_no_room(){
 
 
 /* in some cases we have sessions that span over two timeslots.
-   so we end up with two slot_status pointing to the same meeting_obj. 
+   so we end up with two slot_status pointing to the same meeting_obj.
    this this occures when someone requests a session that is extra long
-   which will then fill up the next timeslot. 
-   
+   which will then fill up the next timeslot.
+
    this functions finds those cases.
 
    returns a json{ 'ts': arr[time_slot_ids] }
@@ -419,7 +419,7 @@ function find_meeting_no_room(){
 */
 function find_double_timeslots(){
     var duplicate = {};
-    
+
     $.each(slot_status, function(key){
 	for(var i =0; i<slot_status[key].length; i++){
 	    // goes threw all the slots
@@ -430,7 +430,7 @@ function find_double_timeslots(){
 	    }
 	    else{
 		duplicate[ss_id] = {'count': 1, 'ts':[key]};
-		
+
 	    }
 	}
     });
@@ -440,11 +440,11 @@ function find_double_timeslots(){
     $.each(duplicate, function(key){
 	if(duplicate[key]['count'] > 1){
 	    dup[key] = duplicate[key]['ts'];
-	    
+
 	}
     });
     return dup;
-	   
+
 }
 
 
@@ -454,7 +454,7 @@ function remove_duplicate(timeslot_id, ss_id){
     children = $("#"+timeslot_id).children();
     child = children;
     console.log(children);
-    for(var i = 0; i< children.length; i++){ // loop to 
+    for(var i = 0; i< children.length; i++){ // loop to
 	if($(children[i]).attr('id') == "session_"+ss_id){ // make sure we only remove duplicate.
 	    try{
 		$(children[i]).remove();
@@ -478,13 +478,13 @@ function auto_remove(){
 
 /* for the spinnner */
 
-/* spinner code from:  
-       http://fgnass.github.com/spin.js/   
-       
+/* spinner code from:
+       http://fgnass.github.com/spin.js/
+
        ex: $("#spinner").spin()      < start the spin
            $("#spinner").spin(false) < stop the spin
-    
-       http://gist.github.com/itsflorida   < jquery functionality. 
+
+       http://gist.github.com/itsflorida   < jquery functionality.
 
        lines: 30,            // The number of lines to draw
        length: 7,            // The length of each line
@@ -510,7 +510,7 @@ function auto_remove(){
            return this.each(function() {
                var $this = $(this),
                data = $this.data();
-                               
+
                if (data.spinner) {
                    data.spinner.stop();
                    delete data.spinner;
@@ -541,7 +541,7 @@ function start_spin(opts){
     // $("#schedule_name").hide();
     $("#spinner").show();
     $("#spinner").spin({lines:16, radius:8, length:16, width:4});
-    
+
 }
 function stop_spin(){
 //spinner

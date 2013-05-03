@@ -37,7 +37,7 @@ function get_all_constraints(){
 function show_non_conflicting_spots(ss_id){
     var conflict_spots = []
     $.each(conflict_classes, function(key){
-	conflict_spots.push(conflict_classes[key].session.slot_status_key); 
+	conflict_spots.push(conflict_classes[key].session.slot_status_key);
     });
     var empty_slots = find_empty_slots();
     conflict_spots.forEach(function(val){
@@ -156,7 +156,7 @@ ScheduledSlot.prototype.initialize = function(json) {
     //console.log("extend "+this.domid+" with "+JSON.stringify(this));
 
     // the key so two sessions in the same timeslot
-    if(slot_status[this.domid] == null) { 
+    if(slot_status[this.domid] == null) {
 	slot_status[this.domid]=[];
     }
     slot_status[this.domid].push(this);
@@ -252,7 +252,7 @@ Session.prototype.generate_info_table = function(ss) {
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
-    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic. 
+    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic.
     // if(ss.timeslot_id == null){
 	$("#info_name_select").val(ss.session_id);
 //    }
@@ -266,7 +266,7 @@ Session.prototype.generate_info_table = function(ss) {
 
     if(ss.timeslot_id == null){
 	$("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
-    }else{	
+    }else{
 	$("#info_location_select").val(ss.timeslot_id); // ***
     }
     $("#info_location_select").val($("#info_location_select_option_"+ss.timeslot_id).val());
@@ -306,7 +306,7 @@ Session.prototype.retrieve_constraints_by_session = function(andthen) {
        $.getJSON( href, "", function(constraint_list) {
                       fill_in_constraints(session_obj, true,  constraint_list, andthen);
                   });
-    } 
+    }
 };
 
 
@@ -418,7 +418,7 @@ Constraint.prototype.build_conflict_view = function() {
 Constraint.prototype.build_othername = function() {
     this.othergroup_name = this.othergroup.acronym;
 };
-    
+
 
 Constraint.prototype.conflict_view = function() {
     this.dom_id = "constraint_"+this.constraint_id;
@@ -435,7 +435,7 @@ Constraint.prototype.conflict_view = function() {
     } else {
         this.build_othername();
     }
-        
+
     return this.build_conflict_view();
 };
 

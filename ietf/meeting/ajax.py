@@ -35,7 +35,7 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         return
 
     # if(scheduledsession_id == "Unassigned"):
-        
+
     #     return
     session_id = int(session_id)
 
@@ -50,7 +50,7 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         return json.dumps({'error':'invalid session'})
 
     log.debug(session)
-    
+
     ss_id = int(scheduledsession_id)
     for ss in session.scheduledsession_set.all():
         ss.session = None

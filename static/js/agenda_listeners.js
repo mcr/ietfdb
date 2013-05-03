@@ -25,13 +25,13 @@ function listeners(){
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
 
-    for(i = 0; i<days.length;i++){  
-        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10, 
+    for(i = 0; i<days.length;i++){
+        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10,
 						   handles: "e, s",
 						   minWidth:2,
-						   
+
 						  });
-        
+
     }
 
     /* listener for when one clicks the 'show all' checkbox */
@@ -62,7 +62,7 @@ function listeners(){
     $("#show_all_area").unbind('click');
     $("#show_all_area").click(show_all_area);
 
-    
+
 }
 
 
@@ -72,10 +72,10 @@ function cb_all_conflict(event){
     try{
 	var conflict_clicked = conflict_clicked.substr(3);
     }catch(err){
-	
+
     }
     $("."+conflict_clicked+" input").click();
-    
+
 
 }
 
@@ -111,14 +111,14 @@ function show_hidden_days(event){
     });
     hidden_days = [];
     $("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
-    
+
 }
 
 function show_all_area(event){
     var areas = find_same_area($("#info_area").children().text());
     console.log(areas);
     $.each(areas, function(index,obj){
-	
+
 	var selector = $("#"+obj.slot_status_key);
 	if(slot_item_hidden(selector) ){
 	    $("#"+obj.slot_status_key).effect("highlight", {color:"lightcoral"}, 2000);
@@ -132,13 +132,13 @@ function show_all_area(event){
 function slot_item_hidden(selector){
 // checking if the thing we will visually display is hidden. (performing effects will break the previous hide)
     var show = true;
-    
-    $.each(hidden_days, function(index,value){ 
+
+    $.each(hidden_days, function(index,value){
 	if(selector.hasClass(value.substr(1))){
 	    show=false;
 	    return show;
 	}
-    });    
+    });
     return show;
 }
 
@@ -152,9 +152,9 @@ function find_empty_slot(){
 	    free_slots.push(item);
 	}
     });
-    
+
     if(free_slots.length > 0){
-	return free_slots[0]; // just return the first one. 
+	return free_slots[0]; // just return the first one.
     }
     else{
 	return null;
@@ -181,7 +181,7 @@ function expand_spacer(target) {
     current_width = parseInt(current_width) + 20;
     $(target).css('min-width',current_width);
     $(target).css('width',current_width);
- 
+
 }
 
 /* the functionality of these listeners will never change so they do not need to be run twice  */
@@ -241,7 +241,7 @@ function set_transparent(){
 		    }
 		}
 	    }
-	    
+
 	})
     })
 
@@ -648,14 +648,14 @@ function drop_drop(event, ui){
 	    break;
 	}
     }
-    if(schedulesession_id != null){ 
+    if(schedulesession_id != null){
 	start_spin();
 	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
 					      {
 						  'session_id':meeting_objs[meeting_id].session_id,
 						  'scheduledsession_id': schedulesession_id,
 					      });
-	
+
     }
     else{
 	console.log("issue sending ajax call!!!");

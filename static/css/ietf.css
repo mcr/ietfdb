@@ -63,11 +63,11 @@ table.meeting_event {
     border-radius: 4px;
     background-color:#2b95b5;
     color:white;
-    font-size: 10px; 
+    font-size: 10px;
     text-align:center;
     border:1px solid blue;
     height:8px;
-  
+
 }
 /* #EDF5FF */
 .menu{
@@ -94,9 +94,9 @@ table.meeting_event {
     border-radius: 4px;
     background-color:#2b95b5;
     color:white;
-    border:1px solid black; 
-    width:25px; 
-    height:15px; 
+    border:1px solid black;
+    width:25px;
+    height:15px;
     float:left;
     cursor:pointer;
 
@@ -177,7 +177,7 @@ div.agenda_slot{
   position: absolute;
   left: 5px;
   top: 15px;
-  width: 320px; 
+  width: 320px;
 }
 
 .ss_info_right {
@@ -233,7 +233,7 @@ div.agenda_slot{
     /* border-top: 1px solid #89D; */
     border:1px solid #89D;
     padding:0px;
-    
+
 }
 .ss_info td{
     min-width:200px;
@@ -283,7 +283,7 @@ td.ss_info_name_short{
   font-size: 11px;
   background-color: #EDF5FF;
   /* bottom: 3px; */
-  margin: 3px; 
+  margin: 3px;
   /* margin-top:3px; */
   /* margin-bottom:3px; */
   padding: 5px;
@@ -298,7 +298,7 @@ td.ss_info_name_short{
 
 .color_legend {
   position: absolute;
-  
+
   left: 3px;
   bottom: 2px;
   padding-bottom: 3px;
@@ -334,7 +334,7 @@ div#conflict_table {
   border-bottom: 2px solid #89D;
 }
 
-#conflict_table th.border {  
+#conflict_table th.border {
   min-width: 0;
   width: 2px;
   border-bottom: 2px solid #89D;
@@ -358,7 +358,7 @@ div#conflict_table {
 .agenda_column_2012-03-30__1120 {
   background-color: red;
   text-decoration: line-through;
-  
+
 }
 
 #spinner{
@@ -405,7 +405,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 }
 .ui-resizable-w{
     cursor: e-resize;
-    
+
 }
 
 
@@ -427,7 +427,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 .free_slot{
     background-color:rgb(0, 102, 153);
-    
+
 }
 
 .show_conflict_view_highlight{
@@ -490,14 +490,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 
 .show_hidden_things{
-    
+
     position: absolute;
     right:    200px;
     bottom:   5px;
     border: 1px solid #89D;
     font-size: 11px;
     background-color: #EDF5FF;
-    margin: 3px; 
+    margin: 3px;
     padding: 5px;
     max-width:  150px;
     min-height:97px;
