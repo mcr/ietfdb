@@ -116,8 +116,12 @@ function load_events(){
      * user save-as and went offline.
      */
     $.each(slot_status, function(key) {
-        ssid = slot_status[key];
-        insert_cell(ssid.domid, "", true);
+        ssid_arr = slot_status[key];
+
+	for(var q = 0; q<ssid_arr.length; q++){
+	    ssid = ssid_arr[q];
+            insert_cell(ssid.domid, "", true);
+	}
     });
 
     
@@ -131,7 +135,13 @@ function load_events(){
 	    ssid = ssid_arr[q];
             slot_id = ("#"+ssid.domid);
 //            $(slot_id).css('background-color',color_droppable_empty_slot ); //'#006699'
+
+	    //console.log("removing class from "+ssid.domid);
+	    /* also, since we are HERE, set the class to indicate if slot is available */
+	    $(slot_id).addClass("agenda_slot_" + ssid.roomtype);
 	    $(slot_id).addClass('free_slot');
+	    $(slot_id).removeClass("agenda_slot_unavailable");
+
             session = meeting_objs[ssid.session_id];
             if (session != null) {
 	       	session.slot_status_key = key;

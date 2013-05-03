@@ -107,6 +107,10 @@ class NamedTimeSlot(object):
         else:
             return [ ]
 
+    @property
+    def slot_decor(self):
+        return self.timeslot.slot_decor
+
 def get_ntimeslots_from_ss(agenda, scheduledsessions):
     ntimeslots = []
     time_seen = set()

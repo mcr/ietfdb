@@ -78,6 +78,7 @@ function setup_slots(){
      "timeslot_id":"{{s.timeslot.id}}",
      "session_id" :"{{s.session.id}}",
      "room"       :"{{s.timeslot.location|slugify}}",
+     "roomtype"   :"{{s.timeslot.type|lower}}",
      "time"       :"{{s.timeslot.time|date:'Hi' }}",
      "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
      "domid"      :"{{s.timeslot.js_identifier}}"});

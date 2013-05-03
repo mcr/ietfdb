@@ -262,6 +262,17 @@ class TimeSlot(models.Model):
     def is_plenary_type(self, name, agenda=None):
         return self.scheduledsessions_at_same_time(agenda)[0].acronym == name
 
+    @property
+    def slot_decor(self):
+        if self.type_id == "plenary":
+            return "plenary";
+        elif self.type_id == "session":
+            return "session";
+        elif self.type_id == "non-session":
+            return "non-session";
+        else:
+            return "reserved";
+
 class Schedule(models.Model):
     """
     Each person may have multiple agendas saved.

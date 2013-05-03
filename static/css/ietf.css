@@ -122,7 +122,7 @@ td.agenda_slot{
 }
 
 .agenda_slot{
-    background-color:#E6E6E6;
+    /* background-color:#E6E6E6; */
     padding:0px;
     width:100px;
     min-width:100px;
@@ -518,3 +518,30 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     margin-right:4px;
 
 }
+
+.agenda_slot_alt {
+    /* for now, use no alternating theme */
+    /* border: 1px dashed #E3E3E3; */ /* darker greyish */
+}
+
+.agenda_slot_plenary {
+    /* background-color: #d38f2d;  */ /* dark orange */
+    background-image: url('/images/orange_hatch.png');
+}
+
+.agenda_slot_session {
+    background-color:#E6E6E6;  /* light grey-ish */
+}
+
+.agenda_slot_other {
+    background-color: #9448d4;  /* purple */
+}
+
+.agenda_slot_non-session {
+    background-color: #9448d4;  /* purple */
+}
+
+.agenda_slot_unavailable {
+    background-color: #4c4c4c;  /* dark grey */
+}
+
