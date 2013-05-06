@@ -387,11 +387,15 @@ div#conflict_table {
 
 background: #99beff; /* Old browsers */
 background: -moz-linear-gradient(left, #99beff 0%, #1e5799 100%); /* FF3.6+ */
+
+/* expect error on firefox */
 background: -webkit-gradient(linear, left top, right top, color-stop(0%,#99beff), color-stop(100%,#1e5799)); /* Chrome,Safari4+ */
 background: -webkit-linear-gradient(left, #99beff 0%,#1e5799 100%); /* Chrome10+,Safari5.1+ */
 background: -o-linear-gradient(left, #99beff 0%,#1e5799 100%); /* Opera 11.10+ */
 background: -ms-linear-gradient(left, #99beff 0%,#1e5799 100%); /* IE10+ */
 background: linear-gradient(to right, #99beff 0%,#1e5799 100%); /* W3C */
+
+/* expect error on firefox */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', endColorstr='#1e5799',GradientType=1 ); /* IE6-9 */
 }
 
