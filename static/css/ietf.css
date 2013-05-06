@@ -534,7 +534,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 }
 
 .agenda_slot_other {
-    background-color: #9448d4;  /* purple */
+    background-color: #a62b2b; /* dark red */
 }
 
 .agenda_slot_non-session {

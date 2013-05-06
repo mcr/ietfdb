@@ -6,6 +6,10 @@ from django.db import models
 from django.conf import settings
 from timedeltafield import TimedeltaField
 
+# mostly used by json_dict()
+from django.template.defaultfilters import slugify, date as date_format, time as time_format
+from django.utils import formats
+
 from ietf.group.models import Group
 from ietf.person.models import Person
 from ietf.doc.models import Document
@@ -250,7 +254,6 @@ class TimeSlot(models.Model):
         #  {{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}"
         # also must match:
         #  {{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}
-        from django.template.defaultfilters import slugify
         return "%s_%s_%s" % (slugify(self.location.name), self.time.strftime('%Y-%m-%d'), self.time.strftime('%H%M'))
 
 
@@ -406,9 +409,9 @@ class ScheduledSession(models.Model):
         if self.session:
             ss['session_id']  = self.session.id
         ss['room'] = slugify(self.timeslot.location)
-        ss['roomtype'] = self.timeslot.type.lower()
-        ss["time"]     = formats.date_format('Hi', self.timeslot.time)
-        ss["date"]     = formats.time_format('Y-m-d', self.timeslot.time)
+        ss['roomtype'] = self.timeslot.type.slug
+        ss["time"]     = date_format(self.timeslot.time, 'Hi')
+        ss["date"]     = time_format(self.timeslot.time, 'Y-m-d')
         ss["domid"]    = self.timeslot.js_identifier
         return ss
 

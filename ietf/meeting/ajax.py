@@ -2,6 +2,7 @@ from django.utils import simplejson as json
 from dajaxice.core import dajaxice_functions
 from dajaxice.decorators import dajaxice_register
 from ietf.ietfauth.decorators import group_required
+from ietf.name.models import TimeSlotTypeName
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from ietf.meeting.views  import get_meeting
@@ -72,13 +73,16 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
 @group_required('Secretariat')
 @dajaxice_register
 def update_timeslot_purpose(request, scheduledsession_id=None, purpose=None):
+    ss_id = int(scheduledsession_id)
     try:
-       ss = ScheduledSession.objects.get(pk=scheduledsession_id)
+       ss = ScheduledSession.objects.get(pk=ss_id)
     except:
         return json.dumps({'error':'invalid timeslot'})
 
     try:
+        logging.debug("timeslot_purpose: %u is '%s'" % (ss_id, purpose))
         timeslottypename = TimeSlotTypeName.objects.get(pk = purpose)
+        logging.debug("2 timeslot_purpose: %u is %s" % (ss_id, purpose))
     except:
         return json.dumps({'error':'invalid timeslot type',
                            'extra': purpose})

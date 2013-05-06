@@ -51,7 +51,7 @@ class MeetingTypeName(NameModel):
 class SessionStatusName(NameModel):
     """Waiting for Approval, Approved, Waiting for Scheduling, Scheduled, Cancelled, Disapproved"""
 class TimeSlotTypeName(NameModel):
-    """Session, Break, Registration, Non-Session"""
+    """Session, Break, Registration, Other(Non-Session), Reserved, unavail"""
 class ConstraintName(NameModel):
     """Conflict"""
 class LiaisonStatementPurposeName(NameModel):
