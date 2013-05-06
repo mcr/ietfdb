@@ -25,22 +25,15 @@ function listeners(){
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
 
-    for(i = 0; i<days.length;i++){
-        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10,
-						   handles: "e, s",
-						   minWidth:2,
-
-						  });
-
-    }
-
-    /* listener for when one clicks the 'show all' checkbox */
-    $('.cb_all_conflict').unbind('click');
-    $('.cb_all_conflict').click(cb_all_conflict);
+    resize_listeners()
 
     $('#find_free').unbind('click');
     $('#find_free').click(function(event){ find_free(); });
 
+
+    /* listener for when one clicks the 'show all' checkbox */
+    $('.cb_all_conflict').unbind('click');
+    $('.cb_all_conflict').click(cb_all_conflict);
 
     /* hiding rooms */
     $(".close_room").unbind('click');

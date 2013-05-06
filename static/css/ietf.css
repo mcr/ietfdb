@@ -416,6 +416,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 .small{
     font: 13px/1.231 arial,helvetica,clean,sans-serif;
 }
+
 .very_small{
     font: 10px/1.231 arial,helvetica,clean,sans-serif;
 }
@@ -457,12 +458,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 
 }
+
 .top_left{
     /* position:absolute; */
     top:0;
     left:0;
 }
 
+.bottom_left{
+    /* position:absolute; */
+    bottom:0;
+    left:0;
+}
 
 
 .close{
@@ -480,6 +487,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 }
 
+.delete {
+    font-size: 14px;
+    cursor: pointer;
+    background-color: white;
+    color:black;
+    min-width:15px;
+    width:15px;
+    max-width:15px;
+    min-height:15px;
+    height:15px;
+    max-height:15px;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
 .minimal_table{
     border-collapse:collapse;
     margin:0px;
@@ -491,7 +513,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     font-size:8px;
     cursor:pointer;
 }
-
 
 .show_hidden_things{
 
@@ -547,5 +568,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 .agenda_slot_unavailable {
     background-color: #4c4c4c;  /* dark grey */
+}
+
+.addbutton {
+    font-size: 6pt;
+    cursor: pointer;
+    float: left;
+    max-width: 35px;
+    width: 35px;
+    height: 10px;
+    padding: 5px 1px 3px 1px;
+    border: 2px solid black;
+    margin: 5px 5px 3px 1px;
 }
 

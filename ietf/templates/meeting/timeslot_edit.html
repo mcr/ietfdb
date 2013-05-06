@@ -80,10 +80,12 @@ function setup_slots(){
 <div class="agenda_div">
 
 <table id="meetings" class="ietf-navbar" style="width:100%">
-  <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span><div id="spinner"><!-- spinney goes here --></div></th>
+  <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span>
+  <div id="spinner"><!-- spinney goes here --></div>
+  </th>
 {% for day in time_slices %}
   <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class=" day_{{day}} agenda_slot_title">
-    <div id="close_{{day|date:'Y-m-d'}}" class="close top_left very_small close_day">x</div>
+    <div class="delete delete_day bottom_left" id="delete_{{day|date:'Y-m-d'}}">X</div>
     {{day|date:'D'}}&nbsp;({{day}})
 
   </th>
@@ -94,10 +96,16 @@ function setup_slots(){
 </th>
 {% endfor %}
     <tr>
-      <th></th>
+      <th>
+        <div class="addbutton" id="addroom">+ROOM</div>
+        <div class="addbutton" id="addday">+DAY</div>
+      </th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
-	      <th class="day_{{day}} room_title">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
+	      <th class="day_{{day}} room_title">
+                  <div class="delete delete_slot bottom_left" id="delete_{{day|date:'Y-m-d'}}_{{slot.0|date:'Hi'}}">X</div>
+              {{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}}
+              </th>
 
 	  {% endfor %}
               <th class="day_{{day}} spacer {{day|date:'Y-m-d'}}-spacer">
@@ -108,7 +116,7 @@ function setup_slots(){
   {% for r in rooms %}
   <tr id="{{r|to_acceptable_id}}" class="agenda_slot">
     <th class="vert_time">
-      <div class="close very_small close_room top_left small_button" id="close_{{r|to_acceptable_id}}">X</div>
+      <div class="delete delete_room bottom_left" id="delete_{{r|to_acceptable_id}}">X</div>
       <div class="right room_name">{{r}}</div>
 
       <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->

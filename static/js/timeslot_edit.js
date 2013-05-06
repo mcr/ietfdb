@@ -61,6 +61,10 @@ function init_timeslot_edit(){
     setup_slots();
     log("setup_slots() ran");
     fill_timeslots();
+
+    resize_listeners();
+    static_listeners();
+
 }
 
 function fill_timeslots() {
