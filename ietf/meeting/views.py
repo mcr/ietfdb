@@ -237,7 +237,7 @@ def edit_timeslots(request, num=None):
     rooms = meeting.room_set
     rooms = rooms.all()
 
-    return HttpResponse(render_to_string("meeting/grid_edit.html",
+    return HttpResponse(render_to_string("meeting/timeslot_edit.html",
                                          {"schedule":schedule,
                                           "scheduledsessions": scheduledsessions,
                                           "meeting_base_url": meeting_base_url,
