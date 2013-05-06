@@ -16,6 +16,8 @@
 200	/feed/wg-proceedings/
 200	/meeting/83/agenda/edit
 200     /meeting/83/agenda/mtg:83
+200	/meeting/83/timeslots/edit
+404	/meeting/83/timeslots/foobar
 404     /meeting/83/agenda/doesnotexist
 200     /meeting/83/agenda/mtg:83/edit
 404     /meeting/83/agenda/doesnotexist/edit

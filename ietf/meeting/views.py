@@ -222,6 +222,34 @@ def agenda_create(request, num=None, schedule_name=None):
 
 ##########################################################################################################################
 @decorator_from_middleware(GZipMiddleware)
+def edit_timeslots(request, num=None):
+
+    meeting = get_meeting(num)
+
+    # always use the official schedule.
+    schedule = get_schedule(meeting, None)
+    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
+
+    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
+
+    meeting_base_url = meeting.url(request.get_host_protocol(), "")
+    site_base_url =request.get_host_protocol()
+    rooms = meeting.room_set
+    rooms = rooms.all()
+
+    return HttpResponse(render_to_string("meeting/grid_edit.html",
+                                         {"schedule":schedule,
+                                          "scheduledsessions": scheduledsessions,
+                                          "meeting_base_url": meeting_base_url,
+                                          "site_base_url": site_base_url,
+                                          "rooms":rooms,
+                                          "time_slices":time_slices,
+                                          "date_slices":date_slices,
+                                          "meeting":meeting},
+                                         RequestContext(request)), mimetype="text/html")
+
+##########################################################################################################################
+@decorator_from_middleware(GZipMiddleware)
 def edit_agenda(request, num=None, schedule_name=None):
 
     if request.method == 'POST':
