@@ -397,6 +397,21 @@ class ScheduledSession(models.Model):
         else:
             return "True"
 
+    def json_dict(self, selfurl):
+        ss = dict()
+        ss['scheduledsession_id'] = self.id
+        #ss['href']          = self.url(sitefqdn)
+        ss['empty'] =  self.empty_str
+        ss['timeslot_id'] = self.timeslot.id
+        if self.session:
+            ss['session_id']  = self.session.id
+        ss['room'] = slugify(self.timeslot.location)
+        ss['roomtype'] = self.timeslot.type.lower()
+        ss["time"]     = formats.date_format('Hi', self.timeslot.time)
+        ss["date"]     = formats.time_format('Y-m-d', self.timeslot.time)
+        ss["domid"]    = self.timeslot.js_identifier
+        return ss
+
 
 class Constraint(models.Model):
     """

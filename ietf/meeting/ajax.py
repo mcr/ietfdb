@@ -69,6 +69,26 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
 
     return json.dumps({'message':'valid'})
 
+@group_required('Secretariat')
+@dajaxice_register
+def update_timeslot_purpose(request, scheduledsession_id=None, purpose=None):
+    try:
+       ss = ScheduledSession.objects.get(pk=scheduledsession_id)
+    except:
+        return json.dumps({'error':'invalid timeslot'})
+
+    try:
+        timeslottypename = TimeSlotTypeName.objects.get(pk = purpose)
+    except:
+        return json.dumps({'error':'invalid timeslot type',
+                           'extra': purpose})
+
+    timeslot = ss.timeslot
+    timeslot.type = timeslottypename
+    timeslot.save()
+
+    return json.dumps(ss.json_dict(request.get_host_protocol))
+
 #
 # this get_info needs to be replaced once we figure out how to get rid of silly
 # ajax state we are passing through.
