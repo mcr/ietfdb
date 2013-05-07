@@ -34,7 +34,7 @@ from ietf.proceedings.models import Meeting as OldMeeting, WgMeetingSession, Mee
 
 # New models
 from ietf.meeting.models import Meeting, TimeSlot, Session
-from ietf.meeting.models import Schedule, ScheduledSession
+from ietf.meeting.models import Schedule, ScheduledSession, Room
 from ietf.group.models import Group
 
 from ietf.meeting.helpers import NamedTimeSlot, get_ntimeslots_from_ss
@@ -221,6 +221,53 @@ def agenda_create(request, num=None, schedule_name=None):
 
 
 ##########################################################################################################################
+from django.forms.models import modelform_factory
+AddRoomForm = modelform_factory(Room, exclude=('meeting',))
+
+@group_required('Secretariat')
+def timeslot_addroom(request, num=None):
+    meeting = get_meeting(num)
+
+    # authorization was enforced by the @group_require decorator above.
+
+    addroomform = AddRoomForm(request.POST)
+    if not addroomform.is_valid():
+        return HttpResponse(status=404)
+
+    instances = addroomform.save()
+
+    for room in instances:
+        room.meeting = meeting
+        room.save()
+
+    # now redirect to this new page with new forms
+    return HttpResponseRedirect(
+        reverse(edit_timeslots, args=[meeting.number]))
+
+class AddDayForm(forms.Form):
+    dayname = forms.DateField(required=True)
+
+@group_required('Secretariat')
+def timeslot_addday(request, num=None):
+    meeting = get_meeting(num)
+
+    # authorization was enforced by the @group_require decorator above.
+
+    addroomform = AddRoomForm(request.POST)
+    if not addroomform.is_valid():
+        return HttpResponse(status=404)
+
+    instances = addroomform.save()
+
+    for room in instances:
+        room.meeting = meeting
+        room.save()
+
+    # now redirect to this new page with new forms
+    return HttpResponseRedirect(
+        reverse(edit_timeslots, args=[meeting.number]))
+
+
 @decorator_from_middleware(GZipMiddleware)
 def edit_timeslots(request, num=None):
 
@@ -237,12 +284,19 @@ def edit_timeslots(request, num=None):
     rooms = meeting.room_set
     rooms = rooms.all()
 
+    addroomurl=reverse(timeslot_addroom, args=[meeting.number])
+    adddayurl =reverse(timeslot_addday,  args=[meeting.number])
+
     return HttpResponse(render_to_string("meeting/timeslot_edit.html",
                                          {"schedule":schedule,
                                           "scheduledsessions": scheduledsessions,
                                           "meeting_base_url": meeting_base_url,
                                           "site_base_url": site_base_url,
                                           "rooms":rooms,
+                                          "addroom":AddRoomForm(),
+                                          "addroomurl":addroomurl,
+                                          "addday":   AddDayForm(),
+                                          "adddayurl":adddayurl,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,
                                           "meeting":meeting},
