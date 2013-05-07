@@ -46,23 +46,24 @@ function listeners(){
     $(".close_room").unbind('click');
     $(".close_room").click(close_room)
 
-    $("#show_hidden_rooms").unbind('click');
-    $("#show_hidden_rooms").click(show_hidden_rooms);
-
+  
 
     /* hiding days */
     $(".close_day").unbind('click');
     $(".close_day").click(close_day);
 
 
-    $("#show_hidden_days").unbind('click');
-    $("#show_hidden_days").click(show_hidden_days);
+    // $("#show_hidden_days").unbind('click');
+    // $("#show_hidden_days").click(show_hidden_days);
+    // $("#show_hidden_rooms").unbind('click');
+    // $("#show_hidden_rooms").click(show_hidden_rooms);
 
 
     $("#show_all_area").unbind('click');
     $("#show_all_area").click(show_all_area);
-
     
+    $("#show_all_button").unbind('click');
+    $("#show_all_button").click(show_all);
 }
 
 
@@ -103,6 +104,11 @@ function close_day(event){
     $(close_day).hide("slow");
     hidden_days.push(close_day);
     $("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
+}
+
+function show_all(){
+    show_hidden_days();
+    show_hidden_rooms();
 }
 
 function show_hidden_days(event){
