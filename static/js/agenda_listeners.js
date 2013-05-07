@@ -648,6 +648,8 @@ function drop_drop(event, ui){
 	    break;
 	}
     }
+    console.log(meeting_objs[meeting_id].session_id);
+    console.log('scheduledsession_id', schedulesession_id);
     if(schedulesession_id != null){ 
 	start_spin();
 	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,

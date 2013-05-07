@@ -28,7 +28,7 @@ function log(text){
 
 
 
-
+var gfrom = null;
 function move_slot(from,to){
     console.log("!!!");
     var meeting = meeting_objs[from];
@@ -53,20 +53,21 @@ function move_slot(from,to){
     //*****  do dajaxice call here  ****** //
 
     var eTemplate = event_template(meeting_objs[from].title, meeting_objs[from].description, meeting_objs[from].session_id,meeting_objs[from].area);
-
-
+    
+    $("#session_"+from).remove();
     $("#"+to).append(eTemplate);
-    // $(this).append(eTemplate
-    // 		  )
-    
-    
-  //  console.log(result);
-    // console.log(meeting);
-    console.log(from_slot);
-    // console.log(to_slot);
-    
-    
-    
+
+    var session_id = from;
+    var scheduledsession_id = slot_status[to].scheduledsession_id;
+    console.log(session_id);
+    console.log(scheduledsession_id);
+//    start_spin();
+    Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
+    					  {
+    					      'session_id':session_id,
+    					      'scheduledsession_id': scheduledsession_id,
+    					  });
+	
     
 }
 

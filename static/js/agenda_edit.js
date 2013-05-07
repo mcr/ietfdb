@@ -79,6 +79,7 @@ function dajaxice_callback(message){
     /* if the message is empty, we got nothing back from the server, which probably 
        means you are offline.
     */
+    console.log(message);
     if(message == ""){
 	console.log("No response from server....");
     }
