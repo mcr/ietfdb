@@ -626,24 +626,25 @@ function drop_drop(event, ui){
 
 
     /* set colors */
+    $(this).removeClass('highlight_free_slot');
     if(check_free({id:to_slot_id}) ){
-	$(this).css('background-color', color_droppable_empty_slot)
+	// $(this).css('background-color', color_droppable_empty_slot)
 	$(this).addClass('free_slot')
     }
     else{
-	$(this).css('background-color',none_color);
+	// $(this).css('background-color',none_color);
 	$(this).removeClass('free_slot')
     }
 
     if(check_free({id:from_slot_id}) ){
-	$("#"+from_slot_id).css('background-color', color_droppable_empty_slot)
+	// $("#"+from_slot_id).css('background-color', color_droppable_empty_slot)
 	$("#"+from_slot_id).addClass('free_slot');
     }
     else{
-	$("#"+from_slot_id).css('background-color',none_color);
+	// $("#"+from_slot_id).css('background-color',none_color);
 	$("#"+from_slot_id).removeClass('free_slot');
     }
-    $("#"+"sortable-list").css('background-color',none_color);
+    // $("#"+"sortable-list").css('background-color',none_color);
     $("#"+"sortable-list").removeClass('free_slot');
     /******************************************************/
 
@@ -668,6 +669,7 @@ function drop_drop(event, ui){
     else{
 	console.log("issue sending ajax call!!!");
     }
+
     droppable();
     listeners();
 }
@@ -713,33 +715,6 @@ function drop_bucket(event,ui){
 
 }
 
-
-
-function drop_bucket2(event,ui){
-
-    var temp_session_id = ui.draggable.attr('id'); // the django session id
-    var idd = temp_session_id.substring(8,temp_session_id.length);
-    var session_obj =  meeting_objs[idd];
-
-    slot_status[session_obj.slot_status_key].session_id = null;
-    slot_status[session_obj.slot_status_key][0].empty = true;
-    $("#"+session_obj.slot_status_key).css('background',color_droppable_empty_slot);
-    session_obj.placed = false;
-    session_obj.slot_status_key = null;
-
-    var eTemplate = event_template(session_obj.title, session_obj.description,
-                                   session_obj.session_id, session_obj.area);
-    $(this).append(eTemplate);
-
-
-    ui.draggable.remove();
-    // dajaxice call should say this session has no timeslot.
-    // Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,{'new_event':new_event}); /* dajaxice_callback does nothing */
-    droppable();
-    listeners();
-
-}
-
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
     $(event.draggable).css("background",dragging_color);
@@ -749,18 +724,20 @@ function drop_activate(event, ui){
 /* what happens when moving a meeting event over something that is 'droppable' */
 function drop_over(event, ui){
     if(check_free(this)){
-	$(this).css("background",highlight);
+	$(this).addClass('highlight_free_slot');
     }
-    $(ui.draggable).css("background",dragging_color);
-    $(event.draggable).css("background",dragging_color);
+    // $(ui.draggable).css("background",dragging_color);
+    // $(event.draggable).css("background",dragging_color);
 }
 
 /* when we have actually dropped the meeting event */
 function drop_out(event, ui){
     if(check_free(this)){
-	$(this).css("background",color_droppable_empty_slot);
-	$(this).addClass("free_slot");
+	if($(this).attr('id') != bucketlist){
+	    $(this).addClass("free_slot");
+	}
     }
+    $(this).removeClass('highlight_free_slot');
 }
 
 

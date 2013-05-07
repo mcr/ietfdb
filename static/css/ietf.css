@@ -528,6 +528,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 }
 
+.highlight_free_slot{
+    background-color:green;
+
+}
+
 
 #show_all{
     

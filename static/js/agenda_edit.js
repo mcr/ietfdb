@@ -29,6 +29,7 @@ var duplicate_sessions = {};
 /********* colors ************************************/
 
 var highlight = "red"; // when we click something and want to highlight it.
+var highlight_free = "green"
 var dragging_color = "blue"; // color when draging events.
 var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
 var color_droppable_empty_slot = 'rgb(0, 102, 153)';
@@ -41,6 +42,8 @@ var hidden_rooms = [];
 var total_rooms = 0; // the number of rooms
 var hidden_days = [];
 var total_days = 0; // the number of days
+
+var bucketlist = "sortable-list" // for if/when the id for bucket list changes.
 /****************************************************/
 
 /////////////-END-GLOBALS-///////////////////////////////////////
