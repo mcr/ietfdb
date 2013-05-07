@@ -43,4 +43,4 @@ def to_acceptable_id(inp):
     
 @register.filter(name='durationFormat')
 def durationFormat(inp):
-    return "%.1f h" % (float(inp)/3600)
+    return "%.1f" % (float(inp)/3600)
