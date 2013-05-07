@@ -4,10 +4,11 @@ from django.test import TestCase, Client
 
 #from ietf.person.models import Person
 from django.contrib.auth.models import User
-from ietf.meeting.models  import TimeSlot, Session, ScheduledSession
+from ietf.meeting.models  import TimeSlot, Session, ScheduledSession, Meeting
 from ietf.ietfauth.decorators import has_role
 from auths import auth_joeblow, auth_wlo, auth_ietfchair, auth_ferrel
 from django.utils import simplejson as json
+from ietf.meeting.helpers import get_meeting
 
 class ApiTestCase(TestCase):
     fixtures = [ 'names.xml',  # ietf/names/fixtures/names.xml for MeetingTypeName, and TimeSlotTypeName
@@ -129,6 +130,48 @@ class ApiTestCase(TestCase):
         resp = self.client.get('/meeting/83.json')
         mtginfo = json.loads(resp.content)
         self.assertNotEqual(mtginfo, None)
+
+    def test_createNewRoomNonSecretariat(self):
+        mtg83 = get_meeting(83)
+        rm221 = mtg83.room_set.filter(name = '221')
+        self.assertEqual(len(rm221), 0)
+
+        # try to create a new room.
+        self.client.post('/meeting/83/timeslots/addroom', {
+                'name' : '221',
+                'capacity': 50,
+            }, **auth_joeblow)
+
+        # see that in fact the room was not created
+        rm221 = mtg83.room_set.filter(name = '221')
+        self.assertEqual(len(rm221), 0)
+
+    def test_createNewRoomSecretariat(self):
+        mtg83 = get_meeting(83)
+        rm221 = mtg83.room_set.filter(name = '221')
+        self.assertEqual(len(rm221), 0)
+
+        timeslots = mtg83.timeslot_set.all()
+        timeslot_initial_len = len(timeslots)
+        self.assertTrue(timeslots_len>0)
+
+        timeslots = mtg83.timeslot_set.all()
+        timeslot_initial_len = len(timeslots)
+        self.assertTrue(timeslots_initial_len>0)
+
+        # try to create a new room
+        self.client.post('/meeting/83/timeslots/addroom', {
+                'name' : '221',
+                'capacity': 50,
+            }, **auth_wlo)
+
+        # see that in fact wlo can create a new room.
+        rm221 = mtg83.room_set.filter(name = '221')
+        self.assertEqual(len(rm221), 1)
+
+        timeslots = mtg83.timeslot_set.all()
+        timeslot_final_len = len(timeslots)
+        self.assertTrue((timeslots_final_len - timeslots_initial_len)==)
 
     def atest_iesgNoAuthWloUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)

@@ -230,15 +230,13 @@ def timeslot_addroom(request, num=None):
 
     # authorization was enforced by the @group_require decorator above.
 
-    addroomform = AddRoomForm(request.POST)
-    if not addroomform.is_valid():
+    newroomform = AddRoomForm(request.POST)
+    if not newroomform.is_valid():
         return HttpResponse(status=404)
 
-    instances = addroomform.save()
-
-    for room in instances:
-        room.meeting = meeting
-        room.save()
+    newroom = newroomform.save(commit=False)
+    newroom.meeting = meeting
+    newroom.save()
 
     # now redirect to this new page with new forms
     return HttpResponseRedirect(
@@ -257,9 +255,7 @@ def timeslot_addday(request, num=None):
     if not addroomform.is_valid():
         return HttpResponse(status=404)
 
-    instances = addroomform.save()
-
-    for room in instances:
+    for room in addroomform:
         room.meeting = meeting
         room.save()
 
