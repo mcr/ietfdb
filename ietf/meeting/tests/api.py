@@ -153,11 +153,7 @@ class ApiTestCase(TestCase):
 
         timeslots = mtg83.timeslot_set.all()
         timeslot_initial_len = len(timeslots)
-        self.assertTrue(timeslots_len>0)
-
-        timeslots = mtg83.timeslot_set.all()
-        timeslot_initial_len = len(timeslots)
-        self.assertTrue(timeslots_initial_len>0)
+        self.assertTrue(timeslot_initial_len>0)
 
         # try to create a new room
         self.client.post('/meeting/83/timeslots/addroom', {
@@ -171,7 +167,7 @@ class ApiTestCase(TestCase):
 
         timeslots = mtg83.timeslot_set.all()
         timeslot_final_len = len(timeslots)
-        self.assertTrue((timeslots_final_len - timeslots_initial_len)==)
+        self.assertEqual((timeslot_final_len - timeslot_initial_len), 26)
 
     def atest_iesgNoAuthWloUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)

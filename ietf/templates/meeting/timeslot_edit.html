@@ -47,16 +47,14 @@ total_days = {{time_slices|length}};
 total_rooms = {{rooms|length}};
 function setup_slots(){
 
-{% for s in scheduledsessions %}
-   make_ss({ "scheduledsession_id": "{{s.id}}",
-     "empty": "{{s.empty_str}}",
-     "timeslot_id":"{{s.timeslot.id}}",
-     "session_id" :"{{s.session.id}}",
-     "room"       :"{{s.timeslot.location|slugify}}",
-     "roomtype"   :"{{s.timeslot.type|lower}}",
-     "time"       :"{{s.timeslot.time|date:'Hi' }}",
-     "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
-     "domid"      :"{{s.timeslot.js_identifier}}"});
+{% for ts in timeslots %}
+   make_ss({
+     "timeslot_id":"{{ts.id}}",
+     "room"       :"{{ts.location|slugify}}",
+     "roomtype"   :"{{ts.type.slug}}",
+     "time"       :"{{ts.time|date:'Hi' }}",
+     "date"       :"{{ts.time|date:'Y-m-d'}}",
+     "domid"      :"{{ts.js_identifier}}"});
 {% endfor %}
 
    console.log("setup_slots run");
@@ -80,7 +78,7 @@ function setup_slots(){
 <div class="agenda_div">
 
 <table id="meetings" class="ietf-navbar" style="width:100%">
-  <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span>
+  <th class="schedule_title"><span id="schedule_name">name: {{meeting.number}}</span>
   <div id="spinner"><!-- spinney goes here --></div>
   </th>
 {% for day in time_slices %}

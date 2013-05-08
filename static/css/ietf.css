@@ -555,14 +555,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 }
 
 .agenda_slot_session {
-    background-color:#E6E6E6;  /* light grey-ish */
+    background-color: #E6E6E6;  /* light grey-ish */
 }
 
-.agenda_slot_other {
+.agenda_slot_reserved {
     background-color: #a62b2b; /* dark red */
 }
 
-.agenda_slot_non-session {
+.agenda_slot_other {
     background-color: #9448d4;  /* purple */
 }
 

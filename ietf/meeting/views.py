@@ -40,7 +40,7 @@ from ietf.group.models import Group
 from ietf.meeting.helpers import NamedTimeSlot, get_ntimeslots_from_ss
 from ietf.meeting.helpers import get_ntimeslots_from_agenda, agenda_info
 from ietf.meeting.helpers import get_areas, get_area_list_from_sessions
-from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list
+from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list, build_timeslices
 from ietf.meeting.helpers import get_scheduledsessions_from_schedule
 from ietf.meeting.helpers import get_modified_from_scheduledsessions
 from ietf.meeting.helpers import get_wg_list, session_draft_list
@@ -238,6 +238,16 @@ def timeslot_addroom(request, num=None):
     newroom.meeting = meeting
     newroom.save()
 
+    days, time_slices, slots  = build_timeslices(meeting)
+    for day in days:
+        for ts in slots[day]:
+            TimeSlot.objects.create(type_id=ts.type_id,
+                                    meeting=meeting,
+                                    name=ts.name,
+                                    time=ts.time,
+                                    location=newroom,
+                                    duration=ts.duration)
+
     # now redirect to this new page with new forms
     return HttpResponseRedirect(
         reverse(edit_timeslots, args=[meeting.number]))
@@ -268,12 +278,9 @@ def timeslot_addday(request, num=None):
 def edit_timeslots(request, num=None):
 
     meeting = get_meeting(num)
+    timeslots = meeting.timeslot_set.exclude(location__isnull = True).all()
 
-    # always use the official schedule.
-    schedule = get_schedule(meeting, None)
-    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
-
-    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
+    time_slices,date_slices,slots = build_timeslices(meeting)
 
     meeting_base_url = meeting.url(request.get_host_protocol(), "")
     site_base_url =request.get_host_protocol()
@@ -284,8 +291,7 @@ def edit_timeslots(request, num=None):
     adddayurl =reverse(timeslot_addday,  args=[meeting.number])
 
     return HttpResponse(render_to_string("meeting/timeslot_edit.html",
-                                         {"schedule":schedule,
-                                          "scheduledsessions": scheduledsessions,
+                                         {"timeslots": timeslots,
                                           "meeting_base_url": meeting_base_url,
                                           "site_base_url": site_base_url,
                                           "rooms":rooms,

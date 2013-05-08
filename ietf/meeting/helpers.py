@@ -209,7 +209,6 @@ def get_area_list_from_sessions(scheduledsessions, num):
         'session__group__parent__acronym',flat=True)
 
 def build_all_agenda_slices(scheduledsessions, all = False):
-
     ################## just some debugging stuff ############
     time_slices = []
     #date_slices = set()
@@ -240,6 +239,34 @@ def build_all_agenda_slices(scheduledsessions, all = False):
 
 
     return time_slices,date_slices
+
+# XXX should really have a list of time periods different from the list of timeslots.
+def build_timeslices(meeting):
+    days = []          # the days of the meetings
+    time_slices = {}   # the times on each day
+    slots = {}
+
+    ids = []
+    for ts in meeting.timeslot_set.all():
+        if ts.location is None:
+            continue
+        ymd = ts.time.date()
+        if ymd not in time_slices:
+            time_slices[ymd] = []
+            slots[ymd] = []
+            days.append(ymd)
+
+        if ymd in time_slices:
+            # only keep unique entries
+            if [ts.time, ts.time + ts.duration] not in time_slices[ymd]:
+                time_slices[ymd].append([ts.time, ts.time + ts.duration])
+                slots[ymd].append(ts)
+
+    days.sort()
+    for ymd in time_slices:
+        time_slices[ymd].sort()
+    return days,time_slices,slots
+
 
 def get_scheduledsessions_from_schedule(schedule):
    ss = schedule.scheduledsession_set.filter(timeslot__location__isnull = False).order_by('timeslot__time','timeslot__name')

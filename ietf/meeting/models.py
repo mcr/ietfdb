@@ -276,6 +276,17 @@ class TimeSlot(models.Model):
         else:
             return "reserved";
 
+    def json_dict(self, selfurl):
+        ts = dict()
+        ts['timeslot_id'] = self.id
+        ts['room']        = slugify(self.location)
+        ts['roomtype'] = self.type.slug
+        ts["time"]     = date_format(self.time, 'Hi')
+        ts["date"]     = time_format(self.time, 'Y-m-d')
+        ts["domid"]    = self.js_identifier
+        return ts
+
+
 class Schedule(models.Model):
     """
     Each person may have multiple agendas saved.

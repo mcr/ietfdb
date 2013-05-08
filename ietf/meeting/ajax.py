@@ -72,26 +72,23 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
 
 @group_required('Secretariat')
 @dajaxice_register
-def update_timeslot_purpose(request, scheduledsession_id=None, purpose=None):
-    ss_id = int(scheduledsession_id)
+def update_timeslot_purpose(request, timeslot_id=None, purpose=None):
+    ts_id = int(timeslot_id)
     try:
-       ss = ScheduledSession.objects.get(pk=ss_id)
+       timeslot = TimeSlot.objects.get(pk=ts_id)
     except:
         return json.dumps({'error':'invalid timeslot'})
 
     try:
-        logging.debug("timeslot_purpose: %u is '%s'" % (ss_id, purpose))
         timeslottypename = TimeSlotTypeName.objects.get(pk = purpose)
-        logging.debug("2 timeslot_purpose: %u is %s" % (ss_id, purpose))
     except:
         return json.dumps({'error':'invalid timeslot type',
                            'extra': purpose})
 
-    timeslot = ss.timeslot
     timeslot.type = timeslottypename
     timeslot.save()
 
-    return json.dumps(ss.json_dict(request.get_host_protocol))
+    return json.dumps(timeslot.json_dict(request.get_host_protocol))
 
 #
 # this get_info needs to be replaced once we figure out how to get rid of silly
