@@ -79,10 +79,9 @@ function fill_timeslots() {
 }
 
 function insert_timeslotedit_cell(ssid) {
-    domid  = ssid.domid
-    slotid = ssid.timeslot_id
-    roomtype=ssid.roomtype
-    slot_id = ("#"+domid)
+    var domid  = ssid.domid
+    var roomtype=ssid.roomtype
+    var slot_id = ("#"+domid)
 
     roomtypesession="";
     roomtypeother="";
@@ -90,27 +89,31 @@ function insert_timeslotedit_cell(ssid) {
     roomtypereserved="";
     roomtypeclass="";
     roomtypeunavailable="";
-    //console.log("domid: "+domid+" has roomtype: "+roomtype)
+    console.log("domid: "+domid+" has roomtype: "+roomtype)
     $(slot_id).removeClass("agenda_slot_unavailable")
+    $(slot_id).removeClass("agenda_slot_other")
+    $(slot_id).removeClass("agenda_slot_session")
+    $(slot_id).removeClass("agenda_slot_plenary")
+    $(slot_id).removeClass("agenda_slot_reserved")
 
     if(roomtype == "session") {
         roomtypesession="selected";
         roomtypeclass="agenda_slot_session";
     } else if(roomtype == "other") {
         roomtypeother="selected";
-        roomtypeclass="agenda_slot_non-session";
+        roomtypeclass="agenda_slot_other";
     } else if(roomtype == "plenary") {
         roomtypeplenary="selected";
         roomtypeclass="agenda_slot_plenary";
     } else if(roomtype == "reserved") {
         roomtypereserved="selected";
-        roomtypeclass="agenda_slot_other";
+        roomtypeclass="agenda_slot_reserved";
     } else {
         roomtypeunavailable="selected";
         roomtypeclass="agenda_slot_unavailable";
     }
 
-    select_id = domid + "_select"
+    var select_id = domid + "_select"
     html = "<form action=\"/some/place\" method=\"post\"><select id='"+select_id+"'>";
     html = html + "<option value='session'     "+roomtypesession+" id='option_"+domid+"_session'>session</option>";
     html = html + "<option value='other'       "+roomtypeother+" id='option_"+domid+"_other'>non-session</option>";
@@ -125,9 +128,9 @@ function insert_timeslotedit_cell(ssid) {
 
     $("#"+select_id).change(function(eventObject) {
 	start_spin();
-        newpurpose = $("#"+select_id).val()
-        console.log("setting id: #"+select_id+" to "+newpurpose);
-        $(slot_id).removeClass(roomtypeclass);
+        var newpurpose = $("#"+select_id).val()
+        console.log("setting id: #"+select_id+" to "+newpurpose+" ("+roomtypeclass+")");
+
         Dajaxice.ietf.meeting.update_timeslot_purpose(
             function(json) {
                 if(json == "") {
@@ -137,12 +140,12 @@ function insert_timeslotedit_cell(ssid) {
                     for(var key in json) {
 	                ssid[key]=json[key];
                     }
-                    console.log("server replied, updating cell contents");
+                    console.log("server replied, updating cell contents: "+ssid.roomtype);
                     insert_timeslotedit_cell(ssid);
                 }
             },
 	    {
-		'scheduledsession_id': ssid.scheduledsession_id,
+		'timeslot_id': ssid.timeslot_id,
                 'purpose': newpurpose,
 	    });
     });
