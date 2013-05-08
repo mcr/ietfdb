@@ -34,6 +34,41 @@ function get_all_constraints(){
 
 }
 
+
+function show_all_conflicts(){
+    for(s in meeting_objs){
+	//console.log(s);
+	try{
+	    meeting_objs[s].retrieve_constraints_by_session(then_this);
+	}catch(err){
+	    console.log(err);
+	}
+    }
+}
+
+
+function then_this(inp){
+      for(var i=0; i<inp.conflicts.length; i++){
+	//  console.log(inp.conflicts[i]);
+	  try{
+	      for(var k=0; k<inp.conflicts[i].length; k++){
+		  for(var q=0; q<inp.conflicts[i][k].length; q++){
+		      inp.conflicts[i][k][q].show_conflict_view();
+		  }	 
+	      }
+	  }
+	  catch(err){
+	      console.log(err);
+	  }
+	  
+	// for(var k=0; k<inp.conflicts[i].length; k++){
+	//     inp.conflicts[i][k].show_conflict_view();
+	// }
+	}
+    
+}
+
+
 function show_non_conflicting_spots(ss_id){
     var conflict_spots = []
     $.each(conflict_classes, function(key){
@@ -135,7 +170,8 @@ function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, tim
     ss.time        = time;
     ss.room        = room;
 
-    ss.column_class= ".agenda-column-"+date+"-"+time;
+    //ss.column_class= ".agenda-column-"+date+"-"+time+"-"+room;
+    ss.column_class=[room+"_"+date+"_"+time,ss.column_class= ".agenda-column-"+date+"-"+time];
 
     var d = new Date(ss.date);
     var t = d.getUTCDay();
@@ -327,7 +363,6 @@ Group.prototype.add_column_class = function(column_class) {
 };
 
 function find_group_by_href(href) {
-    //console.log("group href", href, group_objs[href]);
     if(group_objs[href] == undefined) {
 	group_objs[href]=new Group();
 	g = group_objs[href];
@@ -368,20 +403,33 @@ Constraint.prototype.column_class = function() {
 
 // red is arbitrary here... There should be multiple shades of red for
 // multiple types of conflicts.
+
+
+
+var __CONSTRAINT_DEBUG = null;
 Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class()
+    // console.log(this);
+    __CONSTRAINT_DEBUG = this;
 
     for(ccn in classes) {
+	// $('#'+this.session.slot_status_key).addClass('show_conflict_view_highlight');
 	cc = classes[ccn];
-	$(cc).addClass("show_conflict_view_highlight");
+	var th_time = ".day_"+cc[1].substr(15);
+	$(th_time).addClass("show_conflict_view_highlight"); //css('background-color',"red");
+	$("#"+cc[0]).addClass("show_conflict_view_highlight");
     }
 };
+
 Constraint.prototype.clear_conflict_view = function() {
     classes=this.column_class()
-
     for(ccn in classes) {
 	cc = classes[ccn];
-	$(cc).removeClass("show_conflict_view_highlight");
+	var th_time = ".day_"+cc[1].substr(15);
+	$(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
+	$("#"+cc[0]).removeClass("show_conflict_view_highlight");
+
+	// $(cc).removeClass("show_conflict_view_highlight");
 	// $(cc).css("background", "");
     }
 };
@@ -545,6 +593,7 @@ Session.prototype.sort_constraints = function() {
 	var sort3 = this.constraints.conflic3;
 	this.conflicts[3] = split_constraint_list_at(sort3, half);
     }
+
 };
 
 

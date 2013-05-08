@@ -46,8 +46,6 @@ function listeners(){
     $(".close_room").unbind('click');
     $(".close_room").click(close_room)
 
-  
-
     /* hiding days */
     $(".close_day").unbind('click');
     $(".close_day").click(close_day);
@@ -288,7 +286,7 @@ function meeting_event_click(event){
 	return;
     }
 
-
+    
     for(var i = 0; i<slot.length; i++){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
@@ -303,6 +301,7 @@ function meeting_event_click(event){
 	__DEBUG__SLOT_OBJ = slot[i];
 	__DEBUG__SESSION_OBJ = session;
     }
+
 
 }
 
@@ -461,6 +460,8 @@ function draw_constraints(session) {
     // setup check boxes for conflicts
     $('.conflict_checkboxes').unbind('click');
     $('.conflict_checkboxes').click(conflict_click);
+    
+    $('.conflict_checkboxes').click();
 
 }
 
