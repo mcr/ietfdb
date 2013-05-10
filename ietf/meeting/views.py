@@ -220,30 +220,6 @@ def agenda_create(request, num=None, schedule_name=None):
                 args=[meeting.number, newschedule.name]))
 
 
-##########################################################################################################################
-from django.forms.models import modelform_factory
-AddRoomForm = modelform_factory(Room, exclude=('meeting',))
-
-@group_required('Secretariat')
-def timeslot_addroom(request, num=None):
-    meeting = get_meeting(num)
-
-    # authorization was enforced by the @group_require decorator above.
-
-    newroomform = AddRoomForm(request.POST)
-    if not newroomform.is_valid():
-        return HttpResponse(status=404)
-
-    newroom = newroomform.save(commit=False)
-    newroom.meeting = meeting
-    newroom.save()
-
-    newroom.create_timeslots()
-
-    # now redirect to this new page with new forms
-    return HttpResponseRedirect(
-        reverse(edit_timeslots, args=[meeting.number]))
-
 class AddDayForm(forms.Form):
     dayname = forms.DateField(required=True)
 

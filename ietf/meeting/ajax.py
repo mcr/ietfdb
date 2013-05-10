@@ -1,13 +1,16 @@
 from django.utils import simplejson as json
 from dajaxice.core import dajaxice_functions
 from dajaxice.decorators import dajaxice_register
+from django.core import serializers
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+
 from ietf.ietfauth.decorators import group_required
 from ietf.name.models import TimeSlotTypeName
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from ietf.meeting.views  import get_meeting
 
-from django.core import serializers
 
 # New models
 from ietf.meeting.models import Meeting, TimeSlot, Session, ScheduledSession, Room
@@ -89,6 +92,69 @@ def update_timeslot_purpose(request, timeslot_id=None, purpose=None):
     timeslot.save()
 
     return json.dumps(timeslot.json_dict(request.get_host_protocol))
+
+##########################################################################################################################
+from django.forms.models import modelform_factory
+AddRoomForm = modelform_factory(Room, exclude=('meeting',))
+
+# no authorization required
+def timeslot_roomlist(request, mtg):
+    rooms = mtg.room_set.all()
+    json_array=[]
+    for room in rooms:
+        json_array.append(room.json_dict(request.get_host_protocol))
+    return HttpResponse(json.dumps(json_array),
+                        mimetype="text/json")
+
+@group_required('Secretariat')
+def timeslot_addroom(request, meeting):
+    # authorization was enforced by the @group_require decorator above.
+
+    newroomform = AddRoomForm(request.POST)
+    if not newroomform.is_valid():
+        return HttpResponse(status=404)
+
+    newroom = newroomform.save(commit=False)
+    newroom.meeting = meeting
+    newroom.save()
+
+    newroom.create_timeslots()
+    # now redirect to newly created room
+    return HttpResponseRedirect(
+        reverse(timeslot_roomurl, args=[meeting.number, newroom.pk]))
+
+@group_required('Secretariat')
+def timeslot_delroom(request, meeting, roomid):
+    # authorization was enforced by the @group_require decorator above.
+    room = get_object_or_404(meeting.room_set, pk=roomid)
+
+    room.delete_timeslots()
+    room.delete()
+    return HttpResponse('{"error":"none"}', status = 200)
+
+def timeslot_roomsurl(request, num=None):
+    meeting = get_meeting(num)
+
+    if request.method == 'GET':
+        return timeslot_roomlist(request, meeting, roomid)
+    elif request.method == 'POST':
+        return timeslot_addroom(request, meeting)
+
+    # unacceptable reply
+    return HttpResponse(status=406)
+
+def timeslot_roomurl(request, num=None, roomid=None):
+    meeting = get_meeting(num)
+
+    if request.method == 'GET':
+        room = get_object_or_404(meeting.room_set, pk=roomid)
+        return HttpResponse(json.dumps(room.json_dict(request.get_host_protocol)),
+                            mimetype="text/json")
+    elif request.method == 'PUT':
+        return timeslot_updroom(request, meeting)
+    elif request.method == 'DELETE':
+        return timeslot_delroom(request, meeting, roomid)
+
 
 #
 # this get_info needs to be replaced once we figure out how to get rid of silly

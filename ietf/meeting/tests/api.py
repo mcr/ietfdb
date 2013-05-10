@@ -131,6 +131,14 @@ class ApiTestCase(TestCase):
         mtginfo = json.loads(resp.content)
         self.assertNotEqual(mtginfo, None)
 
+    def test_getRoomJson(self):
+        mtg83 = get_meeting(83)
+        rm243 = mtg83.room_set.get(name = '243')
+
+        resp = self.client.get('/meeting/83/room/%s.json' % rm243.pk)
+        rm243json = json.loads(resp.content)
+        self.assertNotEqual(rm243json, None)
+
     def test_createNewRoomNonSecretariat(self):
         mtg83 = get_meeting(83)
         rm221 = mtg83.room_set.filter(name = '221')
@@ -156,7 +164,7 @@ class ApiTestCase(TestCase):
         self.assertTrue(timeslot_initial_len>0)
 
         # try to create a new room
-        self.client.post('/meeting/83/timeslots/addroom', {
+        self.client.post('/meeting/83/rooms', {
                 'name' : '221',
                 'capacity': 50,
             }, **auth_wlo)
@@ -168,6 +176,28 @@ class ApiTestCase(TestCase):
         timeslots = mtg83.timeslot_set.all()
         timeslot_final_len = len(timeslots)
         self.assertEqual((timeslot_final_len - timeslot_initial_len), 26)
+
+    def test_deleteNewRoomSecretariat(self):
+        mtg83 = get_meeting(83)
+        rm243 = mtg83.room_set.get(name = '243')
+        self.assertNotEqual(rm243, None)
+
+        timeslots = mtg83.timeslot_set.all()
+        timeslot_initial_len = len(timeslots)
+        self.assertTrue(timeslot_initial_len>0)
+
+        # try to delete a new room
+        self.client.delete('/meeting/83/rooms', {
+                'name' : '243',
+            }, **auth_wlo)
+
+        # see that in fact wlo can delete an existing room.
+        rm243 = mtg83.room_set.filter(name = '243')
+        self.assertEqual(len(rm243), 0)
+
+        timeslots = mtg83.timeslot_set.all()
+        timeslot_final_len = len(timeslots)
+        self.assertEqual((timeslot_final_len - timeslot_initial_len), -26)
 
     def atest_iesgNoAuthWloUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)

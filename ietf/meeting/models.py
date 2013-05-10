@@ -181,6 +181,15 @@ class Room(models.Model):
                     sched.scheduledsession_set.create(timeslot=ts0,
                                                       schedule=sched)
 
+    def url(self, sitefqdn):
+        return "%s/meeting/%s/room/%s.json" % (sitefqdn, self.meeting.number, self.id)
+
+    def json_dict(self, sitefqdn):
+        return {
+            'href':                 self.url(sitefqdn),
+            'name':                 self.name,
+            'capacity':             self.capacity,
+            }
 
 
 class TimeSlot(models.Model):
