@@ -587,3 +587,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 #addday_form {
 }
+
+/*
+.ui-dialog {
+    border: 3px solid black;
+    padding: 5px;
+    background-color: #fff;
+}
+*/
+.dialog {
+    display: hidden;
+}

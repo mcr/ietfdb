@@ -132,6 +132,32 @@ class Meeting(models.Model):
             'reg_area':                self.reg_area
             }
 
+    def build_timeslices(self):
+        days = []          # the days of the meetings
+        time_slices = {}   # the times on each day
+        slots = {}
+
+        ids = []
+        for ts in self.timeslot_set.all():
+            if ts.location is None:
+                continue
+            ymd = ts.time.date()
+            if ymd not in time_slices:
+                time_slices[ymd] = []
+                slots[ymd] = []
+                days.append(ymd)
+
+            if ymd in time_slices:
+                # only keep unique entries
+                if [ts.time, ts.time + ts.duration] not in time_slices[ymd]:
+                    time_slices[ymd].append([ts.time, ts.time + ts.duration])
+                    slots[ymd].append(ts)
+
+        days.sort()
+        for ymd in time_slices:
+            time_slices[ymd].sort()
+        return days,time_slices,slots
+
 
 class Room(models.Model):
     meeting = models.ForeignKey(Meeting)
@@ -140,6 +166,22 @@ class Room(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def create_timeslots(self):
+        days, time_slices, slots  = self.meeting.build_timeslices()
+        for day in days:
+            for ts in slots[day]:
+                ts0 = TimeSlot.objects.create(type_id=ts.type_id,
+                                    meeting=self.meeting,
+                                    name=ts.name,
+                                    time=ts.time,
+                                    location=self,
+                                    duration=ts.duration)
+                for sched in self.meeting.schedule_set.all():
+                    sched.scheduledsession_set.create(timeslot=ts0,
+                                                      schedule=sched)
+
+
 
 class TimeSlot(models.Model):
     """

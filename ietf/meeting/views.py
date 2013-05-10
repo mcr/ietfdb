@@ -40,7 +40,7 @@ from ietf.group.models import Group
 from ietf.meeting.helpers import NamedTimeSlot, get_ntimeslots_from_ss
 from ietf.meeting.helpers import get_ntimeslots_from_agenda, agenda_info
 from ietf.meeting.helpers import get_areas, get_area_list_from_sessions
-from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list, build_timeslices
+from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list
 from ietf.meeting.helpers import get_scheduledsessions_from_schedule
 from ietf.meeting.helpers import get_modified_from_scheduledsessions
 from ietf.meeting.helpers import get_wg_list, session_draft_list
@@ -238,15 +238,7 @@ def timeslot_addroom(request, num=None):
     newroom.meeting = meeting
     newroom.save()
 
-    days, time_slices, slots  = build_timeslices(meeting)
-    for day in days:
-        for ts in slots[day]:
-            TimeSlot.objects.create(type_id=ts.type_id,
-                                    meeting=meeting,
-                                    name=ts.name,
-                                    time=ts.time,
-                                    location=newroom,
-                                    duration=ts.duration)
+    newroom.create_timeslots()
 
     # now redirect to this new page with new forms
     return HttpResponseRedirect(
@@ -280,7 +272,7 @@ def edit_timeslots(request, num=None):
     meeting = get_meeting(num)
     timeslots = meeting.timeslot_set.exclude(location__isnull = True).all()
 
-    time_slices,date_slices,slots = build_timeslices(meeting)
+    time_slices,date_slices,slots = meeting.build_timeslices()
 
     meeting_base_url = meeting.url(request.get_host_protocol(), "")
     site_base_url =request.get_host_protocol()

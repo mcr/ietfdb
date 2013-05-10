@@ -65,6 +65,27 @@ function init_timeslot_edit(){
     resize_listeners();
     static_listeners();
 
+    $(".delete_room").unbind('click');
+    $(".delete_room").click(delete_room);
+}
+
+function delete_room(event) {
+    var clickedroom = $(event.target).attr('roomid');
+    event.preventDefault();
+
+    $("#room_delete_dialog").dialog({
+      buttons : {
+        "Confirm" : function() {
+            console.log("deleting room "+clickedroom);
+            $(this).dialog("close");
+        },
+        "Cancel" : function() {
+            $(this).dialog("close");
+        }
+      }
+    });
+
+    $("#room_delete_dialog").dialog("open");
 }
 
 function fill_timeslots() {
