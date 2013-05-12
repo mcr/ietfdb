@@ -167,6 +167,12 @@ class Room(models.Model):
     def __unicode__(self):
         return self.name
 
+    def delete_timeslots(self):
+        for ts in self.timeslot_set.all():
+            for ss in ts.scheduledsession_set.all():
+                ss.delete()
+            ts.delete()
+
     def create_timeslots(self):
         days, time_slices, slots  = self.meeting.build_timeslices()
         for day in days:
