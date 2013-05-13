@@ -156,6 +156,7 @@ class Meeting(models.Model):
         days.sort()
         for ymd in time_slices:
             time_slices[ymd].sort()
+            slots[ymd].sort(lambda x,y: cmp(x.time, y.time))
         return days,time_slices,slots
 
 

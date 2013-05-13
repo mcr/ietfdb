@@ -248,6 +248,7 @@ def edit_timeslots(request, num=None):
                                           "addday":   AddSlotForm(),
                                           "adddayurl":adddayurl,
                                           "time_slices":time_slices,
+                                          "slot_slices": slots,
                                           "date_slices":date_slices,
                                           "meeting":meeting},
                                          RequestContext(request)), mimetype="text/html")

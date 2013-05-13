@@ -99,10 +99,13 @@ function setup_slots(){
         <div class="addbutton" id="add_day">+DAY</div>
       </th>
     {% for day in time_slices %}
-	  {% for slot in date_slices|lookup:day %}
+	  {% for slot in slot_slices|lookup:day %}
 	      <th class="day_{{day}} room_title">
-                  <div class="delete delete_slot bottom_left" id="delete_{{day|date:'Y-m-d'}}_{{slot.0|date:'Hi'}}">X</div>
-              {{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}}
+                  <div
+                       href="{{slot.relurl}}"
+                       class="delete delete_slot bottom_left"
+                       id="delete_{{day|date:'Y-m-d'}}_{{slot.time|date:'Hi'}}">X</div>
+              {{slot.time|date:'Hi'}}-{{slot.end_time|date:'Hi'}}
               </th>
 
 	  {% endfor %}
