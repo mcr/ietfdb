@@ -582,7 +582,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     margin: 5px 5px 3px 1px;
 }
 
-#addroom_form {
+#add_room_dialog {
 }
 
 #addday_form {
@@ -595,6 +595,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     background-color: #fff;
 }
 */
+
 .dialog {
-    display: hidden;
+    display: none;
 }

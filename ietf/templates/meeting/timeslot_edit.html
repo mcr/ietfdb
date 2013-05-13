@@ -95,8 +95,8 @@ function setup_slots(){
 {% endfor %}
     <tr>
       <th>
-        <div class="addbutton" id="addroom">+ROOM</div>
-        <div class="addbutton" id="addday">+DAY</div>
+        <div class="addbutton" id="add_room">+ROOM</div>
+        <div class="addbutton" id="add_day">+DAY</div>
       </th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
@@ -132,16 +132,15 @@ function setup_slots(){
 </table>
 
 </div>
-<div id="addroom_form">
-   <form action="{{addroomurl}}" method="post">{% csrf_token %}
+<div class="dialog" id="add_room_dialog">
+   <form action="{{roomsurl}}" method="post">{% csrf_token %}
       <table>
         {{ addroom.as_table }}
       <tr><td><input type="submit" name="addroom" value="addroom"></td></tr>
       </table>
    </form>
-   <div id="addform_cancel">X</div>
 </div>
-<div id="addday_form">
+<div class="dialog" id="addday_form">
    <table>
       <form action="{{adddayurl}}" method="post">{% csrf_token %}
         {{ addday.as_table }}

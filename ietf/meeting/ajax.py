@@ -9,7 +9,8 @@ from ietf.ietfauth.decorators import group_required
 from ietf.name.models import TimeSlotTypeName
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
-from ietf.meeting.views  import get_meeting
+from ietf.meeting.helpers import get_meeting
+from ietf.meeting.views   import edit_timeslots
 
 
 # New models
@@ -117,11 +118,14 @@ def timeslot_addroom(request, meeting):
     newroom = newroomform.save(commit=False)
     newroom.meeting = meeting
     newroom.save()
-
     newroom.create_timeslots()
-    # now redirect to newly created room
-    return HttpResponseRedirect(
-        reverse(timeslot_roomurl, args=[meeting.number, newroom.pk]))
+
+    if "text/json" in request.META['HTTP_ACCEPT']:
+        return HttpResponseRedirect(
+            reverse(timeslot_roomurl, args=[meeting.number, newroom.pk]))
+    else:
+        return HttpResponseRedirect(
+            reverse(edit_timeslots, args=[meeting.number]))
 
 @group_required('Secretariat')
 def timeslot_delroom(request, meeting, roomid):

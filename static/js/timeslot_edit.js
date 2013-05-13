@@ -67,6 +67,24 @@ function init_timeslot_edit(){
 
     $(".delete_room").unbind('click');
     $(".delete_room").click(delete_room);
+
+    $("#add_room").unbind('click')
+    $("#add_room").click(add_room);
+}
+
+function add_room(event) {
+    event.preventDefault();
+    var rooms_url  = $(event.target).attr('href');
+
+    $("#add_room_dialog").dialog({
+      buttons : {
+        "Cancel" : function() {
+            $(this).dialog("close");
+        }
+      }
+    });
+
+    $("#room_delete_dialog").dialog("open");
 }
 
 function delete_room(event) {
