@@ -570,6 +570,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     background-color: #4c4c4c;  /* dark grey */
 }
 
+/* this is for timeslot edit page */
+
 .addbutton {
     font-size: 6pt;
     cursor: pointer;
@@ -598,4 +600,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 
 .dialog {
     display: none;
+}
+.capacity {
+    font: 10px/1.231 arial,helvetica,clean,sans-serif;
+    font-style:italic;
 }

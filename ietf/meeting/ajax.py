@@ -95,6 +95,8 @@ def update_timeslot_purpose(request, timeslot_id=None, purpose=None):
     return json.dumps(timeslot.json_dict(request.get_host_protocol))
 
 ##########################################################################################################################
+## ROOM API
+##########################################################################################################################
 from django.forms.models import modelform_factory
 AddRoomForm = modelform_factory(Room, exclude=('meeting',))
 
@@ -120,7 +122,7 @@ def timeslot_addroom(request, meeting):
     newroom.save()
     newroom.create_timeslots()
 
-    if "text/json" in request.META['HTTP_ACCEPT']:
+    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
         return HttpResponseRedirect(
             reverse(timeslot_roomurl, args=[meeting.number, newroom.pk]))
     else:
@@ -140,7 +142,7 @@ def timeslot_roomsurl(request, num=None):
     meeting = get_meeting(num)
 
     if request.method == 'GET':
-        return timeslot_roomlist(request, meeting, roomid)
+        return timeslot_roomlist(request, meeting)
     elif request.method == 'POST':
         return timeslot_addroom(request, meeting)
 
@@ -152,17 +154,88 @@ def timeslot_roomurl(request, num=None, roomid=None):
 
     if request.method == 'GET':
         room = get_object_or_404(meeting.room_set, pk=roomid)
-        return HttpResponse(json.dumps(room.json_dict(request.get_host_protocol)),
+        return HttpResponse(json.dumps(room.json_dict(request.get_host_protocol())),
                             mimetype="text/json")
     elif request.method == 'PUT':
         return timeslot_updroom(request, meeting)
     elif request.method == 'DELETE':
         return timeslot_delroom(request, meeting, roomid)
 
+##########################################################################################################################
+## DAY/SLOT API
+##########################################################################################################################
+AddSlotForm = modelform_factory(TimeSlot, exclude=('meeting','location','sessions', 'modified'))
 
-#
+# no authorization required to list.
+def timeslot_slotlist(request, mtg):
+    slots = mtg.timeslot_set.all()
+    json_array=[]
+    for slot in slots:
+        json_array.append(slot.json_dict(request.get_host_protocol()))
+    return HttpResponse(json.dumps(json_array),
+                        mimetype="text/json")
+
+@group_required('Secretariat')
+def timeslot_addslot(request, meeting):
+
+    # authorization was enforced by the @group_require decorator above.
+    addslotform = AddSlotForm(request.POST)
+    sys.stdout.write("newslot: %u" % ( addslotform.is_valid() ))
+    if not addslotform.is_valid():
+        return HttpResponse(status=404)
+
+    newslot = addslotform.save(commit=False)
+    newslot.meeting = meeting
+    newslot.save()
+
+    newslot.create_concurrent_timeslots()
+
+    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+        return HttpResponseRedirect(
+            reverse(timeslot_dayurl, args=[meeting.number, newroom.pk]))
+    else:
+        return HttpResponseRedirect(
+            reverse(edit_timeslots, args=[meeting.number]))
+
+@group_required('Secretariat')
+def timeslot_delslot(request, meeting, slotid):
+    # authorization was enforced by the @group_require decorator above.
+    slot = get_object_or_404(meeting.timeslot_set, pk=slotid)
+
+    slot.delete()
+    return HttpResponse('{"error":"none"}', status = 200)
+
+def timeslot_slotsurl(request, num=None):
+    meeting = get_meeting(num)
+
+    if request.method == 'GET':
+        return timeslot_slotlist(request, meeting)
+    elif request.method == 'POST':
+        return timeslot_addslot(request, meeting)
+
+    # unacceptable reply
+    return HttpResponse(status=406)
+
+def timeslot_sloturl(request, num=None, slotid=None):
+    meeting = get_meeting(num)
+
+    if request.method == 'GET':
+        slot = get_object_or_404(meeting.timeslot_set, pk=slotid)
+        return HttpResponse(json.dumps(slot.json_dict(request.get_host_protocol())),
+                            mimetype="text/json")
+    elif request.method == 'PUT':
+        # not yet implemented!
+        return timeslot_updslot(request, meeting)
+    elif request.method == 'DELETE':
+        return timeslot_delslot(request, meeting, slotid)
+
+##########################################################################################################################
+## Agenda Editing API functions
+##########################################################################################################################
+
 # this get_info needs to be replaced once we figure out how to get rid of silly
 # ajax state we are passing through.
+# XXX believed to be obsolete now?
 @dajaxice_register
 def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id=None, session_id=None):#, event):
 

@@ -347,6 +347,19 @@ class TimeSlot(models.Model):
         ts["domid"]    = self.js_identifier
         return ts
 
+    """
+    This routine takes the current timeslot, which is assumed to have no location,
+    and assigns a room, and then creates an identical timeslot for all of the other
+    rooms.
+    """
+    def create_concurrent_timeslots(self):
+        ts = self
+        for room in self.meeting.room_set.all():
+            ts.location = room
+            ts.save()
+            # this is simplest way to "clone" an object...
+            ts.id = None
+
 
 class Schedule(models.Model):
     """

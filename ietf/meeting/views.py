@@ -220,28 +220,6 @@ def agenda_create(request, num=None, schedule_name=None):
                 args=[meeting.number, newschedule.name]))
 
 
-class AddDayForm(forms.Form):
-    dayname = forms.DateField(required=True)
-
-@group_required('Secretariat')
-def timeslot_addday(request, num=None):
-    meeting = get_meeting(num)
-
-    # authorization was enforced by the @group_require decorator above.
-
-    addroomform = AddRoomForm(request.POST)
-    if not addroomform.is_valid():
-        return HttpResponse(status=404)
-
-    for room in addroomform:
-        room.meeting = meeting
-        room.save()
-
-    # now redirect to this new page with new forms
-    return HttpResponseRedirect(
-        reverse(edit_timeslots, args=[meeting.number]))
-
-
 @decorator_from_middleware(GZipMiddleware)
 def edit_timeslots(request, num=None):
 
@@ -255,19 +233,19 @@ def edit_timeslots(request, num=None):
     rooms = meeting.room_set
     rooms = rooms.all()
 
-    from ietf.meeting.ajax import timeslot_roomsurl, AddRoomForm
+    from ietf.meeting.ajax import timeslot_roomsurl, AddRoomForm, timeslot_slotsurl, AddSlotForm
 
     roomsurl  =reverse(timeslot_roomsurl, args=[meeting.number])
-    adddayurl =reverse(timeslot_addday,  args=[meeting.number])
+    adddayurl =reverse(timeslot_slotsurl, args=[meeting.number])
 
     return HttpResponse(render_to_string("meeting/timeslot_edit.html",
                                          {"timeslots": timeslots,
                                           "meeting_base_url": meeting_base_url,
                                           "site_base_url": site_base_url,
                                           "rooms":rooms,
-                                          "addroom":AddRoomForm(),
+                                          "addroom":  AddRoomForm(),
                                           "roomsurl": roomsurl,
-                                          "addday":   AddDayForm(),
+                                          "addday":   AddSlotForm(),
                                           "adddayurl":adddayurl,
                                           "time_slices":time_slices,
                                           "date_slices":date_slices,

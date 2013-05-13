@@ -70,6 +70,12 @@ function init_timeslot_edit(){
 
     $("#add_room").unbind('click')
     $("#add_room").click(add_room);
+
+    $(".delete_day").unbind('click');
+    $(".delete_day").click(delete_day);
+
+    $("#add_day").unbind('click')
+    $("#add_day").click(add_day);
 }
 
 function add_room(event) {
@@ -77,6 +83,7 @@ function add_room(event) {
     var rooms_url  = $(event.target).attr('href');
 
     $("#add_room_dialog").dialog({
+        "title" : "Add new room",
       buttons : {
         "Cancel" : function() {
             $(this).dialog("close");
@@ -112,6 +119,49 @@ function delete_room(event) {
     });
 
     $("#room_delete_dialog").dialog("open");
+}
+
+function add_day(event) {
+    event.preventDefault();
+    var rooms_url  = $(event.target).attr('href');
+
+    $("#add_day_dialog").dialog({
+        "title" : "Add new day/time",
+      buttons : {
+        "Cancel" : function() {
+            $(this).dialog("close");
+        }
+      }
+    });
+
+    $("#room_day_dialog").dialog("open");
+}
+
+function delete_day(event) {
+    var clickedday      = $(event.target).attr('timeslot_id');
+    var timeslot_url    = $(event.target).attr('href');
+    event.preventDefault();
+
+    $("#day_delete_dialog").dialog({
+      buttons : {
+        "Confirm" : function() {
+            console.log("deleting day "+clickedday);
+	    $.ajax({
+		url: timeslot_url,
+	       type: 'DELETE',
+	    success: function(result) {
+			window.location.reload(true);
+                 }
+            });
+            $(this).dialog("close");
+        },
+        "Cancel" : function() {
+            $(this).dialog("close");
+        }
+      }
+    });
+
+    $("#day_delete_dialog").dialog("open");
 }
 
 function fill_timeslots() {

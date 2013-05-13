@@ -140,14 +140,13 @@ function setup_slots(){
       </table>
    </form>
 </div>
-<div class="dialog" id="addday_form">
+<div class="dialog" id="add_day_dialog">
    <table>
       <form action="{{adddayurl}}" method="post">{% csrf_token %}
         {{ addday.as_table }}
         <tr><td><input type="submit" name="addday" value="addday"></td></tr>
       </form>
    </table>
-   <div id="addday_cancel">X</div>
 </div>
 
 <div class="dialog" id="room_delete_dialog">

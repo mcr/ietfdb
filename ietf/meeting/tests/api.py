@@ -1,5 +1,5 @@
 import base64
-import sys
+import sys, datetime
 from django.test import TestCase, Client
 
 #from ietf.person.models import Person
@@ -145,7 +145,7 @@ class ApiTestCase(TestCase):
         self.assertEqual(len(rm221), 0)
 
         # try to create a new room.
-        self.client.post('/meeting/83/timeslots/addroom', {
+        self.client.post('/meeting/83/rooms', {
                 'name' : '221',
                 'capacity': 50,
             }, **auth_joeblow)
@@ -222,6 +222,66 @@ class ApiTestCase(TestCase):
         #print "json: %s" % (resp.content)
         mtginfo = json.loads(resp.content)
         self.assertNotEqual(mtginfo, None)
+
+    def test_getSlotJson(self):
+        mtg83 = get_meeting(83)
+        slot0 = mtg83.timeslot_set.all()[0]
+
+        resp = self.client.get('/meeting/83/timeslot/%s.json' % slot0.pk)
+        slot0json = json.loads(resp.content)
+        self.assertNotEqual(slot0json, None)
+
+    def test_createNewSlotNonSecretariat(self):
+        mtg83 = get_meeting(83)
+        slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
+        self.assertEqual(len(slot23), 0)
+
+        # try to create a new room.
+        resp = self.client.post('/meeting/83/timeslots', {
+                'type' : 'plenary',
+                'name' : 'Workshop on Smart Object Security',
+                'time' : '2012-03-23',
+                'duration_days' : 0,
+                'duration_hours': 8,
+                'duration_minutes' : 0,
+                'duration_seconds' : 0,
+            }, **auth_joeblow)
+
+        self.assertEqual(resp.status_code, 403)
+        # see that in fact the room was not created
+        slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
+        self.assertEqual(len(slot23), 0)
+
+    def test_createNewSlotSecretariat(self):
+        mtg83 = get_meeting(83)
+        slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
+        self.assertEqual(len(slot23), 0)
+
+        # try to create a new room.
+        resp = self.client.post('/meeting/83/timeslots', {
+                'type' : 'plenary',
+                'name' : 'Workshop on Smart Object Security',
+                'time' : '2012-03-23',
+                'duration': '08:00:00',
+            }, **auth_wlo)
+        self.assertEqual(resp.status_code, 302)
+
+        # see that in fact wlo can create a new timeslot
+        mtg83 = get_meeting(83)
+        slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
+        self.assertEqual(len(slot23), 11)
+
+    def test_deleteNewSlotSecretariat(self):
+        mtg83 = get_meeting(83)
+        slot0 = mtg83.timeslot_set.all()[0]
+
+        # try to delete a new room
+        self.client.delete('/meeting/83/timeslot/%s.json' % (slot0.pk), **auth_wlo)
+
+        # see that in fact wlo can delete an existing room.
+        slot0n = mtg83.timeslot_set.filter(pk = slot0.pk)
+        self.assertEqual(len(slot0n), 0)
+
 
 
 
