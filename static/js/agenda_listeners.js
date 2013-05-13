@@ -11,6 +11,18 @@
 *
 */
 
+function resize_listeners() {
+    for(i = 0; i<days.length;i++){
+        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10,
+						   handles: "e, s",
+						   minWidth:2,
+
+						  });
+
+    }
+
+}
+
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
