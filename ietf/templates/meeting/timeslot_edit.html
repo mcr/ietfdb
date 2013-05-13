@@ -118,7 +118,7 @@ function setup_slots(){
 	   id="delete_{{r|to_acceptable_id}}"
 	   href="{{r.relurl}}"
 	   roomid="{{r.pk}}">X</div>
-      <div class="right room_name">{{r}}</div>
+      <div class="right room_name">{{r}} <span class="capacity">({{r.capacity}})</span></div>
 
       <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->
     {% for day in time_slices %}
