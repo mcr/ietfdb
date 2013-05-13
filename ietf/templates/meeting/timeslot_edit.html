@@ -83,7 +83,7 @@ function setup_slots(){
   </th>
 {% for day in time_slices %}
   <th colspan="{{date_slices|colWidth:day}}" id="{{day|date:'Y-m-d'}}-btn" class=" day_{{day}} agenda_slot_title">
-    <div class="delete delete_day bottom_left" id="delete_{{day|date:'Y-m-d'}}">X</div>
+    <div style="display: none;" class="delete delete_day bottom_left" id="delete_{{day|date:'Y-m-d'}}">X</div>
     {{day|date:'D'}}&nbsp;({{day}})
 
   </th>
