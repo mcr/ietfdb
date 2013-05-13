@@ -71,8 +71,8 @@ function init_timeslot_edit(){
     $("#add_room").unbind('click')
     $("#add_room").click(add_room);
 
-    $(".delete_day").unbind('click');
-    $(".delete_day").click(delete_day);
+    $(".delete_slot").unbind('click');
+    $(".delete_slot").click(delete_slot);
 
     $("#add_day").unbind('click')
     $("#add_day").click(add_day);
@@ -137,12 +137,13 @@ function add_day(event) {
     $("#room_day_dialog").dialog("open");
 }
 
-function delete_day(event) {
+function delete_slot(event) {
     var clickedday      = $(event.target).attr('timeslot_id');
     var timeslot_url    = $(event.target).attr('href');
     event.preventDefault();
 
-    $("#day_delete_dialog").dialog({
+    $("#slot_delete_dialog").dialog({
+        title: "Deleting slot "+clickedday,
       buttons : {
         "Confirm" : function() {
             console.log("deleting day "+clickedday);
@@ -161,7 +162,7 @@ function delete_day(event) {
       }
     });
 
-    $("#day_delete_dialog").dialog("open");
+    $("#slot_delete_dialog").dialog("open");
 }
 
 function fill_timeslots() {

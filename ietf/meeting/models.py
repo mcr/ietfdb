@@ -348,6 +348,14 @@ class TimeSlot(models.Model):
         ts["domid"]    = self.js_identifier
         return ts
 
+    def url(self, sitefqdn):
+        return "%s/meeting/%s/timeslot/%s.json" % (sitefqdn, self.meeting.number, self.id)
+
+    @property
+    def relurl(self):
+        return self.url("")
+
+
     """
     This routine takes the current timeslot, which is assumed to have no location,
     and assigns a room, and then creates an identical timeslot for all of the other
@@ -361,6 +369,21 @@ class TimeSlot(models.Model):
             # this is simplest way to "clone" an object...
             ts.id = None
 
+    """
+    This routine deletes all timeslots which are in the same time as this slot.
+    """
+    def delete_concurrent_timeslots(self):
+        # can not include duration in filter, because there is no support
+        # for having it a WHERE clause.
+        # below will delete self as well.
+        for ts in self.meeting.timeslot_set.filter(time=self.time).all():
+            if ts.duration!=self.duration:
+                continue
+
+            # now remove any schedule that might have been made to this
+            # timeslot.
+            ts.scheduledsession_set.all().delete()
+            ts.delete()
 
 class Schedule(models.Model):
     """

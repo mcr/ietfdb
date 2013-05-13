@@ -202,7 +202,8 @@ def timeslot_delslot(request, meeting, slotid):
     # authorization was enforced by the @group_require decorator above.
     slot = get_object_or_404(meeting.timeslot_set, pk=slotid)
 
-    slot.delete()
+    # this will delete self as well.
+    slot.delete_concurrent_timeslots()
     return HttpResponse('{"error":"none"}', status = 200)
 
 def timeslot_slotsurl(request, num=None):

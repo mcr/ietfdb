@@ -103,6 +103,7 @@ function setup_slots(){
 	      <th class="day_{{day}} room_title">
                   <div
                        href="{{slot.relurl}}"
+                       timeslot_id="{{slot.pk}}"
                        class="delete delete_slot bottom_left"
                        id="delete_{{day|date:'Y-m-d'}}_{{slot.time|date:'Hi'}}">X</div>
               {{slot.time|date:'Hi'}}-{{slot.end_time|date:'Hi'}}
@@ -154,6 +155,10 @@ function setup_slots(){
 
 <div class="dialog" id="room_delete_dialog">
      Are you sure you want to delete this room?
+</div>
+
+<div class="dialog" id="slot_delete_dialog">
+     Are you sure you want to delete this entire timeslot?
 </div>
 
 {% if server_mode %}
