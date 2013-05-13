@@ -71,12 +71,20 @@ function init_timeslot_edit(){
 
 function delete_room(event) {
     var clickedroom = $(event.target).attr('roomid');
+    var room_url    = $(event.target).attr('href');
     event.preventDefault();
 
     $("#room_delete_dialog").dialog({
       buttons : {
         "Confirm" : function() {
             console.log("deleting room "+clickedroom);
+	    $.ajax({
+		url: room_url,
+	       type: 'DELETE',
+	    success: function(result) {
+			window.location.reload(true);
+                 }
+            });
             $(this).dialog("close");
         },
         "Cancel" : function() {

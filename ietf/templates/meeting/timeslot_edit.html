@@ -19,7 +19,6 @@
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.accordion.js'></script>
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery.ui.draggable.js'></script>
 
-
 {% if server_mode %}
 	{% ifnotequal server_mode "production" %}
 	<script src="https://towtruck.mozillalabs.com/towtruck.js"></script>
@@ -115,7 +114,10 @@ function setup_slots(){
   {% for r in rooms %}
   <tr id="{{r|to_acceptable_id}}" class="agenda_slot">
     <th class="vert_time">
-      <div class="delete delete_room bottom_left" id="delete_{{r|to_acceptable_id}}" roomid="{{r.pk}}">X</div>
+      <div class="delete delete_room bottom_left"
+	   id="delete_{{r|to_acceptable_id}}"
+	   href="{{r.relurl}}"
+	   roomid="{{r.pk}}">X</div>
       <div class="right room_name">{{r}}</div>
 
       <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->

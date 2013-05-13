@@ -190,6 +190,10 @@ class Room(models.Model):
     def url(self, sitefqdn):
         return "%s/meeting/%s/room/%s.json" % (sitefqdn, self.meeting.number, self.id)
 
+    @property
+    def relurl(self):
+        return self.url("")
+
     def json_dict(self, sitefqdn):
         return {
             'href':                 self.url(sitefqdn),

@@ -255,7 +255,9 @@ def edit_timeslots(request, num=None):
     rooms = meeting.room_set
     rooms = rooms.all()
 
-    addroomurl=reverse(timeslot_addroom, args=[meeting.number])
+    from ietf.meeting.ajax import timeslot_roomsurl, AddRoomForm
+
+    roomsurl  =reverse(timeslot_roomsurl, args=[meeting.number])
     adddayurl =reverse(timeslot_addday,  args=[meeting.number])
 
     return HttpResponse(render_to_string("meeting/timeslot_edit.html",
@@ -264,7 +266,7 @@ def edit_timeslots(request, num=None):
                                           "site_base_url": site_base_url,
                                           "rooms":rooms,
                                           "addroom":AddRoomForm(),
-                                          "addroomurl":addroomurl,
+                                          "roomsurl": roomsurl,
                                           "addday":   AddDayForm(),
                                           "adddayurl":adddayurl,
                                           "time_slices":time_slices,
