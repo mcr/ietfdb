@@ -186,7 +186,7 @@ function insert_timeslotedit_cell(ssid) {
     roomtypereserved="";
     roomtypeclass="";
     roomtypeunavailable="";
-    console.log("domid: "+domid+" has roomtype: "+roomtype)
+    //console.log("domid: "+domid+" has roomtype: "+roomtype)
     $(slot_id).removeClass("agenda_slot_unavailable")
     $(slot_id).removeClass("agenda_slot_other")
     $(slot_id).removeClass("agenda_slot_session")
