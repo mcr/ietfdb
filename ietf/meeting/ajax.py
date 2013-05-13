@@ -164,7 +164,7 @@ def timeslot_roomurl(request, num=None, roomid=None):
 ##########################################################################################################################
 ## DAY/SLOT API
 ##########################################################################################################################
-AddSlotForm = modelform_factory(TimeSlot, exclude=('meeting','location','sessions', 'modified'))
+AddSlotForm = modelform_factory(TimeSlot, exclude=('meeting','name','location','sessions', 'modified'))
 
 # no authorization required to list.
 def timeslot_slotlist(request, mtg):
@@ -180,7 +180,7 @@ def timeslot_addslot(request, meeting):
 
     # authorization was enforced by the @group_require decorator above.
     addslotform = AddSlotForm(request.POST)
-    sys.stdout.write("newslot: %u" % ( addslotform.is_valid() ))
+    log.debug("newslot: %u" % ( addslotform.is_valid() ))
     if not addslotform.is_valid():
         return HttpResponse(status=404)
 
