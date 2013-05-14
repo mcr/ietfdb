@@ -18,7 +18,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.decorators import decorator_from_middleware
-from ietf.ietfauth.decorators import group_required
+from ietf.ietfauth.decorators import group_required, has_role
 from django.middleware.gzip import GZipMiddleware
 from django.db.models import Max
 from ietf.group.colors import fg_group_colors, bg_group_colors
@@ -253,7 +253,8 @@ def edit_timeslots(request, num=None):
                                           "meeting":meeting},
                                          RequestContext(request)), mimetype="text/html")
 
-##########################################################################################################################
+##############################################################################
+@group_required('Area_Director','Secretariat')
 @decorator_from_middleware(GZipMiddleware)
 def edit_agenda(request, num=None, schedule_name=None):
 
@@ -300,8 +301,34 @@ def edit_agenda(request, num=None, schedule_name=None):
                                           "show_inline": set(["txt","htm","html"]) },
                                          RequestContext(request)), mimetype="text/html")
 
-###########################################################################################################################
+##############################################################################
+# show list of agendas.
+#
+@group_required('Area_Director','Secretariat')
+@decorator_from_middleware(GZipMiddleware)
+def edit_agendas(request, num=None):
 
+    #if request.method == 'POST':
+    #    return agenda_create(request, num, schedule_name)
+
+    meeting = get_meeting(num)
+    user = request.user
+
+    schedules = meeting.schedule_set
+    visibleschedules = schedules.filter(visible = True)
+    if not has_role(user, 'Secretariat'):
+        schedules = schedules.filter(owner = user.get_profile())
+
+    return HttpResponse(render_to_string("meeting/agenda_list.html",
+                                         {"meeting":   meeting,
+                                          "myschedules":      schedules.all(),
+                                          "visibleschedules": visibleschedules.all()
+                                          },
+                                         RequestContext(request)),
+                        mimetype="text/html")
+
+
+##############################################################################
 def iphone_agenda(request, num, name):
     timeslots, scheduledsessions, update, meeting, venue, ads, plenaryw_agenda, plenaryt_agenda = agenda_info(num, name)
 

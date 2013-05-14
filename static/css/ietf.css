@@ -1,4 +1,5 @@
 .custom_text_stuff{
+  position: relative;
     margin-top: 40px;
     text-align: center;
     font-size: 14px;
@@ -604,4 +605,60 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 .capacity {
     font: 10px/1.231 arial,helvetica,clean,sans-serif;
     font-style:italic;
+}
+
+/* this is for the agenda summary page */
+.towtruck {
+  position: fixed;
+  bottom: 5px;
+  right: 15px;
+}
+
+.agenda_list_title {
+  font-size: 44px;
+  font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+  text-decoration: underline;
+}
+
+div.agenda_list {
+  margin-left: 25%;
+  margin-right: 25%;
+  max-width: 500px;
+  padding-top:  10px;
+  padding-left: 20px;
+  border: 2px dashed #444444;
+  background-color: #bbbbbb;
+  min-height: 600px;
+  padding-bottom: 40px;
+}
+
+div.agenda_list tr.heading td {
+    padding-top: 30px;
+    padding-bottom: 5px;
+    font-size: 32px;
+}
+
+div.agenda_list tr th {
+  border-bottom: 2px solid black;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+}
+
+
+div.agenda_list tr {
+  margin-top: 8px;
+}
+
+div.agenda_list tr td.agenda_data {
+  margin-top: 8px;
+  margin-bottom: 3px;
+  padding: 3px 5px 1px 3px;
+  width: 100px;
+  text-align: left;
+}
+
+.agenda_visible {
+    background-image: url('/images/visible.svg');
 }

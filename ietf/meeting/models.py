@@ -159,7 +159,6 @@ class Meeting(models.Model):
             slots[ymd].sort(lambda x,y: cmp(x.time, y.time))
         return days,time_slices,slots
 
-
 class Room(models.Model):
     meeting = models.ForeignKey(Meeting)
     name = models.CharField(max_length=255)
@@ -404,6 +403,45 @@ class Schedule(models.Model):
 
     def __unicode__(self):
         return u"%s:%s(%s)" % (self.meeting, self.name, self.owner)
+
+    def url(self, sitefqdn):
+        return "%s/meeting/%s/agenda/%s" % (sitefqdn, self.meeting.number, self.name)
+
+    @property
+    def relurl(self):
+        return self.url("")
+
+    def url_edit(self, sitefqdn):
+        return "%s/meeting/%s/agenda/%s/edit" % (sitefqdn, self.meeting.number, self.name)
+
+    @property
+    def relurl_edit(self):
+        return self.url_edit("")
+
+    @property
+    def visible_token(self):
+        if self.visible:
+            return "visible"
+        else:
+            return "hidden"
+
+    @property
+    def public_token(self):
+        if self.public:
+            return "public"
+        else:
+            return "private"
+
+    @property
+    def official_token(self):
+        if self.meeting.agenda == self:
+            return "official"
+        else:
+            return ""
+
+
+
+
 
 
 class ScheduledSession(models.Model):
