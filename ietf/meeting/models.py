@@ -316,7 +316,7 @@ class TimeSlot(models.Model):
         #  {{s.timeslot.time|date:'Y-m-d'}}_{{ s.timeslot.time|date:'Hi' }}"
         # also must match:
         #  {{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}
-        return "%s_%s_%s" % (slugify(self.location.name), self.time.strftime('%Y-%m-%d'), self.time.strftime('%H%M'))
+        return "%s_%s_%s" % (slugify(self.get_location()), self.time.strftime('%Y-%m-%d'), self.time.strftime('%H%M'))
 
 
     @property

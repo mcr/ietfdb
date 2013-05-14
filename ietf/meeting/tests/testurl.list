@@ -23,3 +23,9 @@
 404     /meeting/83/agenda/doesnotexist/edit
 200     /meeting/83/agenda.ics?APP,-~Other,-~Plenary
 200	/meeting/83/agenda-utc/
+200	/meeting/83/rooms
+200	/meeting/83/room/206.json
+200	/meeting/83/timeslots
+200	/meeting/83/timeslot/2371.json
+
+
