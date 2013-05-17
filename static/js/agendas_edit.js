@@ -34,7 +34,29 @@ $(document).ready(function() {
 function init_agendas_edit(){
     log("initstuff() ran");
     static_listeners();
+
+    $(".agenda_visible").unbind('click');
+    $(".agenda_visible").click(toggle_visible);
 }
+
+function toggle_visible(event) {
+    var span_to_replace = $(event.target)
+    var current_value   = $(event.target).attr('value');
+    var agenda_url      = $(event.target).attr('href');
+
+    var new_value = 1;
+    if(current_value == "1") {
+        new_value = "0"
+    }
+    event.preventDefault();
+
+    $.ajax({ "url": agenda_url,
+             "type": "PUT",
+             "data": { "visible" : new_value },
+             "success": function(result) {
+             }});
+}
+
 
 /*
  * Local Variables:

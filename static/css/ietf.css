@@ -660,4 +660,5 @@ div.agenda_list tr td.agenda_data {
 }
 
 .agenda_visible {
+    cursor:pointer;
 }
