@@ -95,9 +95,9 @@ def update_timeslot_purpose(request, timeslot_id=None, purpose=None):
 
     return json.dumps(timeslot.json_dict(request.get_host_protocol))
 
-##########################################################################################################################
+#############################################################################
 ## ROOM API
-##########################################################################################################################
+#############################################################################
 from django.forms.models import modelform_factory
 AddRoomForm = modelform_factory(Room, exclude=('meeting',))
 
@@ -163,9 +163,9 @@ def timeslot_roomurl(request, num=None, roomid=None):
     elif request.method == 'DELETE':
         return timeslot_delroom(request, meeting, roomid)
 
-##########################################################################################################################
+#############################################################################
 ## DAY/SLOT API
-##########################################################################################################################
+#############################################################################
 AddSlotForm = modelform_factory(TimeSlot, exclude=('meeting','name','location','sessions', 'modified'))
 
 # no authorization required to list.
