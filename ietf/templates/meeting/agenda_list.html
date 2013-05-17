@@ -51,7 +51,7 @@
         <a href="{{agenda.relurl}}"><span class="agenda_name">{{ agenda.name }}</span></a>
       </td>
       <td class="agenda_data"> <span class="agenda_owner">{{ agenda.owner }}</span> </td>
-      <td class="agenda_data"> <a href="{{agenda.visible_toggle_url}}"><span class="agenda_visible {{agenda.visible_class}}">{{ agenda.visible_token }}</span></a></td>
+      <td class="agenda_data"> <span href="{{agenda.relurl}}" value="{{agenda.visible}}" class="agenda_visible {{agenda.visible_class}}">{{ agenda.visible_token }}</span></a></td>
       <td class="agenda_data"> <span class="agenda_public {{agenda.public_class}}">{{ agenda.public_token }}</span></td>
       <td class="agenda_mark"> <span class="agenda_official">{{ agenda.official_token }}</span></td>
       <td class="agenda_mark"> <span class="agenda_delete">DELETE</span> </td>

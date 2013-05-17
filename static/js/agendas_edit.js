@@ -53,6 +53,7 @@ function toggle_visible(event) {
     $.ajax({ "url": agenda_url,
              "type": "PUT",
              "data": { "visible" : new_value },
+             "dataType": "json",
              "success": function(result) {
              }});
 }

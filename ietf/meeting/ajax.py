@@ -5,9 +5,9 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
-from ietf.ietfauth.decorators import group_required
+from ietf.ietfauth.decorators import group_required, has_role
 from ietf.name.models import TimeSlotTypeName
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse, Http404, QueryDict
 
 from ietf.meeting.helpers import get_meeting, get_schedule
 from ietf.meeting.views   import edit_timeslots, edit_agenda
@@ -235,7 +235,8 @@ def timeslot_sloturl(request, num=None, slotid=None):
 #############################################################################
 ## Agenda List API
 #############################################################################
-EditAgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner'))
+AgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner'))
+EditAgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner', 'name'))
 
 @group_required('Area_Director','Secretariat')
 def agenda_list(request, mtg):
@@ -244,14 +245,14 @@ def agenda_list(request, mtg):
     for agenda in agendas:
         json_array.append(agenda.json_dict(request.get_host_protocol))
     return HttpResponse(json.dumps(json_array),
-                        mimetype="text/json")
+                        mimetype="application/json")
 
 # duplicates save-as functionality below.
 @group_required('Area_Director','Secretariat')
 def agenda_add(request, meeting):
     # authorization was enforced by the @group_require decorator above.
 
-    newagendaform = EditAgendaEntryForm(request.POST)
+    newagendaform = AgendaEntryForm(request.POST)
     if not newagendaform.is_valid():
         return HttpResponse(status=404)
 
@@ -272,21 +273,26 @@ def agenda_add(request, meeting):
 def agenda_update(request, meeting, schedule):
     # authorization was enforced by the @group_require decorator above.
 
-    newagendaform = EditAgendaEntryForm(request.POST)
-    if not newagendaform.is_valid():
-        return HttpResponse(status=404)
+    # forms are completely useless for update actions that want to
+    # accept a subset of values.
+    update_dict = QueryDict(request.raw_post_data)
 
-    newagenda = newagendaform.save(commit=False)
-    newagenda.meeting = meeting
-    newagenda.owner   = request.user.get_profile()
-    newagenda.save()
+    user = request.user
+    if has_role(user, "Secretariat"):
+        if "public" in update_dict:
+            schedule.public = update_dict["public"]
 
-    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
-        return HttpResponseRedirect(
-            reverse(agenda_infourl, args=[meeting.number, newagenda.name]))
+    if "visible" in update_dict:
+        schedule.visible = update_dict["visible"]
+
+    schedule.save()
+
+    if "HTTP_ACCEPT" in request.META and "application/json" in request.META['HTTP_ACCEPT']:
+        return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),
+                            mimetype="application/json")
     else:
         return HttpResponseRedirect(
-            reverse(edit_agenda, args=[meeting.number, newagenda.name]))
+            reverse(edit_agenda, args=[meeting.number, schedule.name]))
 
 @group_required('Secretariat')
 def agenda_del(request, meeting, schedule):
@@ -311,7 +317,10 @@ def agenda_infosurl(request, num=None):
 
 def agenda_infourl(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
+    #log.debug("agenda: %s / %s" % (meeting, schedule_name))
+
     schedule = get_schedule(meeting, schedule_name)
+    #log.debug("results in agenda: %u" % (schedule.id))
 
     if request.method == 'GET':
         return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),
@@ -320,6 +329,8 @@ def agenda_infourl(request, num=None, schedule_name=None):
         return agenda_update(request, meeting, schedule)
     elif request.method == 'DELETE':
         return agenda_del(request, meeting, schedule)
+    else:
+        return HttpResponse(status=406)
 
 #############################################################################
 ## Agenda Editing API functions

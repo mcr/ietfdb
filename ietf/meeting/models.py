@@ -396,8 +396,8 @@ class Schedule(models.Model):
     meeting  = models.ForeignKey(Meeting, null=True)
     name     = models.CharField(max_length=16, blank=False)
     owner    = models.ForeignKey(Person)
-    visible  = models.BooleanField(default=True, help_text=u"Make this agenda publically available")
-    public   = models.BooleanField(default=True, help_text=u"Make this agenda available to those who know about it")
+    visible  = models.BooleanField(default=True, help_text=u"Make this agenda available to those who know about it")
+    public   = models.BooleanField(default=True, help_text=u"Make this agenda publically available")
     # considering copiedFrom = models.ForeignKey('Schedule', blank=True, null=True)
 
     def __unicode__(self):
