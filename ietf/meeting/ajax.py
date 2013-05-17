@@ -125,7 +125,7 @@ def timeslot_addroom(request, meeting):
 
     if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
         url = reverse(timeslot_roomurl, args=[meeting.number, newroom.pk])
-        log.debug("Returning timeslot_roomurl: %s " % (url))
+        #log.debug("Returning timeslot_roomurl: %s " % (url))
         return HttpResponseRedirect(url)
     else:
         return HttpResponseRedirect(
@@ -262,7 +262,7 @@ def agenda_add(request, meeting):
 
     if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
         url =  reverse(agenda_infourl, args=[meeting.number, newagenda.name])
-        log.debug("Returning agenda_infourl: %s " % (url))
+        #log.debug("Returning agenda_infourl: %s " % (url))
         return HttpResponseRedirect(url)
     else:
         return HttpResponseRedirect(
@@ -334,7 +334,7 @@ def get_info(request, scheduledsession_id=None, active_slot_id=None, timeslot_id
     try:
         session = Session.objects.get(pk=int(session_id))
     except Session.DoesNotExist:
-        logging.debug("No ScheduledSession was found for id:%s" % (session_id))
+        log.debug("No ScheduledSession was found for id:%s" % (session_id))
         # in this case we want to return empty the session information and perhaps indicate to the user there is a issue.
         return
 
