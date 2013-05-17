@@ -283,7 +283,11 @@ def agenda_update(request, meeting, schedule):
             schedule.public = update_dict["public"]
 
     if "visible" in update_dict:
-        schedule.visible = update_dict["visible"]
+        value = update_dict["visible"]
+        if value == "0":
+            value = False
+        log.debug("setting visible for %s to %s" % (schedule, value))
+        schedule.visible = value
 
     schedule.save()
 

@@ -40,13 +40,14 @@ function init_agendas_edit(){
 }
 
 function toggle_visible(event) {
-    var span_to_replace = $(event.target)
-    var current_value   = $(event.target).attr('value');
+    var span_to_replace = event.target;
+    var current_value   = $(event.target).html();
     var agenda_url      = $(event.target).attr('href');
 
     var new_value = 1;
-    if(current_value == "1") {
-        new_value = "0"
+    log("value "+current_value)
+    if(current_value == "visible") {
+        new_value = 0
     }
     event.preventDefault();
 
@@ -55,6 +56,10 @@ function toggle_visible(event) {
              "data": { "visible" : new_value },
              "dataType": "json",
              "success": function(result) {
+                 /* result is a json object */
+                 value = result["visible"]
+                 log("new value "+value)
+                 $(span_to_replace).html(value)
              }});
 }
 

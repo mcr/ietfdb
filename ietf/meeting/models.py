@@ -451,7 +451,10 @@ class Schedule(models.Model):
         sch = dict()
         sch['schedule_id'] = self.id
         sch['href']        = self.url(sitefqdn)
-        sch['visible']     = self.visible
+        if self.visible:
+            sch['visible']  = "visible"
+        else:
+            sch['visible']  = "hidden"
         sch['public']      = self.public
         sch['owner']       = self.owner.url(sitefqdn)
         # should include href to list of scheduledsessions, but they have no direct API yet.
