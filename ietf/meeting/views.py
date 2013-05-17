@@ -304,6 +304,7 @@ def edit_agenda(request, num=None, schedule_name=None):
 ##############################################################################
 # show list of agendas.
 #
+
 @group_required('Area_Director','Secretariat')
 @decorator_from_middleware(GZipMiddleware)
 def edit_agendas(request, num=None):
@@ -315,14 +316,12 @@ def edit_agendas(request, num=None):
     user = request.user
 
     schedules = meeting.schedule_set
-    visibleschedules = schedules.filter(visible = True)
     if not has_role(user, 'Secretariat'):
-        schedules = schedules.filter(owner = user.get_profile())
+        schedules = schedules.filter(visible = True) | schedules.filter(owner = user.get_profile())
 
     return HttpResponse(render_to_string("meeting/agenda_list.html",
                                          {"meeting":   meeting,
-                                          "myschedules":      schedules.all(),
-                                          "visibleschedules": visibleschedules.all()
+                                          "schedules": schedules.all()
                                           },
                                          RequestContext(request)),
                         mimetype="text/html")

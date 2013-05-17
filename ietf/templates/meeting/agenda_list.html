@@ -39,43 +39,22 @@
 
 <div class="agenda_list">
 <table>
-  <tr class="heading"><td colspan=6>Agendas I control</td></tr>
-
   <tr>
     <th>Name</th>
     <th>Owner</th>
     <th>Visible</th>
     <th>Public</th>
   </tr>
-  {% for agenda in myschedules %}
+  {% for agenda in schedules %}
     <tr>
       <td class="agenda_data">
         <a href="{{agenda.relurl}}"><span class="agenda_name">{{ agenda.name }}</span></a>
       </td>
       <td class="agenda_data"> <span class="agenda_owner">{{ agenda.owner }}</span> </td>
-      <td class="agenda_data"> <span class="agenda_visible">{{ agenda.visible_token }}</span></td>
-      <td class="agenda_data"> <span class="agenda_public">{{ agenda.public_token }}</span></td>
+      <td class="agenda_data"> <a href="{{agenda.visible_toggle_url}}"><span class="agenda_visible {{agenda.visible_class}}">{{ agenda.visible_token }}</span></a></td>
+      <td class="agenda_data"> <span class="agenda_public {{agenda.public_class}}">{{ agenda.public_token }}</span></td>
       <td class="agenda_mark"> <span class="agenda_official">{{ agenda.official_token }}</span></td>
       <td class="agenda_mark"> <span class="agenda_delete">DELETE</span> </td>
-    </tr>
-  {% endfor %}
-
-  <tr class="heading"><td colspan=6>Agendas I have access to</td></tr>
-
-  <tr>
-    <th>Name</th>
-    <th>Owner</th>
-    <th>Visible</th>
-    <th>Public</th>
-  </tr>
-  {% for agenda in visibleschedules %}
-    <tr>
-      <td class="agenda_data">
-        <a href="{{agenda.relurl}}"><span class="agenda_name">{{ agenda.name }}</span></a>
-      </td>
-      <td class="agenda_data"> <span class="agenda_owner">{{ agenda.owner }}</span> </td>
-      <td class="agenda_data"> <span class="agenda_visible">{{ agenda.visible_token }}</span></td>
-      <td class="agenda_data"> <span class="agenda_public">{{ agenda.public_token }}</span></td>
     </tr>
   {% endfor %}
 </table>

@@ -169,8 +169,7 @@ class Room(models.Model):
 
     def delete_timeslots(self):
         for ts in self.timeslot_set.all():
-            for ss in ts.scheduledsession_set.all():
-                ss.delete()
+            ts.scheduledsession_set.all().delete()
             ts.delete()
 
     def create_timeslots(self):
@@ -439,10 +438,24 @@ class Schedule(models.Model):
         else:
             return ""
 
+    def delete_scheduledsessions(self):
+        self.scheduledsession_set.all().delete()
 
+    # I'm loath to put calls to reverse() in there.
+    # is there a better way?
+    def url(self, sitefqdn):
+        # XXX need to include owner.
+        return "%s/meeting/%s/agendas/%s.json" % (sitefqdn, self.meeting.number, self.name)
 
-
-
+    def json_dict(self, sitefqdn):
+        sch = dict()
+        sch['schedule_id'] = self.id
+        sch['href']        = self.url(sitefqdn)
+        sch['visible']     = self.visible
+        sch['public']      = self.public
+        sch['owner']       = self.owner.url(sitefqdn)
+        # should include href to list of scheduledsessions, but they have no direct API yet.
+        return sch
 
 class ScheduledSession(models.Model):
     """

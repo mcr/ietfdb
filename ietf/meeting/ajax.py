@@ -9,12 +9,13 @@ from ietf.ietfauth.decorators import group_required
 from ietf.name.models import TimeSlotTypeName
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
-from ietf.meeting.helpers import get_meeting
-from ietf.meeting.views   import edit_timeslots
+from ietf.meeting.helpers import get_meeting, get_schedule
+from ietf.meeting.views   import edit_timeslots, edit_agenda
 
 
 # New models
-from ietf.meeting.models import Meeting, TimeSlot, Session, ScheduledSession, Room
+from ietf.meeting.models import Meeting, TimeSlot, Session
+from ietf.meeting.models import Schedule, ScheduledSession, Room
 from ietf.group.models import Group
 import datetime
 
@@ -35,7 +36,7 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         if(scheduledsession_id == None):
             pass # most likely the user moved the item and dropped it in the same box. js should never make the call in this case.
         else:
-            logging.debug("session_id=%s , scheduledsession_id=%s doing nothing and returning" % (session_id, scheduledsession_id))
+            log.debug("session_id=%s , scheduledsession_id=%s doing nothing and returning" % (session_id, scheduledsession_id))
 
         return
 
@@ -123,8 +124,9 @@ def timeslot_addroom(request, meeting):
     newroom.create_timeslots()
 
     if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
-        return HttpResponseRedirect(
-            reverse(timeslot_roomurl, args=[meeting.number, newroom.pk]))
+        url = reverse(timeslot_roomurl, args=[meeting.number, newroom.pk])
+        log.debug("Returning timeslot_roomurl: %s " % (url))
+        return HttpResponseRedirect(url)
     else:
         return HttpResponseRedirect(
             reverse(edit_timeslots, args=[meeting.number]))
@@ -230,9 +232,98 @@ def timeslot_sloturl(request, num=None, slotid=None):
     elif request.method == 'DELETE':
         return timeslot_delslot(request, meeting, slotid)
 
-##########################################################################################################################
+#############################################################################
+## Agenda List API
+#############################################################################
+EditAgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner'))
+
+@group_required('Area_Director','Secretariat')
+def agenda_list(request, mtg):
+    agendas = mtg.schedule_set.all()
+    json_array=[]
+    for agenda in agendas:
+        json_array.append(agenda.json_dict(request.get_host_protocol))
+    return HttpResponse(json.dumps(json_array),
+                        mimetype="text/json")
+
+# duplicates save-as functionality below.
+@group_required('Area_Director','Secretariat')
+def agenda_add(request, meeting):
+    # authorization was enforced by the @group_require decorator above.
+
+    newagendaform = EditAgendaEntryForm(request.POST)
+    if not newagendaform.is_valid():
+        return HttpResponse(status=404)
+
+    newagenda = newagendaform.save(commit=False)
+    newagenda.meeting = meeting
+    newagenda.owner   = request.user.get_profile()
+    newagenda.save()
+
+    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+        url =  reverse(agenda_infourl, args=[meeting.number, newagenda.name])
+        log.debug("Returning agenda_infourl: %s " % (url))
+        return HttpResponseRedirect(url)
+    else:
+        return HttpResponseRedirect(
+            reverse(edit_agenda, args=[meeting.number, newagenda.name]))
+
+@group_required('Area_Director','Secretariat')
+def agenda_update(request, meeting, schedule):
+    # authorization was enforced by the @group_require decorator above.
+
+    newagendaform = EditAgendaEntryForm(request.POST)
+    if not newagendaform.is_valid():
+        return HttpResponse(status=404)
+
+    newagenda = newagendaform.save(commit=False)
+    newagenda.meeting = meeting
+    newagenda.owner   = request.user.get_profile()
+    newagenda.save()
+
+    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+        return HttpResponseRedirect(
+            reverse(agenda_infourl, args=[meeting.number, newagenda.name]))
+    else:
+        return HttpResponseRedirect(
+            reverse(edit_agenda, args=[meeting.number, newagenda.name]))
+
+@group_required('Secretariat')
+def agenda_del(request, meeting, schedule):
+    schedule.delete_scheduledsessions()
+    log.debug("agenda: %s / %s" % (meeting, meeting.agenda))
+    if meeting.agenda == schedule:
+        meeting.agenda = None
+        meeting.save()
+    schedule.delete()
+    return HttpResponse('{"error":"none"}', status = 200)
+
+def agenda_infosurl(request, num=None):
+    meeting = get_meeting(num)
+
+    if request.method == 'GET':
+        return agenda_list(request, meeting)
+    elif request.method == 'POST':
+        return agenda_add(request, meeting)
+
+    # unacceptable action
+    return HttpResponse(status=406)
+
+def agenda_infourl(request, num=None, schedule_name=None):
+    meeting = get_meeting(num)
+    schedule = get_schedule(meeting, schedule_name)
+
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),
+                            mimetype="text/json")
+    elif request.method == 'PUT':
+        return agenda_update(request, meeting, schedule)
+    elif request.method == 'DELETE':
+        return agenda_del(request, meeting, schedule)
+
+#############################################################################
 ## Agenda Editing API functions
-##########################################################################################################################
+#############################################################################
 
 # this get_info needs to be replaced once we figure out how to get rid of silly
 # ajax state we are passing through.

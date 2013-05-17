@@ -163,11 +163,14 @@ class ApiTestCase(TestCase):
         timeslot_initial_len = len(timeslots)
         self.assertTrue(timeslot_initial_len>0)
 
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
         # try to create a new room
         self.client.post('/meeting/83/rooms', {
                 'name' : '221',
                 'capacity': 50,
-            }, **auth_wlo)
+            }, **extra_headers)
 
         # see that in fact wlo can create a new room.
         rm221 = mtg83.room_set.filter(name = '221')
@@ -257,14 +260,17 @@ class ApiTestCase(TestCase):
         slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
         self.assertEqual(len(slot23), 0)
 
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
         # try to create a new room.
         resp = self.client.post('/meeting/83/timeslots', {
                 'type' : 'plenary',
                 'name' : 'Workshop on Smart Object Security',
                 'time' : '2012-03-23',
                 'duration': '08:00:00',
-            }, **auth_wlo)
-        self.assertEqual(resp.status_code, 302)
+            }, **extra_headers)
+        self.assertEqual(resp.status_code, 200)
 
         # see that in fact wlo can create a new timeslot
         mtg83 = get_meeting(83)
@@ -281,6 +287,67 @@ class ApiTestCase(TestCase):
         # see that in fact wlo can delete an existing room.
         slot0n = mtg83.timeslot_set.filter(pk = slot0.pk)
         self.assertEqual(len(slot0n), 0)
+
+    def test_getAgendaJson(self):
+        mtg83 = get_meeting(83)
+        a83   = mtg83.agenda
+
+        resp = self.client.get('/meeting/83/agendas/%s.json' % a83.name)
+        a83json = json.loads(resp.content)
+        self.assertNotEqual(a83json, None)
+
+    def test_createNewAgendaNonSecretariat(self):
+        mtg83 = get_meeting(83)
+
+        # try to create a new agenda
+        resp = self.client.post('/meeting/83/agendas', {
+                'type' : 'plenary',
+                'name' : 'Workshop on Smart Object Security',
+                'time' : '2012-03-23',
+                'duration_days' : 0,
+                'duration_hours': 8,
+                'duration_minutes' : 0,
+                'duration_seconds' : 0,
+            }, **auth_joeblow)
+
+        self.assertEqual(resp.status_code, 403)
+        # see that in fact the room was not created
+        slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
+        self.assertEqual(len(slot23), 0)
+
+    def test_createNewSlotSecretariat(self):
+        mtg83 = get_meeting(83)
+        a83   = mtg83.agenda
+
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # try to create a new agenda
+        resp = self.client.post('/meeting/83/agendas', {
+                'name' : 'fakeagenda1',
+            }, **extra_headers)
+
+        self.assertEqual(resp.status_code, 302)
+
+        # see that in fact wlo can create a new timeslot
+        mtg83 = get_meeting(83)
+        n83 = mtg83.schedule_set.filter(name='fakeagenda1')
+        self.assertNotEqual(n83, None)
+
+    def test_deleteAgendaSecretariat(self):
+        mtg83 = get_meeting(83)
+        a83   = mtg83.agenda
+        self.assertNotEqual(a83, None)
+
+        # try to delete an agenda
+        resp = self.client.delete('/meeting/83/agendas/%s.json' % (a83.name), **auth_wlo)
+        self.assertEqual(resp.status_code, 200)
+
+        # see that in fact wlo can delete an existing room.
+        mtg83 = get_meeting(83)
+        a83c = mtg83.schedule_set.filter(pk = a83.pk).count()
+        self.assertEqual(a83c, 0)
+        self.assertEqual(mtg83.agenda, None)
 
 
 
