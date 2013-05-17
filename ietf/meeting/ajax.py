@@ -108,7 +108,7 @@ def timeslot_roomlist(request, mtg):
     for room in rooms:
         json_array.append(room.json_dict(request.get_host_protocol))
     return HttpResponse(json.dumps(json_array),
-                        mimetype="text/json")
+                        mimetype="application/json")
 
 @group_required('Secretariat')
 def timeslot_addroom(request, meeting):
@@ -123,7 +123,7 @@ def timeslot_addroom(request, meeting):
     newroom.save()
     newroom.create_timeslots()
 
-    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+    if "HTTP_ACCEPT" in request.META and "application/json" in request.META['HTTP_ACCEPT']:
         url = reverse(timeslot_roomurl, args=[meeting.number, newroom.pk])
         #log.debug("Returning timeslot_roomurl: %s " % (url))
         return HttpResponseRedirect(url)
@@ -157,7 +157,7 @@ def timeslot_roomurl(request, num=None, roomid=None):
     if request.method == 'GET':
         room = get_object_or_404(meeting.room_set, pk=roomid)
         return HttpResponse(json.dumps(room.json_dict(request.get_host_protocol())),
-                            mimetype="text/json")
+                            mimetype="application/json")
     elif request.method == 'PUT':
         return timeslot_updroom(request, meeting)
     elif request.method == 'DELETE':
@@ -175,7 +175,7 @@ def timeslot_slotlist(request, mtg):
     for slot in slots:
         json_array.append(slot.json_dict(request.get_host_protocol()))
     return HttpResponse(json.dumps(json_array),
-                        mimetype="text/json")
+                        mimetype="application/json")
 
 @group_required('Secretariat')
 def timeslot_addslot(request, meeting):
@@ -192,7 +192,7 @@ def timeslot_addslot(request, meeting):
 
     newslot.create_concurrent_timeslots()
 
-    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+    if "HTTP_ACCEPT" in request.META and "application/json" in request.META['HTTP_ACCEPT']:
         return HttpResponseRedirect(
             reverse(timeslot_dayurl, args=[meeting.number, newroom.pk]))
     else:
@@ -225,7 +225,7 @@ def timeslot_sloturl(request, num=None, slotid=None):
     if request.method == 'GET':
         slot = get_object_or_404(meeting.timeslot_set, pk=slotid)
         return HttpResponse(json.dumps(slot.json_dict(request.get_host_protocol())),
-                            mimetype="text/json")
+                            mimetype="application/json")
     elif request.method == 'PUT':
         # not yet implemented!
         return timeslot_updslot(request, meeting)
@@ -260,7 +260,7 @@ def agenda_add(request, meeting):
     newagenda.owner   = request.user.get_profile()
     newagenda.save()
 
-    if "HTTP_ACCEPT" in request.META and "text/json" in request.META['HTTP_ACCEPT']:
+    if "HTTP_ACCEPT" in request.META and "application/json" in request.META['HTTP_ACCEPT']:
         url =  reverse(agenda_infourl, args=[meeting.number, newagenda.name])
         #log.debug("Returning agenda_infourl: %s " % (url))
         return HttpResponseRedirect(url)
@@ -315,7 +315,7 @@ def agenda_infourl(request, num=None, schedule_name=None):
 
     if request.method == 'GET':
         return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),
-                            mimetype="text/json")
+                            mimetype="application/json")
     elif request.method == 'PUT':
         return agenda_update(request, meeting, schedule)
     elif request.method == 'DELETE':
@@ -356,14 +356,14 @@ def session_json(request, num, sessionid):
 
     sess1 = session.json_dict(request.get_host_protocol())
     return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
-                        mimetype="text/json")
+                        mimetype="application/json")
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)
     #print "request is: %s\n" % (request.get_host_protocol())
     return HttpResponse(json.dumps(meeting.json_dict(request.get_host_protocol()),
                                    sort_keys=True, indent=2),
-                        mimetype="text/json")
+                        mimetype="application/json")
 
 # current dajaxice does not support GET, only POST.
 # it has almost no value for GET, particularly if the results are going to be
@@ -383,7 +383,7 @@ def session_constraints(request, num=None, sessionid=None):
                           sort_keys=True, indent=2),
     #print "  gives: %s" % (json_str)
 
-    return HttpResponse(json_str, mimetype="text/json")
+    return HttpResponse(json_str, mimetype="application/json")
 
 
 
