@@ -280,7 +280,10 @@ def agenda_update(request, meeting, schedule):
     user = request.user
     if has_role(user, "Secretariat"):
         if "public" in update_dict:
-            schedule.public = update_dict["public"]
+            value = update_dict["public"]
+            if value == "0":
+                value = False
+            schedule.public = value
 
     if "visible" in update_dict:
         value = update_dict["visible"]

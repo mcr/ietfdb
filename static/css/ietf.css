@@ -659,6 +659,7 @@ div.agenda_list tr td.agenda_data {
   text-align: left;
 }
 
-.agenda_visible {
+.agenda_data span {
     cursor:pointer;
 }
+

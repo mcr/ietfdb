@@ -455,7 +455,10 @@ class Schedule(models.Model):
             sch['visible']  = "visible"
         else:
             sch['visible']  = "hidden"
-        sch['public']      = self.public
+        if self.public:
+            sch['public']   = "public"
+        else:
+            sch['public']   = "private"
         sch['owner']       = self.owner.url(sitefqdn)
         # should include href to list of scheduledsessions, but they have no direct API yet.
         return sch
