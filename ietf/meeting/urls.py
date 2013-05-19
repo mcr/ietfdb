@@ -44,7 +44,7 @@ urlpatterns = patterns('',
     (r'^(?P<num>\d+)/agenda/(?P<session>[A-Za-z0-9-]+)/?$', views.session_agenda),
     (r'^(?P<num>\d+)/session/(?P<sessionid>\d+).json',             ajax.session_json),
     (r'^(?P<num>\d+)/session/(?P<sessionid>\d+)/constraints.json', ajax.session_constraints),
-    (r'^(?P<meeting_num>\d+).json$', ajax.meeting_json),
+    (r'^(?P<meeting_num>\d+).json$',                               ajax.meeting_json),
     (r'^$', views.current_materials),
 )
 

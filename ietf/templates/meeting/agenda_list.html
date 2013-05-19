@@ -52,7 +52,7 @@
     <th>Public</th>
   </tr>
   {% for agenda in schedules %}
-    <tr agenda_name={{agenda.name}} id="agenda_name_{{agenda.name|slugify}}" href="{{agenda.relurl}}" class="{{agenda.official_class}}_row">
+    <tr agenda_name="{{agenda.name}}" id="agenda_name_{{agenda.name|slugify}}" href="{{agenda.relurl}}" class="{{agenda.official_class}}_row">
       <td class="agenda_mark agenda_data"> <span class="agenda_official_mark {{agenda.official_class}}">{{ agenda.official_token }}</span></td>
       <td class="agenda_data">
         <a href="{% url ietf.meeting.views.edit_agenda agenda.meeting.number agenda.name %}"><span class="agenda_name">{{ agenda.name }}</span></a>
