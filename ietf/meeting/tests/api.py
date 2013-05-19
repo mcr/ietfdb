@@ -373,6 +373,54 @@ class ApiTestCase(TestCase):
         self.assertEqual(a83c, 0)
         self.assertEqual(mtg83.agenda, None)
 
+    #
+    # MEETING API
+    #
+    def test_getMeetingJson(self):
+        resp = self.client.get('/meeting/83.json')
+        m83json = json.loads(resp.content)
+        self.assertNotEqual(m83json, None)
 
+    def test_setMeetingAgendaNonSecretariat(self):
+        mtg83 = get_meeting(83)
+        self.assertNotEqual(mtg83.agenda, None)
 
+        # try to create a new agenda
+        resp = self.client.put('/meeting/83.json', data={
+                'agenda' : 'None'
+            }, **auth_joeblow)
+
+        self.assertEqual(resp.status_code, 403)
+        self.assertNotEqual(mtg83.agenda, None)
+
+    def test_setMeetingAgendaNoneSecretariat(self):
+        mtg83 = get_meeting(83)
+        self.assertNotEqual(mtg83.agenda, None)
+
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # try to create a new agenda
+        resp = self.client.post('/meeting/83.json', data={
+                'agenda' : 'None'
+            }, **extra_headers)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(mtg83.agenda, None)
+
+    def test_setMeetingAgendaSecretariat(self):
+        mtg83 = get_meeting(83)
+        new_sched = mtg83.schedule_set.create(name="funny",
+                                              meeting=mtg83,
+                                              owner=mtg83.agenda.owner)
+        self.assertNotEqual(mtg83.agenda, new_sched)
+
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # try to create a new agenda
+        resp = self.client.put('/meeting/83.json', data={
+                'agenda' : new_sched.name
+            }, **extra_headers)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(mtg83.agenda, new_sched)
 

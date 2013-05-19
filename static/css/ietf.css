@@ -506,7 +506,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 .minimal_table{
     border-collapse:collapse;
     margin:0px;
-
 }
 
 
@@ -626,6 +625,7 @@ div.agenda_list {
   max-width: 500px;
   padding-top:  10px;
   padding-left: 20px;
+  padding-right:20px;
   border: 2px dashed #444444;
   background-color: #bbbbbb;
   min-height: 600px;
@@ -663,3 +663,6 @@ div.agenda_list tr td.agenda_data {
     cursor:pointer;
 }
 
+.agenda_official_row {
+  background-color: #dddddd;
+}

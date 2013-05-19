@@ -275,19 +275,23 @@ def agenda_update(request, meeting, schedule):
 
     # forms are completely useless for update actions that want to
     # accept a subset of values.
-    update_dict = QueryDict(request.raw_post_data)
+    update_dict = QueryDict(request.raw_post_data, encoding=request._encoding)
+
+    #log.debug("99 meeting.agenda: %s / %s / %s" %
+    #          (schedule, update_dict, request.raw_post_data))
 
     user = request.user
     if has_role(user, "Secretariat"):
         if "public" in update_dict:
             value = update_dict["public"]
-            if value == "0":
+            if value == "0" or value == 0:
                 value = False
+            log.debug("setting public for %s to %s" % (schedule, value))
             schedule.public = value
 
     if "visible" in update_dict:
         value = update_dict["visible"]
-        if value == "0":
+        if value == "0" or value == 0:
             value = False
         log.debug("setting visible for %s to %s" % (schedule, value))
         schedule.visible = value
@@ -340,6 +344,51 @@ def agenda_infourl(request, num=None, schedule_name=None):
         return HttpResponse(status=406)
 
 #############################################################################
+## Meeting API  (very limited)
+#############################################################################
+
+def meeting_get(request, meeting):
+    return HttpResponse(json.dumps(meeting.json_dict(request.get_host_protocol()),
+                                sort_keys=True, indent=2),
+                        mimetype="application/json")
+
+@group_required('Secretariat')
+def meeting_update(request, meeting):
+    # authorization was enforced by the @group_require decorator above.
+
+    # at present, only the official agenda can be updated from this interface.
+    update_dict = QueryDict(request.raw_post_data, encoding=request._encoding)
+
+    log.debug("1 meeting.agenda: %s / %s / %s" % (meeting.agenda, update_dict, request.raw_post_data))
+    if "agenda" in update_dict:
+        value = update_dict["agenda"]
+        log.debug("4 meeting.agenda: %s" % (value))
+        if value is None or value == "None":
+            meeting.agenda = None
+        else:
+            schedule = get_schedule(meeting, schedule_name)
+            log.debug("3 meeting.agenda: %s" % (schedule))
+            meeting.agenda = schedule
+
+    #log.debug("2 meeting.agenda: %s" % (meeting.agenda))
+    meeting.save()
+    return HttpResponse(status = 200)
+
+def meeting_json(request, meeting_num):
+    meeting = get_meeting(meeting_num)
+
+    if request.method == 'GET':
+        return meeting_get(request, meeting)
+    elif request.method == 'PUT':
+        return meeting_update(request, meeting)
+    elif request.method == 'POST':
+        return meeting_update(request, meeting)
+
+    else:
+        return HttpResponse(status=406)
+
+
+#############################################################################
 ## Agenda Editing API functions
 #############################################################################
 
@@ -374,13 +423,6 @@ def session_json(request, num, sessionid):
 
     sess1 = session.json_dict(request.get_host_protocol())
     return HttpResponse(json.dumps(sess1, sort_keys=True, indent=2),
-                        mimetype="application/json")
-
-def meeting_json(request, meeting_num):
-    meeting = get_meeting(meeting_num)
-    #print "request is: %s\n" % (request.get_host_protocol())
-    return HttpResponse(json.dumps(meeting.json_dict(request.get_host_protocol()),
-                                   sort_keys=True, indent=2),
                         mimetype="application/json")
 
 # current dajaxice does not support GET, only POST.

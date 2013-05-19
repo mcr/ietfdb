@@ -8,8 +8,8 @@
 {% block title %}IETF {{ meeting.number }} Meeting Agenda{% endblock %}
 {% load agenda_custom_tags %}
 {% block pagehead %}
-<link rel='stylesheet' type='text/css' href='/css/ietf.css' />
 <link rel='stylesheet' type='text/css' href='/css/jquery-ui-themes/jquery-ui-1.8.11.custom.css' />
+<link rel='stylesheet' type='text/css' href='/css/ietf.css' />
 
 <script type='text/javascript' src='/js/jquery-1.8.2.min.js'></script>
 <script type='text/javascript' src='/js/jquery-ui-1.9.0.custom/jquery-ui.custom.js'></script>
@@ -34,7 +34,7 @@
 &lt;
 </div>
 
-<div class="agenda_list_title">
+<div href="{{ meeting.relurl }}" class="agenda_list_title">
 <p>Meeting {{meeting.number}}</p>
 </div>
 
@@ -42,24 +42,25 @@
 <p><a href="{% url ietf.meeting.views.edit_timeslots meeting.number %}">Edit Timeslots</a></p>
 </div>
 
-<div class="agenda_list">
+<div id="class_list" class="agenda_list">
 <table>
   <tr>
+    <th></th>
     <th>Name</th>
     <th>Owner</th>
     <th>Visible</th>
     <th>Public</th>
   </tr>
   {% for agenda in schedules %}
-    <tr>
+    <tr agenda_name={{agenda.name}} id="agenda_name_{{agenda.name|slugify}}" href="{{agenda.relurl}}" class="{{agenda.official_class}}_row">
+      <td class="agenda_mark agenda_data"> <span class="agenda_official_mark {{agenda.official_class}}">{{ agenda.official_token }}</span></td>
       <td class="agenda_data">
         <a href="{% url ietf.meeting.views.edit_agenda agenda.meeting.number agenda.name %}"><span class="agenda_name">{{ agenda.name }}</span></a>
       </td>
       <td class="agenda_data"> <span class="agenda_owner">{{ agenda.owner }}</span> </td>
-      <td class="agenda_data"> <span href="{{agenda.relurl}}" class="agenda_visible {{agenda.visible_class}}">{{ agenda.visible_token }}</span></a></td>
-      <td class="agenda_data"> <span href="{{agenda.relurl}}" class="agenda_public {{agenda.public_class}}">{{ agenda.public_token }}</span></td>
-      <td class="agenda_mark"> <span class="agenda_official">{{ agenda.official_token }}</span></td>
-      <td class="agenda_mark agenda_data"> <span href="{{agenda.relurl}}" class="agenda_delete">DEL</span> </td>
+      <td class="agenda_data"> <span class="agenda_visible {{agenda.visible_class}}">{{ agenda.visible_token }}</span></a></td>
+      <td class="agenda_data"> <span class="agenda_public {{agenda.public_class}}">{{ agenda.public_token }}</span></td>
+      <td class="agenda_mark agenda_data"> <span class="agenda_delete">DEL</span> </td>
     </tr>
   {% endfor %}
 </table>

@@ -113,6 +113,10 @@ class Meeting(models.Model):
     def url(self, sitefqdn, exten=".json"):
         return "%s/meeting/%s%s" % (sitefqdn, self.number, exten)
 
+    @property
+    def relurl(self):
+        return self.url("")
+
     def json_dict(self, sitefqdn):
         # unfortunately, using the datetime aware json encoder seems impossible,
         # so the dates are formatted as strings here.
@@ -432,11 +436,22 @@ class Schedule(models.Model):
             return "private"
 
     @property
+    def is_official(self):
+        return (self.meeting.agenda == self)
+
+    @property
+    def official_class(self):
+        if self.is_official:
+            return "agenda_official"
+        else:
+            return "agenda_unofficial"
+
+    @property
     def official_token(self):
-        if self.meeting.agenda == self:
+        if self.is_official:
             return "official"
         else:
-            return ""
+            return "unofficial"
 
     def delete_scheduledsessions(self):
         self.scheduledsession_set.all().delete()
