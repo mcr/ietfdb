@@ -55,7 +55,7 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
     except:
         return json.dumps({'error':'invalid session'})
 
-    log.debug(session)
+    #log.debug(session)
 
     ss_id = int(scheduledsession_id)
     for ss in session.scheduledsession_set.all():
@@ -182,7 +182,7 @@ def timeslot_addslot(request, meeting):
 
     # authorization was enforced by the @group_require decorator above.
     addslotform = AddSlotForm(request.POST)
-    log.debug("newslot: %u" % ( addslotform.is_valid() ))
+    #log.debug("newslot: %u" % ( addslotform.is_valid() ))
     if not addslotform.is_valid():
         return HttpResponse(status=404)
 
@@ -304,7 +304,7 @@ def agenda_update(request, meeting, schedule):
 @group_required('Secretariat')
 def agenda_del(request, meeting, schedule):
     schedule.delete_scheduledsessions()
-    log.debug("agenda: %s / %s" % (meeting, meeting.agenda))
+    #log.debug("deleting meeting: %s agenda: %s" % (meeting, meeting.agenda))
     if meeting.agenda == schedule:
         meeting.agenda = None
         meeting.save()
@@ -327,7 +327,7 @@ def agenda_infourl(request, num=None, schedule_name=None):
     #log.debug("agenda: %s / %s" % (meeting, schedule_name))
 
     schedule = get_schedule(meeting, schedule_name)
-    #log.debug("results in agenda: %u" % (schedule.id))
+    #log.debug("results in agenda: %u / %s" % (schedule.id, request.method))
 
     if request.method == 'GET':
         return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),

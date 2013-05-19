@@ -288,6 +288,9 @@ class ApiTestCase(TestCase):
         slot0n = mtg83.timeslot_set.filter(pk = slot0.pk)
         self.assertEqual(len(slot0n), 0)
 
+    #
+    # AGENDA API
+    #
     def test_getAgendaJson(self):
         mtg83 = get_meeting(83)
         a83   = mtg83.agenda
@@ -315,7 +318,7 @@ class ApiTestCase(TestCase):
         slot23 = mtg83.timeslot_set.filter(time=datetime.date(year=2012,month=3,day=23))
         self.assertEqual(len(slot23), 0)
 
-    def test_createNewSlotSecretariat(self):
+    def test_createNewAgendaSecretariat(self):
         mtg83 = get_meeting(83)
         a83   = mtg83.agenda
 
@@ -333,6 +336,27 @@ class ApiTestCase(TestCase):
         mtg83 = get_meeting(83)
         n83 = mtg83.schedule_set.filter(name='fakeagenda1')
         self.assertNotEqual(n83, None)
+
+    def test_updateAgendaSecretariat(self):
+        mtg83 = get_meeting(83)
+        a83   = mtg83.agenda
+        self.assertTrue(a83.visible)
+
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='application/json'
+
+        # try to create a new agenda
+        resp = self.client.put('/meeting/83/agendas/%s.json' % (a83.name),
+                               data='visible=0',
+                               content_type="application/x-www-form-urlencoded",
+                               **extra_headers)
+
+        self.assertEqual(resp.status_code, 200)
+
+        # see that in fact wlo can create a new timeslot
+        mtg83 = get_meeting(83)
+        a83   = mtg83.agenda
+        self.assertFalse(a83.visible)
 
     def test_deleteAgendaSecretariat(self):
         mtg83 = get_meeting(83)
