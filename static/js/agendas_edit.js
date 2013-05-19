@@ -134,7 +134,10 @@ function toggle_official(event) {
      */
 
     /* if agenda_official is > 1, then it is enabled */
-    var value = $(event.target).find(".agenda_official").length;
+    var value = 0;
+    if($(event.target).html() == "official") {
+        value = 1;
+    }
     var new_value = agenda_name;
     var new_official = 1;
     if(value > 0) {
