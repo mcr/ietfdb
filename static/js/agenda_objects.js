@@ -54,25 +54,25 @@ function then_this(inp){
 	      for(var k=0; k<inp.conflicts[i].length; k++){
 		  for(var q=0; q<inp.conflicts[i][k].length; q++){
 		      inp.conflicts[i][k][q].show_conflict_view();
-		  }	 
+		  }
 	      }
 	  }
 	  catch(err){
 	      console.log(err);
 	  }
-	  
+
 	// for(var k=0; k<inp.conflicts[i].length; k++){
 	//     inp.conflicts[i][k].show_conflict_view();
 	// }
 	}
-    
+
 }
 
 
 function show_non_conflicting_spots(ss_id){
     var conflict_spots = []
     $.each(conflict_classes, function(key){
-	conflict_spots.push(conflict_classes[key].session.slot_status_key); 
+	conflict_spots.push(conflict_classes[key].session.slot_status_key);
     });
     var empty_slots = find_empty_slots();
     conflict_spots.forEach(function(val){
@@ -158,37 +158,44 @@ var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // ScheduledSession is DJANGO name for this object, but needs to be renamed.
 // It represents a TimeSlot that can be assigned in this schedule.
-function ScheduledSlot() {}
+//   { "scheduledsession_id": "{{s.id}}",
+//     "empty": "{{s.empty_str}}",
+//     "timeslot_id":"{{s.timeslot.id}}",
+//     "session_id" :"{{s.session.id}}",
+//     "room"       :"{{s.timeslot.location|slugify}}",
+//     "time"       :"{{s.timeslot.time|date:'Hi' }}",
+//     "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
+//     "domid"      :"{{s.timeslot.js_identifier}}"}
 
-function slot_obj(scheduledsession_id, empty, timeslot_id, session_id, room, time, date, domid) {
-    ss = new ScheduledSlot();
-    ss.scheduledsession_id = scheduledsession_id;
-    ss.empty       = empty;
-    ss.timeslot_id = timeslot_id;
-    ss.session_id  = session_id;
-    ss.date        = date;
-    ss.time        = time;
-    ss.room        = room;
+function ScheduledSlot(){
+}
 
-    //ss.column_class= ".agenda-column-"+date+"-"+time+"-"+room;
-    ss.column_class=[room+"_"+date+"_"+time,ss.column_class= ".agenda-column-"+date+"-"+time];
+ScheduledSlot.prototype.initialize = function(json) {
+    for(var key in json) {
+	this[key]=json[key];
+    }
+    this.column_class= ".agenda-column-"+this.date+"-"+this.time;
 
-    var d = new Date(ss.date);
+    var d = new Date(this.date);
     var t = d.getUTCDay();
-    if(ss.room == "Unassigned"){
-	ss.short_string = "Unassigned";
+    if(this.room == "Unassigned"){
+	this.short_string = "Unassigned";
     }
     else{
-	ss.short_string = daysofweek[t] + ", "+ ss.time + ", " + upperCaseWords(ss.room);
+	this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
     }
-    if(domid) {
-	ss.domid = domid;
-    } else {
-	ss.domid = json_to_id(this);
-//	console.log("gen "+timeslot_id+" is domid: "+ss.domid);
+    if(!this.domid) {
+	this.domid = json_to_id(this);
+	//console.log("gen "+timeslot_id+" is domid: "+this.domid);
     }
-    return ss;
-}
+    //console.log("extend "+this.domid+" with "+JSON.stringify(this));
+
+    // the key so two sessions in the same timeslot
+    if(slot_status[this.domid] == null) {
+	slot_status[this.domid]=[];
+    }
+    slot_status[this.domid].push(this);
+};
 
 ScheduledSlot.prototype.session = function() {
     if(this.session_id != undefined) {
@@ -197,6 +204,11 @@ ScheduledSlot.prototype.session = function() {
 	return undefined;
     }
 };
+
+function make_ss(json) {
+    var ss = new ScheduledSlot();
+    ss.initialize(json);
+}
 
 
 // SESSION OBJECTS
@@ -275,7 +287,7 @@ Session.prototype.generate_info_table = function(ss) {
     $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
 
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
-    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic. 
+    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic.
     // if(ss.timeslot_id == null){
 	$("#info_name_select").val(ss.session_id);
 //    }
@@ -289,7 +301,7 @@ Session.prototype.generate_info_table = function(ss) {
 
     if(ss.timeslot_id == null){
 	$("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
-    }else{	
+    }else{
 	$("#info_location_select").val(ss.timeslot_id); // ***
     }
     $("#info_location_select").val($("#info_location_select_option_"+ss.timeslot_id).val());
@@ -329,7 +341,7 @@ Session.prototype.retrieve_constraints_by_session = function(andthen) {
        $.getJSON( href, "", function(constraint_list) {
                       fill_in_constraints(session_obj, true,  constraint_list, andthen);
                   });
-    } 
+    }
 };
 
 
@@ -453,7 +465,7 @@ Constraint.prototype.build_conflict_view = function() {
 Constraint.prototype.build_othername = function() {
     this.othergroup_name = this.othergroup.acronym;
 };
-    
+
 
 Constraint.prototype.conflict_view = function() {
     this.dom_id = "constraint_"+this.constraint_id;
@@ -470,7 +482,7 @@ Constraint.prototype.conflict_view = function() {
     } else {
         this.build_othername();
     }
-        
+
     return this.build_conflict_view();
 };
 

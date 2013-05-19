@@ -22,7 +22,7 @@ def get_id(room,day):
     x = TimeSlot.objects.filter(time=date)
     return "bla"
 
-# returns the length of the value of a dict. 
+# returns the length of the value of a dict.
 # We are doing this to how long the title for the calendar should be. (this should return the number of time slots)
 @register.filter(name='colWidth')
 def get_col_width(dict, index):
@@ -40,7 +40,7 @@ def to_acceptable_id(inp):
     out = out.replace('\\','_')
     return out
 
-    
+
 @register.filter(name='durationFormat')
 def durationFormat(inp):
     return "%.1f" % (float(inp)/3600)

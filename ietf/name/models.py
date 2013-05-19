@@ -11,7 +11,7 @@ class NameModel(models.Model):
 
     def __unicode__(self):
         return self.name
-    
+
     class Meta:
         abstract = True
         ordering = ['order']
@@ -51,7 +51,7 @@ class MeetingTypeName(NameModel):
 class SessionStatusName(NameModel):
     """Waiting for Approval, Approved, Waiting for Scheduling, Scheduled, Cancelled, Disapproved"""
 class TimeSlotTypeName(NameModel):
-    """Session, Break, Registration"""
+    """Session, Break, Registration, Other(Non-Session), Reserved, unavail"""
 class ConstraintName(NameModel):
     """Conflict"""
 class LiaisonStatementPurposeName(NameModel):

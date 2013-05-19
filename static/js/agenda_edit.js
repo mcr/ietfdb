@@ -4,12 +4,12 @@
 *
 *   Orlando Project: Credil 2013 ( http://credil.org/ )
 *   Author: Justin Hornosty ( justin@credil.org )
-* 
-*   
-*   This file should contain functions relating to 
+*
+*
+*   This file should contain functions relating to
 *   jquery ui droppable ( http://jqueryui.com/droppable/ )
-*   and other interactions. 
-* 
+*   and other interactions.
+*
 */
 
 
@@ -31,7 +31,7 @@ var duplicate_sessions = {};
 var highlight = "red"; // when we click something and want to highlight it.
 var highlight_free = "green"
 var dragging_color = "blue"; // color when draging events.
-var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value. 
+var none_color = '';  // when we reset the color. I believe doing '' will force it back to the stylesheet value.
 var color_droppable_empty_slot = 'rgb(0, 102, 153)';
 
 // these are used for debugging only.
@@ -56,8 +56,8 @@ $(document).ready(function() {
 
 });
 
-/* initStuff() 
-   This is ran at page load and sets up the entire page. 
+/* initStuff()
+   This is ran at page load and sets up the entire page.
 */
 function initStuff(){
     log("initstuff() ran");
@@ -74,15 +74,15 @@ function initStuff(){
     static_listeners();
     log("listeners() ran");
     calculate_name_select_box();
-    duplicate_sessions = find_double_timeslots();    
+    duplicate_sessions = find_double_timeslots();
 }
 
 
 function dajaxice_callback(message){
-    /* if the message is empty, we got nothing back from the server, which probably 
+    /* if the message is empty, we got nothing back from the server, which probably
        means you are offline.
     */
-    console.log(message);
+    console.log("callback: "+message);
     if(message == ""){
 	console.log("No response from server....");
     }

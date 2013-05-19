@@ -11,6 +11,18 @@
 *
 */
 
+function resize_listeners() {
+    for(i = 0; i<days.length;i++){
+        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10,
+						   handles: "e, s",
+						   minWidth:2,
+
+						  });
+
+    }
+
+}
+
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
@@ -25,22 +37,15 @@ function listeners(){
     $('.color_checkboxes').unbind('click');
     $('.color_checkboxes').click(color_legend_click);
 
-    for(i = 0; i<days.length;i++){  
-        $("#resize-"+days[i]+"-spacer").resizable({maxHeight:10, 
-						   handles: "e, s",
-						   minWidth:2,
-						   
-						  });
-        
-    }
-
-    /* listener for when one clicks the 'show all' checkbox */
-    $('.cb_all_conflict').unbind('click');
-    $('.cb_all_conflict').click(cb_all_conflict);
+    resize_listeners()
 
     $('#find_free').unbind('click');
     $('#find_free').click(function(event){ find_free(); });
 
+
+    /* listener for when one clicks the 'show all' checkbox */
+    $('.cb_all_conflict').unbind('click');
+    $('.cb_all_conflict').click(cb_all_conflict);
 
     /* hiding rooms */
     $(".close_room").unbind('click');
@@ -50,16 +55,14 @@ function listeners(){
     $(".close_day").unbind('click');
     $(".close_day").click(close_day);
 
-
     // $("#show_hidden_days").unbind('click');
     // $("#show_hidden_days").click(show_hidden_days);
     // $("#show_hidden_rooms").unbind('click');
     // $("#show_hidden_rooms").click(show_hidden_rooms);
 
-
     $("#show_all_area").unbind('click');
     $("#show_all_area").click(show_all_area);
-    
+
     $("#show_all_button").unbind('click');
     $("#show_all_button").click(show_all);
 }
@@ -71,10 +74,10 @@ function cb_all_conflict(event){
     try{
 	var conflict_clicked = conflict_clicked.substr(3);
     }catch(err){
-	
+
     }
     $("."+conflict_clicked+" input").click();
-    
+
 
 }
 
@@ -115,14 +118,14 @@ function show_hidden_days(event){
     });
     hidden_days = [];
     $("#hidden_days").html(hidden_days.length.toString()+"/"+total_days.toString());
-    
+
 }
 
 function show_all_area(event){
     var areas = find_same_area($("#info_area").children().text());
     console.log(areas);
     $.each(areas, function(index,obj){
-	
+
 	var selector = $("#"+obj.slot_status_key);
 	if(slot_item_hidden(selector) ){
 	    $("#"+obj.slot_status_key).effect("highlight", {color:"lightcoral"}, 2000);
@@ -136,13 +139,13 @@ function show_all_area(event){
 function slot_item_hidden(selector){
 // checking if the thing we will visually display is hidden. (performing effects will break the previous hide)
     var show = true;
-    
-    $.each(hidden_days, function(index,value){ 
+
+    $.each(hidden_days, function(index,value){
 	if(selector.hasClass(value.substr(1))){
 	    show=false;
 	    return show;
 	}
-    });    
+    });
     return show;
 }
 
@@ -156,9 +159,9 @@ function find_empty_slot(){
 	    free_slots.push(item);
 	}
     });
-    
+
     if(free_slots.length > 0){
-	return free_slots[0]; // just return the first one. 
+	return free_slots[0]; // just return the first one.
     }
     else{
 	return null;
@@ -185,7 +188,7 @@ function expand_spacer(target) {
     current_width = parseInt(current_width) + 20;
     $(target).css('min-width',current_width);
     $(target).css('width',current_width);
- 
+
 }
 
 /* the functionality of these listeners will never change so they do not need to be run twice  */
@@ -245,7 +248,7 @@ function set_transparent(){
 		    }
 		}
 	    }
-	    
+
 	})
     })
 
@@ -286,7 +289,7 @@ function meeting_event_click(event){
 	return;
     }
 
-    
+
     for(var i = 0; i<slot.length; i++){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
@@ -460,7 +463,7 @@ function draw_constraints(session) {
     // setup check boxes for conflicts
     $('.conflict_checkboxes').unbind('click');
     $('.conflict_checkboxes').click(conflict_click);
-    
+
     $('.conflict_checkboxes').click();
 
 }
@@ -626,7 +629,7 @@ function drop_drop(event, ui){
 
 
 
-    /* set colors */
+    /* set colours */
     $(this).removeClass('highlight_free_slot');
     if(check_free({id:to_slot_id}) ){
 	// $(this).css('background-color', color_droppable_empty_slot)
@@ -656,16 +659,14 @@ function drop_drop(event, ui){
 	    break;
 	}
     }
-    console.log(meeting_objs[meeting_id].session_id);
-    console.log('scheduledsession_id', schedulesession_id);
-    if(schedulesession_id != null){ 
+    if(schedulesession_id != null){
 	start_spin();
 	Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
 					      {
 						  'session_id':meeting_objs[meeting_id].session_id,
 						  'scheduledsession_id': schedulesession_id,
 					      });
-	
+
     }
     else{
 	console.log("issue sending ajax call!!!");
