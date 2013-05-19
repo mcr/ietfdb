@@ -270,7 +270,7 @@ class ApiTestCase(TestCase):
                 'time' : '2012-03-23',
                 'duration': '08:00:00',
             }, **extra_headers)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 302)
 
         # see that in fact wlo can create a new timeslot
         mtg83 = get_meeting(83)
@@ -386,9 +386,10 @@ class ApiTestCase(TestCase):
         self.assertNotEqual(mtg83.agenda, None)
 
         # try to create a new agenda
-        resp = self.client.put('/meeting/83.json', data={
-                'agenda' : 'None'
-            }, **auth_joeblow)
+        resp = self.client.put('/meeting/83.json',
+                               data="agenda=None",
+                               content_type="application/x-www-form-urlencoded",
+                               **auth_joeblow)
 
         self.assertEqual(resp.status_code, 403)
         self.assertNotEqual(mtg83.agenda, None)
@@ -398,13 +399,17 @@ class ApiTestCase(TestCase):
         self.assertNotEqual(mtg83.agenda, None)
 
         extra_headers = auth_wlo
-        extra_headers['HTTP_ACCEPT']='text/json'
+        extra_headers['HTTP_ACCEPT']='application/json'
 
         # try to create a new agenda
-        resp = self.client.post('/meeting/83.json', data={
-                'agenda' : 'None'
-            }, **extra_headers)
+        resp = self.client.post('/meeting/83.json',
+                                data="agenda=None",
+                                content_type="application/x-www-form-urlencoded",
+                                **extra_headers)
         self.assertEqual(resp.status_code, 200)
+
+        # new to reload the object
+        mtg83 = get_meeting(83)
         self.assertEqual(mtg83.agenda, None)
 
     def test_setMeetingAgendaSecretariat(self):
@@ -418,9 +423,13 @@ class ApiTestCase(TestCase):
         extra_headers['HTTP_ACCEPT']='text/json'
 
         # try to create a new agenda
-        resp = self.client.put('/meeting/83.json', data={
-                'agenda' : new_sched.name
-            }, **extra_headers)
+        resp = self.client.put('/meeting/83.json',
+                               data="agenda=%s" % new_sched.name,
+                               content_type="application/x-www-form-urlencoded",
+                               **extra_headers)
         self.assertEqual(resp.status_code, 200)
+
+        # new to reload the object
+        mtg83 = get_meeting(83)
         self.assertEqual(mtg83.agenda, new_sched)
 

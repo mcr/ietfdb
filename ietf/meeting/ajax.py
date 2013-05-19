@@ -359,15 +359,15 @@ def meeting_update(request, meeting):
     # at present, only the official agenda can be updated from this interface.
     update_dict = QueryDict(request.raw_post_data, encoding=request._encoding)
 
-    log.debug("1 meeting.agenda: %s / %s / %s" % (meeting.agenda, update_dict, request.raw_post_data))
+    #log.debug("1 meeting.agenda: %s / %s / %s" % (meeting.agenda, update_dict, request.raw_post_data))
     if "agenda" in update_dict:
         value = update_dict["agenda"]
-        log.debug("4 meeting.agenda: %s" % (value))
+        #log.debug("4 meeting.agenda: %s" % (value))
         if value is None or value == "None":
             meeting.agenda = None
         else:
-            schedule = get_schedule(meeting, schedule_name)
-            log.debug("3 meeting.agenda: %s" % (schedule))
+            schedule = get_schedule(meeting, value)
+            #log.debug("3 meeting.agenda: %s" % (schedule))
             meeting.agenda = schedule
 
     #log.debug("2 meeting.agenda: %s" % (meeting.agenda))
