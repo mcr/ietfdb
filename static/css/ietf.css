@@ -437,7 +437,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
 }
 
 .show_conflict_view_highlight{
-    background-color:red;
+    background-color: red;
+}
+
+.show_conflict_specific_box {
+  border: 5px solid red;
 }
 
 /* ::-webkit-scrollbar{ */

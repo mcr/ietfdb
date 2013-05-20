@@ -63,18 +63,19 @@ function initStuff(){
     log("initstuff() ran");
     setup_slots();
     log("setup_slots() ran");
-    load_all_groups();        // should be in a single big block.
-    log("groups loaded");
     droppable();
     log("droppable() ran");
     load_events();
     log("load_events() ran");
+    load_all_groups();        // should be in a single big block.
+    log("groups loaded");
     find_meeting_no_room();
     listeners();
     static_listeners();
     log("listeners() ran");
     calculate_name_select_box();
     duplicate_sessions = find_double_timeslots();
+
 }
 
 

@@ -188,8 +188,8 @@ ScheduledSlot.prototype.initialize = function(json) {
 	this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
     }
     if(!this.domid) {
-	this.domid = json_to_id(this);
-	//console.log("gen "+timeslot_id+" is domid: "+this.domid);
+    	this.domid = json_to_id(this);
+        //console.log("gen "+timeslot_id+" is domid: "+this.domid);
     }
     //console.log("extend "+this.domid+" with "+JSON.stringify(this));
 
@@ -326,12 +326,15 @@ Session.prototype.group = function(andthen) {
 };
 
 function load_all_groups() {
-    $.each(meeting_objs, function(key) {
-	       session = meeting_objs[key];
-	       // load the group object
-	       session.group();
-	   });
+    for(key in meeting_objs) {
+        session = meeting_objs[key];
+        // load the group object
+        group = session.group(null);
+        group.add_session(session);
+        log("group: ", group, "has session: ", session.session_id);
+    }
 }
+
 var __DEBUG_THIS_SLOT;
 Session.prototype.retrieve_constraints_by_session = function(andthen) {
     __DEBUG_THIS_SLOT = this;
@@ -368,8 +371,14 @@ Group.prototype.load_group_obj = function(andthen) {
     } else {
         andthen(group_obj);
     }
-}
+};
 
+Group.prototype.add_session = function(session) {
+    if(this.all_sessions == undefined) {
+        this.all_sessions = [];
+    }
+    this.all_sessions.push(session);
+};
 Group.prototype.add_column_class = function(column_class) {
     if(this.column_class == undefined) {
 	this.column_class = [];
@@ -434,10 +443,14 @@ Constraint.prototype.show_conflict_view = function() {
         /* this extracts the day from this structure */
 	var th_time = ".day_"+cc[1].substr(15);
         console.log("299", th_time);
-	$(th_time).addClass("show_conflict_view_highlight"); //css('background-color',"red");
-        console.log("266", "#"+cc[0]);
-	$("#"+cc[0]).addClass("show_conflict_view_highlight");
+	$(th_time).addClass("show_conflict_view_highlight");
     }
+
+    $.each(this.othergroup.all_sessions, function(key) {
+               var nid = "#session_"+this.session_id;
+               console.log("279", this.session_id, nid);
+               $(nid).addClass("show_conflict_specific_box");
+           });
 };
 
 Constraint.prototype.clear_conflict_view = function() {
