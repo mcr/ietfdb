@@ -25,7 +25,7 @@ class Migration(DataMigration):
             na = Schedule(name=("mtg:%s"%(meeting.number))[0:15],
                              owner=wanda,
                              visible=True, public=True)
-            na.meeting = meeting;
+            na.meeting = meeting
             na.save()
             meeting.agenda = na
             meeting.save()
