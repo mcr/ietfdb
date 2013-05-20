@@ -435,6 +435,7 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
+    console.log("viewing", this.thisgroup.href);
 
     for(ccn in classes) {
 	var cc = classes[ccn];
@@ -447,12 +448,14 @@ Constraint.prototype.show_conflict_view = function() {
 
     console.log("make box", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
-    $.each(sessions, function(key) {
+    if(sessions) {
+      $.each(sessions, function(key) {
                console.log("2 make box", key);
                var nid = "#session_"+this.session_id;
                console.log("279", this.session_id, nid);
                $(nid).addClass("show_conflict_specific_box");
            });
+    }
     console.log("viewed", this.thisgroup.href);
 };
 
@@ -467,11 +470,14 @@ Constraint.prototype.clear_conflict_view = function() {
     }
 
     console.log("boxes for", this.thisgroup.href);
-    $.each(this.othergroup.all_sessions, function(key) {
+    sessions = this.othergroup.all_sessions
+    if(sessions) {
+      $.each(sessions, function(key) {
                var nid = "#session_"+this.session_id;
                console.log("269", this.session_id, nid);
                $(nid).removeClass("show_conflict_specific_box");
            });
+    }
     console.log("hid", this.thisgroup.href);
 };
 
