@@ -221,7 +221,6 @@ function conflict_click(event){
 	conflict_status[clicked] = true;
 	constraint.show_conflict_view();
     }
-
 }
 
 
@@ -289,7 +288,6 @@ function meeting_event_click(event){
 	return;
     }
 
-
     for(var i = 0; i<slot.length; i++){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
@@ -304,7 +302,6 @@ function meeting_event_click(event){
 	__DEBUG__SLOT_OBJ = slot[i];
 	__DEBUG__SESSION_OBJ = session;
     }
-
 
 }
 

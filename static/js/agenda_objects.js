@@ -174,7 +174,10 @@ ScheduledSlot.prototype.initialize = function(json) {
     for(var key in json) {
 	this[key]=json[key];
     }
-    this.column_class= ".agenda-column-"+this.date+"-"+this.time;
+
+    /* this needs to be an object */
+    this.column_class=[this.room+"_"+this.date+"_"+this.time,
+                       ".agenda-column-"+this.date+"-"+this.time];
 
     var d = new Date(this.date);
     var t = d.getUTCDay();
@@ -421,14 +424,18 @@ Constraint.prototype.column_class = function() {
 var __CONSTRAINT_DEBUG = null;
 Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class()
-    // console.log(this);
+    //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
 
     for(ccn in classes) {
 	// $('#'+this.session.slot_status_key).addClass('show_conflict_view_highlight');
 	cc = classes[ccn];
+
+        /* this extracts the day from this structure */
 	var th_time = ".day_"+cc[1].substr(15);
+        console.log("299", th_time);
 	$(th_time).addClass("show_conflict_view_highlight"); //css('background-color',"red");
+        console.log("266", "#"+cc[0]);
 	$("#"+cc[0]).addClass("show_conflict_view_highlight");
     }
 };
