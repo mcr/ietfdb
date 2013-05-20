@@ -437,8 +437,7 @@ Constraint.prototype.show_conflict_view = function() {
     __CONSTRAINT_DEBUG = this;
 
     for(ccn in classes) {
-	// $('#'+this.session.slot_status_key).addClass('show_conflict_view_highlight');
-	cc = classes[ccn];
+	var cc = classes[ccn];
 
         /* this extracts the day from this structure */
 	var th_time = ".day_"+cc[1].substr(15);
@@ -446,24 +445,34 @@ Constraint.prototype.show_conflict_view = function() {
 	$(th_time).addClass("show_conflict_view_highlight");
     }
 
-    $.each(this.othergroup.all_sessions, function(key) {
+    console.log("make box", this.thisgroup.href);
+    sessions = this.othergroup.all_sessions
+    $.each(sessions, function(key) {
+               console.log("2 make box", key);
                var nid = "#session_"+this.session_id;
                console.log("279", this.session_id, nid);
                $(nid).addClass("show_conflict_specific_box");
            });
+    console.log("viewed", this.thisgroup.href);
 };
 
 Constraint.prototype.clear_conflict_view = function() {
     classes=this.column_class()
+    console.log("hiding", this.thisgroup.href);
     for(ccn in classes) {
-	cc = classes[ccn];
+	var cc = classes[ccn];
 	var th_time = ".day_"+cc[1].substr(15);
+        console.log("259", th_time);
 	$(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
-	$("#"+cc[0]).removeClass("show_conflict_view_highlight");
-
-	// $(cc).removeClass("show_conflict_view_highlight");
-	// $(cc).css("background", "");
     }
+
+    console.log("boxes for", this.thisgroup.href);
+    $.each(this.othergroup.all_sessions, function(key) {
+               var nid = "#session_"+this.session_id;
+               console.log("269", this.session_id, nid);
+               $(nid).removeClass("show_conflict_specific_box");
+           });
+    console.log("hid", this.thisgroup.href);
 };
 
 
