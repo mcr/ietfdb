@@ -30,17 +30,15 @@ def get_col_width(dict, index):
         return len(dict[index])
     return 0
 
-# Replaces characters that are not acceptable html ID's. ' ','&','/','\' to '_'
+# Replaces characters that are not acceptable html ID's
 @register.filter(name='to_acceptable_id')
 def to_acceptable_id(inp):
+    # see http://api.jquery.com/category/selectors/?rdfrom=http%3A%2F%2Fdocs.jquery.com%2Fmw%2Findex.php%3Ftitle%3DSelectors%26redirect%3Dno
+    # for more information. 
+    invalid = ["!","\"", "#","$","%","&","'","(",")","*","+",",",".","/",":",";","<","=",">","?","@","[","\\","]","^","`","{","|","}","~"]
     out = str(inp)
-    out = out.replace(' ','_')
-    out = out.replace('&','_')
-    out = out.replace('/','_')
-    out = out.replace('\\','_')
-    out = out.replace('(','_')
-    out = out.replace(')','_')
-    out = out.replace('\'','')
+    for i in invalid:
+        out = out.replace(i,'_')
     return out
 
     
