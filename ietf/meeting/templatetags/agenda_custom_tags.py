@@ -38,6 +38,8 @@ def to_acceptable_id(inp):
     out = out.replace('&','_')
     out = out.replace('/','_')
     out = out.replace('\\','_')
+    out = out.replace('(','_')
+    out = out.replace(')','_')
     return out
 
     
