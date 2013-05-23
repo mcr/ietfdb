@@ -147,7 +147,7 @@ function setup_slots(){
       <th><button id="show_all_button" class="styled_button">show all</button></th>
     {% for day in time_slices %}
 	  {% for slot in date_slices|lookup:day %}
-	      <th class="day_{{day}}-{{slot.0|date:'Hi'}} room_title ">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
+	      <th class="day_{{day}}-{{slot.0|date:'Hi'}} day_{{day}} room_title ">{{slot.0|date:'Hi'}}-{{slot.1|date:'Hi'}} </th>
 
 	  {% endfor %}
               <th class="day_{{day}} spacer {{day|date:'Y-m-d'}}-spacer">
