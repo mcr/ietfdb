@@ -680,8 +680,11 @@ class Session(models.Model):
         if self.meeting.type_id == "interim":
             return self.meeting.number
 
-        ss0 = self.scheduledsession_set.order_by('timeslot__time')[0]
-        return u"%s: %s %s" % (self.meeting, self.group.acronym, ss0.timeslot.time.strftime("%H%M") if ss0 else "(unscheduled)")
+        ss0name = "(unscheduled)"
+        ss = self.scheduledsession_set.order_by('timeslot__time')
+        if ss:
+            ss0name = ss[0].timeslot.time.strftime("%H%M")
+        return u"%s: %s %s" % (self.meeting, self.group.acronym, ss0name)
 
     @property
     def short_name(self):
