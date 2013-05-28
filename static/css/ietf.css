@@ -718,3 +718,10 @@ div.agenda_list tr td.agenda_data {
 .agenda_official_row {
   background-color: #dddddd;
 }
+
+
+div.line{
+  transform-origin: 0 100%;
+  height: 3px; /* Line width of 3 */
+  background: #000; /* Black fill */
+}

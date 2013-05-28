@@ -23,6 +23,25 @@
 */
 
 
+function createLine(x1,y1, x2,y2){
+    var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+  var transform = 'rotate('+angle+'deg)';
+
+    var line = $('<div>')
+        .appendTo('#meetings')
+        .addClass('line')
+        .css({
+          'position': '',
+          'transform': transform
+        })
+        .width(length)
+        .offset({left: x1, top: y1});
+
+    return line;
+}
+
+
 function empty_callback(inp){
 //    console.log('inp:', inp);
 }
@@ -34,37 +53,95 @@ function get_all_constraints(){
 
 }
 
-
-function show_all_conflicts(){
-    for(s in meeting_objs){
-	//console.log(s);
-	try{
-	    meeting_objs[s].retrieve_constraints_by_session(then_this);
-	}catch(err){
-	    console.log(err);
-	}
-    }
+function display_conflicts(){
+    get_all_conflicts();
+    show_all_conflicts();
 }
 
+var all_conflicts = [];
 
-function then_this(inp){
-      for(var i=0; i<inp.conflicts.length; i++){
-	//  console.log(inp.conflicts[i]);
-	  try{
-	      for(var k=0; k<inp.conflicts[i].length; k++){
-		  for(var q=0; q<inp.conflicts[i][k].length; q++){
-		      inp.conflicts[i][k][q].show_conflict_view();
-		  }
-	      }
-	  }
-	  catch(err){
-	      console.log(err);
-	  }
-
-	// for(var k=0; k<inp.conflicts[i].length; k++){
-	//     inp.conflicts[i][k].show_conflict_view();
-	// }
+function show_all_conflicts(){
+    for(var i =0; i<all_conflicts.length;i++){
+	if(all_conflicts[i][0].attr('class').split(' ').indexOf('show_conflict_specific_box') < 0){
+	    console.log(all_conflicts[i][0]);
+	    all_conflicts[i][0].addClass("show_conflict_specific_box");
+	    all_conflicts[i][1].addClass("show_conflict_specific_box");
 	}
+	else{
+	    console.log(all_conflicts[i][0].attr('class').split(' '));
+	    }
+
+    }
+    
+    // for(var i =0; i<all_conflicts.length;i++){
+    // 	if(all_conflicts[i][0].attr('class').split(' ').indexOf('show_conflict_specific_box')){
+
+    // 	   }else{ 
+    // 	var x1 = all_conflicts[i][0].offset().left;
+    // 	var y1 = all_conflicts[i][0].offset().top;
+
+    // 	var x2= all_conflicts[i][1].offset().left;
+    // 	var y2= all_conflicts[i][1].offset().top;
+
+    // 	createLine(x1,y1,x2,y2);
+    // 	       }
+    // }
+
+	
+}
+
+function get_all_conflicts(){
+    for(s in meeting_objs){
+	try{
+	    meeting_objs[s].retrieve_constraints_by_session(then_this);
+	}
+	catch(err){
+	   // console.log(err);
+	}
+	
+    }
+}
+var __DEBUG_SHOW_CONSTRAINT = null;
+function then_this(inp){
+    //console.log(inp);
+    try{
+	var vertical_location = "."+$("#"+inp.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+	}
+    catch(err){
+    }
+
+    $.each(inp.constraints.conflict, function(i){
+	//console.log(inp.constraints.conflict[i]); 
+	classes=inp.constraints.conflict[i].column_class();
+	$.each(classes, function(index,value){
+	    if(value[1] == vertical_location){
+		// there is a conflict!
+		__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+	//	console.log($($("#"+value[0]).children()[0]));
+		var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
+		all_conflicts.push(conflict_pair);
+	    }
+	    
+	});
+    });
+    
+      // for(var i=0; i<inp.conflicts.length; i++){
+      // 	//  console.log(inp.conflicts[i]);
+      // 	  try{
+      // 	      for(var k=0; k<inp.conflicts[i].length; k++){
+      // 		  for(var q=0; q<inp.conflicts[i][k].length; q++){
+      // 		      inp.conflicts[i][k][q].show_conflict_view();
+      // 		  }
+      // 	      }
+      // 	  }
+      // 	  catch(err){
+      // 	      console.log(err);
+      // 	  }
+
+      // 	// for(var k=0; k<inp.conflicts[i].length; k++){
+      // 	//     inp.conflicts[i][k].show_conflict_view();
+      // 	// }
+      // 	}
 
 }
 
@@ -351,6 +428,22 @@ Session.prototype.retrieve_constraints_by_session = function(andthen) {
 };
 
 
+Session.prototype.retrieve_contraint = function(){
+    var session_obj = this;
+    var href = meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json";
+    $.getJSON( href, "", function(constraint_list) {
+	console.log(constraint_list);
+	andthen();
+	// fill_in_constraints(session_obj, true,  constraint_list, andthen);
+    });
+
+}
+
+
+
+
+
+
 
 // GROUP OBJECTS
 function Group() {}
@@ -436,7 +529,7 @@ Constraint.prototype.show_conflict_view = function() {
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
     console.log("viewing", this.thisgroup.href);
-
+    
     for(ccn in classes) {
 	var cc = classes[ccn];
 
