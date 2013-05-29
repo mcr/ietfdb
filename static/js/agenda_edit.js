@@ -82,7 +82,7 @@ function initStuff(){
 
     /* Comment this out for fast loading */
     get_all_conflicts();
-    do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ stop_spin(); display_conflicts(); });
+    do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ find_all_conflicts(); stop_spin(); display_conflicts(); });
 
 }
 
