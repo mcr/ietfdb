@@ -440,7 +440,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
     background-color: red;
 }
 
-table.show_conflict_specific_box {
+.show_conflict_specific_box {
+  border: 2px solid red;
+}
+
+table.actual_conflict {
   padding-left: 30px;
   background-image: url('/images/clker-1195427724688380074fire_cefa_01.png');
   background-repeat: no-repeat;
