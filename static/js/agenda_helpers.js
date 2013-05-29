@@ -14,7 +14,7 @@
    this function should achieve this.
 
    result will be a function that when returns true will stop the work and then the callback
-   will be triggered. 
+   will be triggered.
 
    ex:
       global_x = 0

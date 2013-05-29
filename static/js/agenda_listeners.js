@@ -32,7 +32,7 @@ function listeners(){
     // $($("#meetings").not('.meeting_event').not('.ui-draggable')).click(function(){ console.log("#meetings clicked") }); //show_all_conflicts);
     $("#meetings").unbind('click');
     $("#meetings").click(all_click);
-    
+
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
     $('.meeting_event').click(meeting_event_click);
 
@@ -74,7 +74,7 @@ function listeners(){
     $("#show_all_button").unbind('click');
     $("#show_all_button").click(show_all);
 
- 
+
 }
 
 function all_click(event){

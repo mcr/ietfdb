@@ -90,16 +90,16 @@ function get_all_conflicts(){
     for(s in meeting_objs){
 	try{
 	    meeting_objs[s].retrieve_constraints_by_session(then_this,
-							    function(){ 
+							    function(){
 								CONFLICT_LOAD_COUNT++;
 								console.log(CONFLICT_LOAD_COUNT+"/"+meeting_objs_length);
-								
+
 							    });
 	}
 	catch(err){
 	   // console.log(err);
 	}
-	
+
     }
 }
 
@@ -123,12 +123,12 @@ function then_this(inp){
 			var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
 			all_conflicts.push(conflict_pair);
 		    }
-		    
+
 		});
 	    }
 	});
     }
-    
+
 }
 
 
@@ -515,7 +515,7 @@ Constraint.prototype.show_conflict_view = function() {
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
 //    console.log("viewing", this.thisgroup.href);
-    
+
     for(ccn in classes) {
 	var cc = classes[ccn];
 
