@@ -93,7 +93,7 @@ function get_all_conflicts(){
     console.log("get_all_conflicts()");
     for(s in meeting_objs){
 	try{
-	    meeting_objs[s].retrieve_constraints_by_session(then_this,
+	    meeting_objs[s].retrieve_constraints_by_session(find_and_populate_conflicts,
 							    function(){
 								CONFLICT_LOAD_COUNT++;
 								console.log(CONFLICT_LOAD_COUNT+"/"+meeting_objs_length);
@@ -108,7 +108,7 @@ function get_all_conflicts(){
 }
 
 var __DEBUG_SHOW_CONSTRAINT = null;
-function then_this(inp){
+function find_and_populate_conflicts(inp){
     //console.log(inp);
     try{
 	var vertical_location = "."+$("#"+inp.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
