@@ -61,16 +61,21 @@ function display_conflicts(){
 var all_conflicts = [];
 
 function show_all_conflicts(){
-    clear_conflict_classes();
+    for(var i = 0; i<all_conflicts.length; i++){
+	all_conflicts[i].addClass("actual_conflict");
+    }
+
+}
+
+function show_all_conflicts_old(){
+    clear_conflict_classes(); // remove the display showing the conflict classes.
     for(var i =0; i<all_conflicts.length;i++){
 	if(all_conflicts[i][0].attr('class').split(' ').indexOf('actual_conflict') < 0){
-	    //console.log(all_conflicts[i][0]);
 	    all_conflicts[i][0].addClass("actual_conflict");
-	    //all_conflicts[i][1].addClass("actual_conflict");
 	}
 	else{
 	    //console.log(all_conflicts[i][0].attr('class').split(' '));
-	    }
+	}
 
     }
 }
@@ -81,14 +86,12 @@ function hide_all_conflicts() {
 
 function hide_all_conflicts_real(){
    for(var i =0; i<all_conflicts.length;i++){
-       all_conflicts[i][0].removeClass("actual_conflict");
-       //all_conflicts[i][1].removeClass("actual_conflict");
+       //all_conflicts[i][0].removeClass("actual_conflict");
+       all_conflicts[i].removeClass("actual_conflict");
    }
 }
 
-
 var CONFLICT_LOAD_COUNT = 0;
-
 function get_all_conflicts(){
     console.log("get_all_conflicts()");
     for(s in meeting_objs){
@@ -124,7 +127,8 @@ function find_and_populate_conflicts(inp){
 		    if(value[1] == vertical_location){
 			// there is a conflict!
 			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
-			var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
+			//var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
+			var conflict_pair = $("#session_"+inp.session_id);
 			all_conflicts.push(conflict_pair);
 		    }
 
