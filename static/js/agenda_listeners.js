@@ -23,8 +23,16 @@ function resize_listeners() {
 
 }
 
+
+
 /* this function needs to be renamed... it should only deal with listeners who need to be unbound prior to rebinding. */
 function listeners(){
+    //$(".agenda_slot td").not(".meeting_event ui-draggable").unbind('click');
+    //$(".agenda_slot td").not(".meeting_event ui-draggable").click(function(event){ console.log("#meetings clicked"); console.log(event); });
+    // $($("#meetings").not('.meeting_event').not('.ui-draggable')).click(function(){ console.log("#meetings clicked") }); //show_all_conflicts);
+    $("#meetings").unbind('click');
+    $("#meetings").click(all_click);
+    
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
     $('.meeting_event').click(meeting_event_click);
 
@@ -65,8 +73,19 @@ function listeners(){
 
     $("#show_all_button").unbind('click');
     $("#show_all_button").click(show_all);
+
+ 
 }
 
+function all_click(event){
+    var classes = $(event.srcElement).attr('class').split(' ');
+    console.log(classes);
+    if(classes.indexOf('meeting_obj') < 0){
+	show_all_conflicts();
+    }
+    // console.log(this);
+    // console.log($(this));
+}
 
 /************ click functions *********************************************************************/
 function cb_all_conflict(event){
@@ -259,6 +278,7 @@ var __DEBUG__SLOT_OBJ;
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
+    hide_all_conflicts();
     try{
 	clear_highlight(find_friends(current_item));
     }catch(err){ }

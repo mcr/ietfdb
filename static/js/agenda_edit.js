@@ -76,6 +76,14 @@ function initStuff(){
     calculate_name_select_box();
     duplicate_sessions = find_double_timeslots();
 
+    start_spin();
+
+    meeting_objs_length = Object.keys(meeting_objs).length;
+
+    /* Comment this out for fast loading */
+    get_all_conflicts();
+    do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ stop_spin(); display_conflicts(); });
+
 }
 
 

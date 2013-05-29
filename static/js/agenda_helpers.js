@@ -9,6 +9,28 @@
 *
 */
 
+/* do_work:
+   when we are waiting for something to either resolve to true, or another similar job
+   this function should achieve this.
+
+   result will be a function that when returns true will stop the work and then the callback
+   will be triggered. 
+
+   ex:
+      global_x = 0
+      do_work(function(){ global_x++; return global_x > 100 }, function(){ console.log("resolved") })
+*/
+function do_work(result,callback){
+    setTimeout(function(){
+	if(!result()){
+	    setTimeout(arguments.callee,1);
+	}
+	else{
+	    callback();
+	}
+    });
+}
+
 
 function log(text){
     console.log(text);
@@ -184,7 +206,7 @@ function populate_events(js_room_id, title, description, session_id, owner, area
 
 function event_template(event_title, description, session_id, area){
     //console.log("area:"+area)
-    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme'>"+event_title+"<span> ("+meeting_objs[session_id].duration+")</span>"+"</th></tr>";
+    return "<table class='meeting_event' id='session_"+session_id+"'><tr id='meeting_event_title'><th class='"+area+"-scheme meeting_obj'>"+event_title+"<span> ("+meeting_objs[session_id].duration+")</span>"+"</th></tr>";
 }
 
 function check_free(inp){

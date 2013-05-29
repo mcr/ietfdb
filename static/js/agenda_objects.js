@@ -61,39 +61,40 @@ function display_conflicts(){
 var all_conflicts = [];
 
 function show_all_conflicts(){
+    clear_conflict_classes();
     for(var i =0; i<all_conflicts.length;i++){
 	if(all_conflicts[i][0].attr('class').split(' ').indexOf('show_conflict_specific_box') < 0){
-	    console.log(all_conflicts[i][0]);
+	    //console.log(all_conflicts[i][0]);
 	    all_conflicts[i][0].addClass("show_conflict_specific_box");
 	    all_conflicts[i][1].addClass("show_conflict_specific_box");
 	}
 	else{
-	    console.log(all_conflicts[i][0].attr('class').split(' '));
+	    //console.log(all_conflicts[i][0].attr('class').split(' '));
 	    }
 
     }
-    
-    // for(var i =0; i<all_conflicts.length;i++){
-    // 	if(all_conflicts[i][0].attr('class').split(' ').indexOf('show_conflict_specific_box')){
+}
+function hide_all_conflicts(){
+   for(var i =0; i<all_conflicts.length;i++){
+	    all_conflicts[i][0].removeClass("show_conflict_specific_box");
+	    all_conflicts[i][1].removeClass("show_conflict_specific_box");
+    }
 
-    // 	   }else{ 
-    // 	var x1 = all_conflicts[i][0].offset().left;
-    // 	var y1 = all_conflicts[i][0].offset().top;
-
-    // 	var x2= all_conflicts[i][1].offset().left;
-    // 	var y2= all_conflicts[i][1].offset().top;
-
-    // 	createLine(x1,y1,x2,y2);
-    // 	       }
-    // }
-
-	
 }
 
+
+var CONFLICT_LOAD_COUNT = 0;
+
 function get_all_conflicts(){
+    console.log("get_all_conflicts()");
     for(s in meeting_objs){
 	try{
-	    meeting_objs[s].retrieve_constraints_by_session(then_this);
+	    meeting_objs[s].retrieve_constraints_by_session(then_this,
+							    function(){ 
+								CONFLICT_LOAD_COUNT++;
+								console.log(CONFLICT_LOAD_COUNT+"/"+meeting_objs_length);
+								
+							    });
 	}
 	catch(err){
 	   // console.log(err);
@@ -101,6 +102,7 @@ function get_all_conflicts(){
 	
     }
 }
+
 var __DEBUG_SHOW_CONSTRAINT = null;
 function then_this(inp){
     //console.log(inp);
@@ -110,39 +112,23 @@ function then_this(inp){
     catch(err){
     }
 
-    $.each(inp.constraints.conflict, function(i){
-	//console.log(inp.constraints.conflict[i]); 
-	classes=inp.constraints.conflict[i].column_class();
-	$.each(classes, function(index,value){
-	    if(value[1] == vertical_location){
-		// there is a conflict!
-		__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
-	//	console.log($($("#"+value[0]).children()[0]));
-		var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
-		all_conflicts.push(conflict_pair);
+    if(inp.constraints.conflict != null){
+	$.each(inp.constraints.conflict, function(i){
+	    classes=inp.constraints.conflict[i].column_class();
+	    if(classes != null){
+		$.each(classes, function(index,value){
+		    if(value[1] == vertical_location){
+			// there is a conflict!
+			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+			var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
+			all_conflicts.push(conflict_pair);
+		    }
+		    
+		});
 	    }
-	    
 	});
-    });
+    }
     
-      // for(var i=0; i<inp.conflicts.length; i++){
-      // 	//  console.log(inp.conflicts[i]);
-      // 	  try{
-      // 	      for(var k=0; k<inp.conflicts[i].length; k++){
-      // 		  for(var q=0; q<inp.conflicts[i][k].length; q++){
-      // 		      inp.conflicts[i][k][q].show_conflict_view();
-      // 		  }
-      // 	      }
-      // 	  }
-      // 	  catch(err){
-      // 	      console.log(err);
-      // 	  }
-
-      // 	// for(var k=0; k<inp.conflicts[i].length; k++){
-      // 	//     inp.conflicts[i][k].show_conflict_view();
-      // 	// }
-      // 	}
-
 }
 
 
@@ -413,7 +399,7 @@ function load_all_groups() {
 }
 
 var __DEBUG_THIS_SLOT;
-Session.prototype.retrieve_constraints_by_session = function(andthen) {
+Session.prototype.retrieve_constraints_by_session = function(andthen, success) {
     __DEBUG_THIS_SLOT = this;
     if("constraints" in this && "conflict" in this.constraints) {
 	/* everything is good, call continuation function */
@@ -423,7 +409,7 @@ Session.prototype.retrieve_constraints_by_session = function(andthen) {
        var href = meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json";
        $.getJSON( href, "", function(constraint_list) {
                       fill_in_constraints(session_obj, true,  constraint_list, andthen);
-                  });
+       }).done(success);
     }
 };
 
@@ -432,7 +418,7 @@ Session.prototype.retrieve_contraint = function(){
     var session_obj = this;
     var href = meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json";
     $.getJSON( href, "", function(constraint_list) {
-	console.log(constraint_list);
+//	console.log(constraint_list);
 	andthen();
 	// fill_in_constraints(session_obj, true,  constraint_list, andthen);
     });
@@ -528,50 +514,50 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-    console.log("viewing", this.thisgroup.href);
+//    console.log("viewing", this.thisgroup.href);
     
     for(ccn in classes) {
 	var cc = classes[ccn];
 
         /* this extracts the day from this structure */
 	var th_time = ".day_"+cc[1].substr(15);
-        console.log("299", th_time);
+//        console.log("299", th_time);
 	$(th_time).addClass("show_conflict_view_highlight");
     }
 
-    console.log("make box", this.thisgroup.href);
+//    console.log("make box", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
     if(sessions) {
       $.each(sessions, function(key) {
-               console.log("2 make box", key);
+  //             console.log("2 make box", key);
                var nid = "#session_"+this.session_id;
-               console.log("279", this.session_id, nid);
+//               console.log("279", this.session_id, nid);
                $(nid).addClass("show_conflict_specific_box");
            });
     }
-    console.log("viewed", this.thisgroup.href);
+//    console.log("viewed", this.thisgroup.href);
 };
 
 Constraint.prototype.clear_conflict_view = function() {
     classes=this.column_class()
-    console.log("hiding", this.thisgroup.href);
+    //console.log("hiding", this.thisgroup.href);
     for(ccn in classes) {
 	var cc = classes[ccn];
 	var th_time = ".day_"+cc[1].substr(15);
-        console.log("259", th_time);
+//        console.log("259", th_time);
 	$(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
     }
 
-    console.log("boxes for", this.thisgroup.href);
+  //  console.log("boxes for", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
     if(sessions) {
       $.each(sessions, function(key) {
                var nid = "#session_"+this.session_id;
-               console.log("269", this.session_id, nid);
+//               console.log("269", this.session_id, nid);
                $(nid).removeClass("show_conflict_specific_box");
            });
     }
-    console.log("hid", this.thisgroup.href);
+//    console.log("hid", this.thisgroup.href);
 };
 
 
