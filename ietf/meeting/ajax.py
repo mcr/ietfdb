@@ -9,7 +9,7 @@ from ietf.ietfauth.decorators import group_required, has_role
 from ietf.name.models import TimeSlotTypeName
 from django.http import HttpResponseRedirect, HttpResponse, Http404, QueryDict
 
-from ietf.meeting.helpers import get_meeting, get_schedule
+from ietf.meeting.helpers import get_meeting, get_schedule, get_schedule_by_id
 from ietf.meeting.views   import edit_timeslots, edit_agenda
 
 
@@ -26,8 +26,28 @@ from ietf.settings import LOG_DIR
 log = logging.getLogger(__name__)
 
 @dajaxice_register
-def sayhello(request):
-    return json.dumps({'message':'Hello World'})
+def readonly(request, meeting_num, schedule_id):
+    meeting = get_meeting(meeting_num)
+    schedule = get_schedule_by_id(meeting, schedule_id)
+
+    secretariat = False
+    read_only   = True
+    user = request.user
+    if has_role(user, "Secretariat"):
+        secretariat = True
+
+    try:
+        person = user.get_profile()
+        if person is not None and schedule.owner == user.person:
+            read_only = False
+    except:
+        # specific error if user has no profile...
+        pass
+
+    return json.dumps(
+        {'secretariat': secretariat,
+         'owner_href':  schedule.owner.url(request.get_host_protocol()),
+         'read_only':   read_only})
 
 @group_required('Area_Director','Secretariat')
 @dajaxice_register

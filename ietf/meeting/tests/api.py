@@ -433,3 +433,31 @@ class ApiTestCase(TestCase):
         mtg83 = get_meeting(83)
         self.assertEqual(mtg83.agenda, new_sched)
 
+    def test_wlo_isSecretariatCanEditSched24(self):
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # check that wlo
+        resp = self.client.post('/dajaxice/ietf.meeting.readonly/', {
+            'argv': '{"meeting_num":"83","schedule_id":"24"}'
+            }, **extra_headers)
+
+        m83perm = json.loads(resp.content)
+        self.assertEqual(m83perm['secretariat'], True)
+        self.assertEqual(m83perm['owner_href'],  "http://testserver/people/108757.json")
+        self.assertEqual(m83perm['read_only'],   False)
+
+    def test_af_IsReadOnlySched24(self):
+        extra_headers = auth_ferrel
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        resp = self.client.post('/dajaxice/ietf.meeting.readonly/', {
+            'argv': '{"meeting_num":"83","schedule_id":"24"}'
+            }, **extra_headers)
+
+        m83perm = json.loads(resp.content)
+        self.assertEqual(m83perm['secretariat'], False)
+        self.assertEqual(m83perm['owner_href'],  "http://testserver/people/108757.json")
+        self.assertEqual(m83perm['read_only'],   True)
+
+

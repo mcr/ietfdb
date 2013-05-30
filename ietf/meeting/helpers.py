@@ -316,3 +316,9 @@ def get_schedule(meeting, name=None):
         schedule = get_object_or_404(meeting.schedule_set, name=name)
     return schedule
 
+def get_schedule_by_id(meeting, schedid):
+    if schedid is None:
+        schedule = meeting.agenda
+    else:
+        schedule = get_object_or_404(meeting.schedule_set, id=int(schedid))
+    return schedule
