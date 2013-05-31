@@ -510,6 +510,9 @@ function hide_ietf_menu_bar(){
 
 /* create the droppable */
 function droppable(){
+    if(read_only) {
+	return;
+    }
     $(function() {
 	/* the thing that is draggable */
 	$( ".meeting_event").draggable({

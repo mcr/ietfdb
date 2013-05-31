@@ -91,39 +91,40 @@ function initStuff(){
     meeting_objs_length = Object.keys(meeting_objs).length;
 
     /* Comment this out for fast loading */
-    //get_all_conflicts();
+    get_all_conflicts();
     do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ stop_spin(); display_conflicts(); });
 
 }
 
+var __READ_ONLY;
 function read_only_result(msg) {
-    if(msg['secretariat']) {
-        is_secretariat = msg['secretariat'];
+    __READ_ONLY = msg;
+    is_secretariat = msg.secretariat;
+
+    read_only = msg.read_only;
+    console.log("read only", read_only);
+
+    if(!read_only) {
+	$("#read_only").css("display", "none");
     }
-    if(msg['read_only']) {
-        read_only = msg['read_only'];
-        console.log("read only", read_only);
-        if(!read_only) {
-            $("#read_only").css("display", "hidden");
-        }
-    }
-    if(msg['write_perm']) {
+
+    if(msg.write_perm) {
         $(".agenda_save_box").css("display", "block");
         if(read_only) {
-            $(".agenda_save_box").css("position", "page");
-            $(".agenda_save_box").css("top", "10px");
+            $(".agenda_save_box").css("position", "fixed");
+            $(".agenda_save_box").css("top", "20px");
             $(".agenda_save_box").css("right", "10px");
+            $(".agenda_save_box").css("bottom", "auto");
             $(".agenda_save_box").css("border", "3px solid blue");
         }
     } else {
         $(".agenda_save_box").html("please login to save");
     }
 
-    if(msg['owner_href']) {
-        schedule_owner_href = msg['owner_href'];
-        // XX go fetch the owner and display it.
-        console.log("owner href:", schedule_owner_href);
-    }
+    schedule_owner_href = msg.owner_href;
+    // XX go fetch the owner and display it.
+    console.log("owner href:", schedule_owner_href);
+
     listeners();
 }
 
