@@ -34,10 +34,7 @@ function listeners(){
     $("#meetings").click(all_click);
 
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
-
-    if(!read_only) {
-        $('.meeting_event').click(meeting_event_click);
-    }
+    $('.meeting_event').click(meeting_event_click);
 
     $('#info_location_select').unbind('change');
     $('#info_location_select').change(info_location_select_change);
