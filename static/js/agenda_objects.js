@@ -61,16 +61,21 @@ function display_conflicts(){
 var all_conflicts = [];
 
 function show_all_conflicts(){
-    clear_conflict_classes();
+    for(var i = 0; i<all_conflicts.length; i++){
+	all_conflicts[i].addClass("actual_conflict");
+    }
+
+}
+
+function show_all_conflicts_old(){
+    clear_conflict_classes(); // remove the display showing the conflict classes.
     for(var i =0; i<all_conflicts.length;i++){
 	if(all_conflicts[i][0].attr('class').split(' ').indexOf('actual_conflict') < 0){
-	    //console.log(all_conflicts[i][0]);
 	    all_conflicts[i][0].addClass("actual_conflict");
-	    //all_conflicts[i][1].addClass("actual_conflict");
 	}
 	else{
 	    //console.log(all_conflicts[i][0].attr('class').split(' '));
-	    }
+	}
 
     }
 }
@@ -81,19 +86,23 @@ function hide_all_conflicts() {
 
 function hide_all_conflicts_real(){
    for(var i =0; i<all_conflicts.length;i++){
-       all_conflicts[i][0].removeClass("actual_conflict");
-       //all_conflicts[i][1].removeClass("actual_conflict");
+       //all_conflicts[i][0].removeClass("actual_conflict");
+       all_conflicts[i].removeClass("actual_conflict");
    }
 }
 
-
 var CONFLICT_LOAD_COUNT = 0;
-
 function get_all_conflicts(){
     console.log("get_all_conflicts()");
     for(s in meeting_objs){
 	try{
-	    meeting_objs[s].retrieve_constraints_by_session(then_this,
+	    // meeting_objs[s].retrieve_constraints_by_session(find_and_populate_conflicts,
+	    // 						    function(){
+	    // 							CONFLICT_LOAD_COUNT++;
+	    // 							console.log(CONFLICT_LOAD_COUNT+"/"+meeting_objs_length);
+
+	    // 						    });
+	    meeting_objs[s].retrieve_constraints_by_session(function(){},
 							    function(){
 								CONFLICT_LOAD_COUNT++;
 								console.log(CONFLICT_LOAD_COUNT+"/"+meeting_objs_length);
@@ -107,33 +116,78 @@ function get_all_conflicts(){
     }
 }
 
-var __DEBUG_SHOW_CONSTRAINT = null;
-function then_this(inp){
-    //console.log(inp);
-    try{
-	var vertical_location = "."+$("#"+inp.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+function find_all_conflicts(){
+    $.each(meeting_objs, function(index,value){
+	try{
+	    var vertical_location = "."+$("#"+value.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+	}catch(err){}
+
+	/* unpack all the conflicts into one arr. */
+	var conflicts = []
+	for( var i = 0; i<value.conflicts.length; i++){
+	    try{
+		for(var k =0; k<value.conflicts[i].length; k++){
+		    try{ 
+			for(var e=0; e<value.conflicts[i][k].length; e++){
+			    conflicts.push(value.conflicts[i][k][e]);
+			}
+		    }catch(err){}
+		}
+
+	    }catch(err){}
 	}
-    catch(err){
-    }
+	
+	/* we go threw the array of conflicts for a session and based on the name (which is a class tied to that table)
+	   we determine if it exists in the vertical column we are located in 
+	   the selector is pushed into a array.
+	*/
+	for(var i = 0; i< conflicts.length; i++){
+	    try{
+		var other_group_acr = conflicts[i].othergroup.acronym;
+		result = $(vertical_location).find("."+other_group_acr);
+		if(result.length > 0){
+		    console.log("meeting_obj["+index+"]",value,"found conflict:",result);
+		    all_conflicts.push($("#session_"+value.session_id));
+		}
+	    }catch(err){}
+	}
+    });
+    
 
-    if(inp.constraints.conflict != null){
-	$.each(inp.constraints.conflict, function(i){
-	    classes=inp.constraints.conflict[i].column_class();
-	    if(classes != null){
-		$.each(classes, function(index,value){
-		    if(value[1] == vertical_location){
-			// there is a conflict!
-			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
-			var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
-			all_conflicts.push(conflict_pair);
-		    }
+    
 
-		});
-	    }
-	});
-    }
 
 }
+
+
+// var __DEBUG_SHOW_CONSTRAINT = null;
+// function find_and_populate_conflicts(inp){
+//     //console.log(inp);
+//     try{
+// 	var vertical_location = "."+$("#"+inp.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+// 	}
+//     catch(err){
+//     }
+
+//     if(inp.constraints.conflict != null){
+// 	$.each(inp.constraints.conflict, function(i){
+// 	    classes=inp.constraints.conflict[i].column_class();
+// 	    if(classes != null){
+// 		$.each(classes, function(index,value){
+// 		    if(value[1] == vertical_location){
+// 			// there is a conflict!
+// 			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+// 			//var conflict_pair = [$("#session_"+inp.session_id),$("#"+value[0])];
+// 			var conflict_pair = $("#session_"+inp.session_id);
+// 			all_conflicts.push(conflict_pair);
+// 		    }
+
+// 		});
+// 	    }
+// 	});
+//     }
+
+// }
 
 
 function show_non_conflicting_spots(ss_id){
