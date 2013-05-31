@@ -22,6 +22,7 @@ from ietf.ietfauth.decorators import group_required, has_role
 from django.middleware.gzip import GZipMiddleware
 from django.db.models import Max
 from ietf.group.colors import fg_group_colors, bg_group_colors
+from django.forms.models import modelform_factory
 
 import debug
 import urllib
@@ -299,6 +300,26 @@ def edit_agenda(request, num=None, schedule_name=None):
                                           "sessions": sessions,
                                           "scheduledsessions": scheduledsessions,
                                           "show_inline": set(["txt","htm","html"]) },
+                                         RequestContext(request)), mimetype="text/html")
+
+##############################################################################
+#  show the properties associated with an agenda (visible, public)
+#    this page uses ajax PUT requests to the API
+#
+AgendaPropertiesForm = modelform_factory(Schedule, fields=('name','visible', 'public'))
+
+@group_required('Area Director','Secretariat')
+@decorator_from_middleware(GZipMiddleware)
+def edit_agenda_properties(request, num=None, schedule_name=None):
+
+    meeting = get_meeting(num)
+    schedule = get_schedule(meeting, schedule_name)
+    form     = AgendaPropertiesForm(instance=schedule)
+
+    return HttpResponse(render_to_string("meeting/properties_edit.html",
+                                         {"schedule":schedule,
+                                          "form":form,
+                                          "meeting":meeting},
                                          RequestContext(request)), mimetype="text/html")
 
 ##############################################################################

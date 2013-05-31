@@ -748,3 +748,29 @@ div.line{
 #read_only p {
     padding: 0px;
 }
+
+#agenda_edit_properties {
+    position: relative;
+    border: 2px solid black;
+    border-radius: 5px;
+    background: white;
+    padding: 30px;
+    height: 250px;
+    width:  450px;
+    top: 30%;
+    left: 40%;
+}
+
+#agenda_edit_properties fieldset {
+    border: none;
+}
+
+#agenda_edit_properties td {
+    text-align: left;
+    font-size: 10pt;
+}
+
+#agenda_edit_properties div#title table {
+    display: inline;
+}
+    
