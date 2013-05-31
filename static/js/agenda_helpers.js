@@ -280,9 +280,11 @@ function empty_info_table(){
     $("#info_name").html("");
     $("#info_area").html("");
     $("#info_duration").html("");
-    $("#info_location").html(generate_select_box()+"<button id='info_location_set'>Set</button>");
-    $("#info_location_select").val("");
-    $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
+    if(!read_only) {
+        $("#info_location").html(generate_select_box()+"<button id='info_location_set'>Set</button>");
+        $("#info_location_select").val("");
+        $("#info_location_select").val($("#info_location_select_option_"+current_timeslot).val());
+    }
     $("#info_responsible").html("");
     $("#info_requestedby").html("");
 }

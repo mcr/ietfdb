@@ -34,7 +34,10 @@ function listeners(){
     $("#meetings").click(all_click);
 
     $('.meeting_event').unbind('click'); // If we don't unbind it, things end up getting stacked, and tons of ajax things are sent.
-    $('.meeting_event').click(meeting_event_click);
+
+    if(!read_only) {
+        $('.meeting_event').click(meeting_event_click);
+    }
 
     $('#info_location_select').unbind('change');
     $('#info_location_select').change(info_location_select_change);
@@ -696,6 +699,10 @@ function drop_drop(event, ui){
 /* what happens when we drop the session onto the bucket list
    (thing named "unassigned events") */
 function drop_bucket(event,ui){
+
+    if(read_only) {
+        return;
+    }
 
     var meeting_id = ui.draggable.attr('id');
     meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.

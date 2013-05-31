@@ -1,6 +1,6 @@
 
 /*
-*   agenda_listeners.js
+*   agenda_edit.js
 *
 *   Orlando Project: Credil 2013 ( http://credil.org/ )
 *   Author: Justin Hornosty ( justin@credil.org )
@@ -17,11 +17,16 @@
 
 //////////////-GLOBALS----////////////////////////////////////////
 
+var meeting_number = 0;   // is the meeting name.
+var schedule_id    = 0;   // what is the schedule we are editing.
+var schedule_owner_href = '';  // who owns this schedule
+var is_secretariat = false;
 var meeting_objs = {};    // contains a list of session objects
 var slot_status = {};     // the status of the slot, in format { room_year-month-day_hour: { free: t/f, timeslotid: id } }
 
 var group_objs = {};      // list of working groups
 
+var read_only = true;     // it is true until we learn otherwise.
 var days = [];
 var legend_status = {};   // agenda area colors.
 
@@ -70,6 +75,7 @@ function initStuff(){
     load_all_groups();        // should be in a single big block.
     log("groups loaded");
     find_meeting_no_room();
+
     listeners();
     static_listeners();
     log("listeners() ran");
@@ -78,14 +84,55 @@ function initStuff(){
 
     start_spin();
 
+    read_only = true;
+    log("do read only check");
+    read_only_check();
+
     meeting_objs_length = Object.keys(meeting_objs).length;
 
     /* Comment this out for fast loading */
-    get_all_conflicts();
+    //get_all_conflicts();
     do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ stop_spin(); display_conflicts(); });
 
 }
 
+function read_only_result(msg) {
+    if(msg['secretariat']) {
+        is_secretariat = msg['secretariat'];
+    }
+    if(msg['read_only']) {
+        read_only = msg['read_only'];
+        console.log("read only", read_only);
+        if(!read_only) {
+            $("#read_only").css("display", "hidden");
+        }
+    }
+    if(msg['write_perm']) {
+        $(".agenda_save_box").css("display", "block");
+        if(read_only) {
+            $(".agenda_save_box").css("position", "page");
+            $(".agenda_save_box").css("top", "10px");
+            $(".agenda_save_box").css("right", "10px");
+            $(".agenda_save_box").css("border", "3px solid blue");
+        }
+    } else {
+        $(".agenda_save_box").html("please login to save");
+    }
+
+    if(msg['owner_href']) {
+        schedule_owner_href = msg['owner_href'];
+        // XX go fetch the owner and display it.
+        console.log("owner href:", schedule_owner_href);
+    }
+    listeners();
+}
+
+function read_only_check() {
+    Dajaxice.ietf.meeting.readonly(read_only_result,
+                                    {'meeting_num': meeting_number,
+                                     'schedule_id': schedule_id,
+                                    });
+}
 
 function dajaxice_callback(message){
     /* if the message is empty, we got nothing back from the server, which probably

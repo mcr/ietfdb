@@ -354,7 +354,9 @@ Session.prototype.generate_info_table = function(ss) {
     $("#info_area").html("<span class='"+this.area.toUpperCase()+"-scheme'>"+this.area+"</span>");
     $("#info_duration").html(this.requested_duration);
 
-    $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
+    if(!read_only) {
+        $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
+    }
 
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
     // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic.
