@@ -446,6 +446,22 @@ class ApiTestCase(TestCase):
         self.assertEqual(m83perm['secretariat'], True)
         self.assertEqual(m83perm['owner_href'],  "http://testserver/people/108757.json")
         self.assertEqual(m83perm['read_only'],   False)
+        self.assertEqual(m83perm['write_perm'],  True)
+
+    def test_wlo_isNonUserCanNotSave(self):
+        extra_headers = auth_joeblow
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # check that wlo
+        resp = self.client.post('/dajaxice/ietf.meeting.readonly/', {
+            'argv': '{"meeting_num":"83","schedule_id":"24"}'
+            }, **extra_headers)
+
+        m83perm = json.loads(resp.content)
+        self.assertEqual(m83perm['secretariat'], False)
+        self.assertEqual(m83perm['owner_href'],  "http://testserver/people/108757.json")
+        self.assertEqual(m83perm['read_only'],   True)
+        self.assertEqual(m83perm['write_perm'],  False)
 
     def test_af_IsReadOnlySched24(self):
         extra_headers = auth_ferrel
@@ -459,5 +475,6 @@ class ApiTestCase(TestCase):
         self.assertEqual(m83perm['secretariat'], False)
         self.assertEqual(m83perm['owner_href'],  "http://testserver/people/108757.json")
         self.assertEqual(m83perm['read_only'],   True)
+        self.assertEqual(m83perm['write_perm'],  True)
 
 

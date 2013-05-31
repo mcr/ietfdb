@@ -32,9 +32,14 @@ def readonly(request, meeting_num, schedule_id):
 
     secretariat = False
     read_only   = True
+    write_perm  = False
     user = request.user
     if has_role(user, "Secretariat"):
         secretariat = True
+        write_perm  = True
+
+    if has_role(user, "Area Director"):
+        write_perm  = True
 
     try:
         person = user.get_profile()
@@ -46,10 +51,11 @@ def readonly(request, meeting_num, schedule_id):
 
     return json.dumps(
         {'secretariat': secretariat,
+         'write_perm':  write_perm,
          'owner_href':  schedule.owner.url(request.get_host_protocol()),
          'read_only':   read_only})
 
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 @dajaxice_register
 def update_timeslot(request, session_id=None, scheduledsession_id=None):
     if(session_id == None or scheduledsession_id == None):
@@ -258,7 +264,7 @@ def timeslot_sloturl(request, num=None, slotid=None):
 AgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner'))
 EditAgendaEntryForm = modelform_factory(Schedule, exclude=('meeting','owner', 'name'))
 
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 def agenda_list(request, mtg):
     agendas = mtg.schedule_set.all()
     json_array=[]
@@ -268,7 +274,7 @@ def agenda_list(request, mtg):
                         mimetype="application/json")
 
 # duplicates save-as functionality below.
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 def agenda_add(request, meeting):
     # authorization was enforced by the @group_require decorator above.
 
@@ -289,7 +295,7 @@ def agenda_add(request, meeting):
         return HttpResponseRedirect(
             reverse(edit_agenda, args=[meeting.number, newagenda.name]))
 
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 def agenda_update(request, meeting, schedule):
     # authorization was enforced by the @group_require decorator above.
 

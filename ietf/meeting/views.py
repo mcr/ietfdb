@@ -167,7 +167,7 @@ def html_agenda_utc(request, num=None, schedule_name=None):
 class SaveAsForm(forms.Form):
     savename = forms.CharField(max_length=100)
 
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 def agenda_create(request, num=None, schedule_name=None):
     meeting = get_meeting(num)
     schedule = get_schedule(meeting, schedule_name)
@@ -254,7 +254,7 @@ def edit_timeslots(request, num=None):
                                          RequestContext(request)), mimetype="text/html")
 
 ##############################################################################
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 @decorator_from_middleware(GZipMiddleware)
 def edit_agenda(request, num=None, schedule_name=None):
 
@@ -305,7 +305,7 @@ def edit_agenda(request, num=None, schedule_name=None):
 # show list of agendas.
 #
 
-@group_required('Area_Director','Secretariat')
+@group_required('Area Director','Secretariat')
 @decorator_from_middleware(GZipMiddleware)
 def edit_agendas(request, num=None):
 
