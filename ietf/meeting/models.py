@@ -120,6 +120,9 @@ class Meeting(models.Model):
     def json_dict(self, sitefqdn):
         # unfortunately, using the datetime aware json encoder seems impossible,
         # so the dates are formatted as strings here.
+        agenda_url = ""
+        if self.agenda:
+            agenda_url = self.agenda.url(sitefqdn)
         return {
             'href':                 self.url(sitefqdn),
             'name':                 self.number,
@@ -127,7 +130,7 @@ class Meeting(models.Model):
             'submission_cut_off_date': fmt_date(self.get_submission_cut_off_date()),
             'submission_correction_date': fmt_date(self.get_submission_correction_date()),
             'date':                    fmt_date(self.date),
-            'agenda_href':             self.agenda.url(sitefqdn),
+            'agenda_href':             agenda_url,
             'city':                    self.city,
             'country':                 self.country,
             'time_zone':               self.time_zone,

@@ -416,6 +416,7 @@ class ApiTestCase(TestCase):
         mtg83 = get_meeting(83)
         new_sched = mtg83.schedule_set.create(name="funny",
                                               meeting=mtg83,
+                                              public=True,
                                               owner=mtg83.agenda.owner)
         self.assertNotEqual(mtg83.agenda, new_sched)
 
@@ -432,6 +433,28 @@ class ApiTestCase(TestCase):
         # new to reload the object
         mtg83 = get_meeting(83)
         self.assertEqual(mtg83.agenda, new_sched)
+
+    def test_setNonPublicMeetingAgendaSecretariat(self):
+        mtg83 = get_meeting(83)
+        new_sched = mtg83.schedule_set.create(name="funny",
+                                              meeting=mtg83,
+                                              public=False,
+                                              owner=mtg83.agenda.owner)
+        self.assertNotEqual(mtg83.agenda, new_sched)
+
+        extra_headers = auth_wlo
+        extra_headers['HTTP_ACCEPT']='text/json'
+
+        # try to create a new agenda
+        resp = self.client.put('/meeting/83.json',
+                               data="agenda=%s" % new_sched.name,
+                               content_type="application/x-www-form-urlencoded",
+                               **extra_headers)
+        self.assertEqual(resp.status_code, 406)
+
+        # new to reload the object
+        mtg83 = get_meeting(83)
+        self.assertNotEqual(mtg83.agenda, new_sched)
 
     def test_wlo_isSecretariatCanEditSched24(self):
         extra_headers = auth_wlo

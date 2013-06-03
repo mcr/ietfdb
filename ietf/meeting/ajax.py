@@ -405,6 +405,8 @@ def meeting_update(request, meeting):
             meeting.agenda = None
         else:
             schedule = get_schedule(meeting, value)
+            if not schedule.public:
+                return HttpResponse(status = 406)
             #log.debug("3 meeting.agenda: %s" % (schedule))
             meeting.agenda = schedule
 
