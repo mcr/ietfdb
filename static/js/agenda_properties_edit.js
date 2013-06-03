@@ -18,9 +18,12 @@
 
 
 /////////////-END-GLOBALS-///////////////////////////////////////
+var cancel_url;
 
 $(document).ready(function() {
     init_agenda_edit();
+
+    cancel_url = $("#agenda_cancel_url").attr("href");
 
     /* hide the side bar by default. */
     $("#CLOSE_IETF_MENUBAR").click();
@@ -32,6 +35,9 @@ function init_agenda_edit(){
 
     $(".agenda_delete").unbind('click');
     $(".agenda_delete").click(delete_agenda);
+
+    $("#agenda_save").unbind('click');
+    $("#agenda_save").click(save_agenda);
 
     $(".agenda_official_mark").unbind('click');
     $(".agenda_official_mark").click(toggle_official);
@@ -135,10 +141,29 @@ function toggle_official(event) {
                    }}});
 }
 
-function edit_agenda_properties(event) {
-    var tr              = $(event.target).closest('tr').attr('href');
-    var agenda_url      = tr.attr('href');
+function save_agenda(form) {
 
+    var agenda_url  = form.action;
+    var name_str    = form.elements["name"].value;
+    var public_flag = false;
+    var visible_flag= false;
+
+    public_flag = form.elements["public"].checked   ? true : false;
+    visible_flag = form.elements["visible"].checked ? true: false;
+    console.log("PUT to ",agenda_url," with name:", name_str,
+                "visible:", visible_flag,
+                "public:",  public_flag);
+
+    $.ajax({"url": agenda_url,
+            "type": "PUT",
+            "data": {  "public" : public_flag,
+                       "visible": visible_flag,
+                       "name"   : name_str,
+                       },
+             "dataType": "json",
+             "success": function(result) {
+                   window.location.assign(cancel_url);
+             }});
 
 }
 

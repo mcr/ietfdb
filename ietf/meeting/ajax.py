@@ -309,20 +309,32 @@ def agenda_update(request, meeting, schedule):
     user = request.user
     if has_role(user, "Secretariat"):
         if "public" in update_dict:
+            value1 = True
             value = update_dict["public"]
-            if value == "0" or value == 0:
-                value = False
-            log.debug("setting public for %s to %s" % (schedule, value))
-            schedule.public = value
+            if value == "0" or value == 0 or value=="false":
+                value1 = False
+            log.debug("setting public for %s to %s" % (schedule, value1))
+            schedule.public = value1
 
     if "visible" in update_dict:
+        value1 = True
         value = update_dict["visible"]
-        if value == "0" or value == 0:
-            value = False
-        log.debug("setting visible for %s to %s" % (schedule, value))
-        schedule.visible = value
+        if value == "0" or value == 0 or value=="false":
+            value1 = False
+        log.debug("setting visible for %s to %s" % (schedule, value1))
+        schedule.visible = value1
+
+    if "name" in update_dict:
+        value = update_dict["name"]
+        log.debug("setting name for %s to %s" % (schedule, value))
+        schedule.name = value
 
     schedule.save()
+
+    # enforce that a non-public schedule can not be the public one.
+    if meeting.agenda == schedule and not schedule.public:
+        meeting.agenda = None
+        meeting.save()
 
     if "HTTP_ACCEPT" in request.META and "application/json" in request.META['HTTP_ACCEPT']:
         return HttpResponse(json.dumps(schedule.json_dict(request.get_host_protocol())),

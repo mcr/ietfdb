@@ -48,16 +48,15 @@
     </td></tr></table>
   </div>
 
-  <form>
+  <form action="{{schedule.relurl}}" method="PUT">
   <fieldset>
      <table>
         {{ form.as_table }}
 
-     <tr href="{{schedule.relurl}}">
+     <tr>
        <td></td>
-       <td colspan=2><span><input type="submit" name="save" value="save"
-       class="styled_button"></span>
-       <a href="{% url ietf.meeting.views.edit_agendas meeting.number %}"><span class="styled_button agenda_cancel">Cancel</span></a></td>
+       <td colspan=2><input type="button" name="save" value="save" onClick="save_agenda(this.form)" class="styled_button">
+       <a id="agenda_cancel_url" href="{% url ietf.meeting.views.edit_agendas meeting.number %}"><span class="styled_button agenda_cancel">Cancel</span></a></td>
        <td><span class="styled_button agenda_delete">DEL</span></td>
      </tr>
      </table>

@@ -718,7 +718,7 @@ div.agenda_list tr td.agenda_data {
 }
 
 .agenda_data span {
-    cursor:pointer;
+    /* cursor:pointer; */
 }
 
 .agenda_official_row {
