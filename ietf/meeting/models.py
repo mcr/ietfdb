@@ -127,6 +127,7 @@ class Meeting(models.Model):
             'submission_cut_off_date': fmt_date(self.get_submission_cut_off_date()),
             'submission_correction_date': fmt_date(self.get_submission_correction_date()),
             'date':                    fmt_date(self.date),
+            'agenda_href':             self.agenda.url(sitefqdn),
             'city':                    self.city,
             'country':                 self.country,
             'time_zone':               self.time_zone,

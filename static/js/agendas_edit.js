@@ -42,9 +42,10 @@ function init_agendas_edit(){
 }
 
 function toggle_official(event) {
-    var agenda_url    = $(event.target).closest('tr').attr('href');
-    var agenda_name   = $(event.target).closest('tr').attr('agenda_name');
-    var agenda_id     = $(event.target).closest('tr').attr('id');
+    var agenda_line   = $(event.target).closest('tr');
+    var agenda_url    = agenda_line.attr('href');
+    var agenda_name   = agenda_line.attr('agenda_name');
+    var agenda_id     = agenda_line.attr('id');
     var meeting_url   = $(".agenda_list_title").attr('href');
     event.preventDefault();
 
@@ -66,6 +67,18 @@ function toggle_official(event) {
         new_official = 0;
     }
 
+
+    if(new_official == 1) {
+        // see if this item is public, fail otherwise.
+        var agenda_public_span = agenda_line.find('.agenda_public').html();
+        // console.log("public_span", agenda_public_span);
+        if (agenda_public_span == "private") {
+            $("#agenda_notpublic_dialog").dialog();
+            return;
+        }
+    }
+
+
     var rows = $(".agenda_list tr:gt(0)");
     rows.each(function(index) {
                   log("row: "+this);
@@ -84,11 +97,20 @@ function toggle_official(event) {
              "data": { "agenda" : new_value },
              "dataType": "json",
              "success": function(result) {
-                   /* result is a json object */
-                   if(new_official) {
-                       $("#"+agenda_id).find(".agenda_official_mark").html("official");
-                       $("#"+agenda_id).addClass("agenda_official_row");
-                   }}});
+                 /* result is a json object, which has the agenda_href to mark official */
+                 var agenda_href = result.agenda_href;
+
+                 var rows = $(".agenda_list tr:gt(0)");
+                 rows.each(function(index) {
+                     var my_href = $(this).attr('href')
+		     /* this is now the tr */
+
+                     if(agenda_href == my_href) {
+                         $(this).find(".agenda_official_mark").html("official");
+                         $(this).addClass("agenda_official_row");
+                     }
+                 });
+             }});
 }
 
 

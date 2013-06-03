@@ -410,7 +410,7 @@ def meeting_update(request, meeting):
 
     #log.debug("2 meeting.agenda: %s" % (meeting.agenda))
     meeting.save()
-    return HttpResponse(status = 200)
+    return meeting_get(request, meeting)
 
 def meeting_json(request, meeting_num):
     meeting = get_meeting(meeting_num)

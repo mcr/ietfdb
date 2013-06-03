@@ -342,6 +342,7 @@ def edit_agendas(request, num=None):
 
     return HttpResponse(render_to_string("meeting/agenda_list.html",
                                          {"meeting":   meeting,
+                                          "sitefqdn":  request.get_host_protocol(),
                                           "schedules": schedules.all()
                                           },
                                          RequestContext(request)),
