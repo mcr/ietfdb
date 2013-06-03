@@ -328,7 +328,7 @@ def edit_agenda_properties(request, num=None, schedule_name=None):
 
 @group_required('Area Director','Secretariat')
 @decorator_from_middleware(GZipMiddleware)
-def edit_agendas(request, num=None):
+def edit_agendas(request, num=None, order=None):
 
     #if request.method == 'POST':
     #    return agenda_create(request, num, schedule_name)
@@ -339,6 +339,8 @@ def edit_agendas(request, num=None):
     schedules = meeting.schedule_set
     if not has_role(user, 'Secretariat'):
         schedules = schedules.filter(visible = True) | schedules.filter(owner = user.get_profile())
+
+    schedules = schedules.order_by('owner', 'name')
 
     return HttpResponse(render_to_string("meeting/agenda_list.html",
                                          {"meeting":   meeting,
