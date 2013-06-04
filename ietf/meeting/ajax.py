@@ -33,7 +33,7 @@ def readonly(request, meeting_num, schedule_id):
     secretariat = False
     write_perm  = False
 
-    cansee,canedit = agenda_permissions(meeting, schedule, user)
+    cansee,canedit = agenda_permissions(meeting, schedule, request.user)
     read_only = not canedit
 
     user = request.user
