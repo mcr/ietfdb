@@ -2,6 +2,7 @@
 
 #import models
 import datetime
+import sys
 import os
 import re
 import tarfile
@@ -262,19 +263,13 @@ def edit_agenda(request, num=None, schedule_name=None):
     if request.method == 'POST':
         return agenda_create(request, num, schedule_name)
 
+    user  = request.user
+    requestor = user.get_profile()
+
     meeting = get_meeting(num)
+    #sys.stdout.write("requestor: %s for sched_name: %s \n" % ( requestor, schedule_name ))
     schedule = get_schedule(meeting, schedule_name)
-
-    # get_modified_from needs the query set, not the list
-    sessions = meeting.session_set.order_by("id", "group", "requested_by")
-    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
-    modified = get_modified_from_scheduledsessions(scheduledsessions)
-
-    area_list = get_areas()
-    wg_name_list = get_wg_name_list(scheduledsessions)
-    wg_list = get_wg_list(wg_name_list)
-
-    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
+    #sys.stdout.write("2 requestor: %u for sched owned by: %u \n" % ( requestor.id, schedule.owner.id ))
 
     meeting_base_url = meeting.url(request.get_host_protocol(), "")
     site_base_url =request.get_host_protocol()
@@ -283,6 +278,43 @@ def edit_agenda(request, num=None, schedule_name=None):
     saveas = SaveAsForm()
     saveasurl=reverse(edit_agenda,
                       args=[meeting.number, schedule.name])
+
+    # do this in positive logic.
+    cansee = False
+
+    #sys.stdout.write("requestor: %s for sched: %s \n" % ( requestor, schedule ))
+    if has_role(user, 'Secretariat'):
+        cansee = True
+
+    if (has_role(user, 'Area Director') and schedule.visible):
+        cansee = True
+
+    if schedule.public:
+        cansee = True
+
+    if schedule.owner == requestor:
+        cansee = True
+
+    if not cansee:
+        sys.stdout.write("visible: %s public: %s owner: %s rquest from: %s\n" % (
+                schedule.visible, schedule.public, schedule.owner, requestor))
+        return HttpResponse(render_to_string("meeting/private_agenda.html",
+                                             {"schedule":schedule,
+                                              "meeting": meeting,
+                                              "meeting_base_url":meeting_base_url},
+                                             RequestContext(request)), status=403, mimetype="text/html")
+
+    sessions = meeting.session_set.order_by("id", "group", "requested_by")
+    scheduledsessions = get_scheduledsessions_from_schedule(schedule)
+
+    # get_modified_from needs the query set, not the list
+    modified = get_modified_from_scheduledsessions(scheduledsessions)
+
+    area_list = get_areas()
+    wg_name_list = get_wg_name_list(scheduledsessions)
+    wg_list = get_wg_list(wg_name_list)
+
+    time_slices,date_slices = build_all_agenda_slices(scheduledsessions, True)
 
     return HttpResponse(render_to_string("meeting/landscape_edit.html",
                                          {"schedule":schedule,
