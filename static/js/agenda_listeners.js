@@ -396,25 +396,6 @@ function retrieve_session_by_id(session_id) {
     return session_obj;
 }
 
-function fill_in_constraints(session_obj, success, constraint_list, andthen)
-{
-    if(!success || constraint_list['error']) {
-        console.log("failed to get constraints for session_id: "+session_obj.session_id, constraint_list['error']);
-        return false;
-    }
-
-    var i = 10;
-    $.each(constraint_list, function(key){
-	       thing = constraint_list[key];
-	       session_obj.add_constraint_obj(thing);
-           });
-    session_obj.sort_constraints();
-
-    // now draw the constraints on the screen.
-    andthen(session_obj);
-}
-
-
 function dajaxice_error(a){
     console.log("dajaxice_error");
 }
