@@ -46,7 +46,8 @@ from ietf.meeting.helpers import build_all_agenda_slices, get_wg_name_list
 from ietf.meeting.helpers import get_scheduledsessions_from_schedule
 from ietf.meeting.helpers import get_modified_from_scheduledsessions
 from ietf.meeting.helpers import get_wg_list, session_draft_list
-from ietf.meeting.helpers import get_meeting, get_schedule, read_agenda_file
+from ietf.meeting.helpers import get_meeting, get_schedule, read_agenda_file, agenda_permissions
+
 
 @decorator_from_middleware(GZipMiddleware)
 def show_html_materials(request, meeting_num=None, schedule_name=None):
@@ -279,21 +280,7 @@ def edit_agenda(request, num=None, schedule_name=None):
     saveasurl=reverse(edit_agenda,
                       args=[meeting.number, schedule.name])
 
-    # do this in positive logic.
-    cansee = False
-
-    #sys.stdout.write("requestor: %s for sched: %s \n" % ( requestor, schedule ))
-    if has_role(user, 'Secretariat'):
-        cansee = True
-
-    if (has_role(user, 'Area Director') and schedule.visible):
-        cansee = True
-
-    if schedule.public:
-        cansee = True
-
-    if schedule.owner == requestor:
-        cansee = True
+    cansee,canedit = agenda_permissions(meeting, schedule, user)
 
     if not cansee:
         sys.stdout.write("visible: %s public: %s owner: %s rquest from: %s\n" % (

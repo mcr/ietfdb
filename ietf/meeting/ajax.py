@@ -7,9 +7,9 @@ from django.shortcuts import get_object_or_404
 
 from ietf.ietfauth.decorators import group_required, has_role
 from ietf.name.models import TimeSlotTypeName
-from django.http import HttpResponseRedirect, HttpResponse, Http404, QueryDict
+from django.http import HttpResponseRedirect, HttpResponse, Http404, QueryDict, Http403
 
-from ietf.meeting.helpers import get_meeting, get_schedule, get_schedule_by_id
+from ietf.meeting.helpers import get_meeting, get_schedule, get_schedule_by_id, agenda_permissions
 from ietf.meeting.views   import edit_timeslots, edit_agenda
 
 
@@ -31,8 +31,11 @@ def readonly(request, meeting_num, schedule_id):
     schedule = get_schedule_by_id(meeting, schedule_id)
 
     secretariat = False
-    read_only   = True
     write_perm  = False
+
+    cansee,canedit = agenda_permissions(meeting, schedule, user)
+    read_only = not canedit
+
     user = request.user
     if has_role(user, "Secretariat"):
         secretariat = True
@@ -67,10 +70,9 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
         return
 
     # if(scheduledsession_id == "Unassigned"):
-
     #     return
-    session_id = int(session_id)
 
+    session_id = int(session_id)
 
     # log.info("%s is updating scheduledsession_id=%u to session_id=%u" %
     #          (request.user, ss_id, session_id))
@@ -81,19 +83,27 @@ def update_timeslot(request, session_id=None, scheduledsession_id=None):
     except:
         return json.dumps({'error':'invalid session'})
 
-    #log.debug(session)
+    #log.debug("session is %s" % session)
 
     ss_id = int(scheduledsession_id)
-    for ss in session.scheduledsession_set.all():
-        ss.session = None
-        ss.save()
+    if ss_id != 0:
+        ss = ScheduledSession.objects.get(pk=ss_id)
+        schedule = ss.session
+
+    meeting = session.meeting
+    cansee,canedit = agenda_permissions(meeting, schedule, request.user)
+
+    if not canedit:
+        raise Http403
+        return json.dumps({'error':'no permission'})
+
+    for ssO in session.scheduledsession_set.all():
+        ssO.session = None
+        ssO.save()
 
     try:
         # find the scheduledsession, assign the Session to it.
-        if(ss_id == 0):
-            ss.session = None
-        else:
-            ss = ScheduledSession.objects.get(pk=ss_id)
+        if(ss_id != 0):
             ss.session = session
         ss.save()
     except Exception as e:

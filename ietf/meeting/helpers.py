@@ -322,3 +322,31 @@ def get_schedule_by_id(meeting, schedid):
     else:
         schedule = get_object_or_404(meeting.schedule_set, id=int(schedid))
     return schedule
+
+def agenda_permissions(meeting, schedule, user):
+    # do this in positive logic.
+    cansee = False
+    canedit= False
+    requestor= None
+
+    try:
+        requestor = user.get_profile()
+    except:
+        pass
+
+    #sys.stdout.write("requestor: %s for sched: %s \n" % ( requestor, schedule ))
+    if has_role(user, 'Secretariat'):
+        cansee = True
+        # secretariat is not superuser for edit!
+
+    if (has_role(user, 'Area Director') and schedule.visible):
+        cansee = True
+
+    if schedule.public:
+        cansee = True
+
+    if requestor is not None and schedule.owner == requestor:
+        cansee = True
+        canedit = True
+
+    return cansee,canedit
