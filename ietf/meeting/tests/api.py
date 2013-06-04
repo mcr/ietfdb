@@ -35,7 +35,7 @@ class ApiTestCase(TestCase):
         ss_one = ScheduledSession.objects.get(pk=2371)
         self.assertEqual(ss_one.timeslot, ts_one)
 
-    def atest_noAuthorizationUpdateAgendaItem(self):
+    def test_noAuthorizationUpdateAgendaItem(self):
         ts_one = TimeSlot.objects.get(pk=2371)
         ts_two = TimeSlot.objects.get(pk=2372)
         ss_one = ScheduledSession.objects.get(pk=2371)
@@ -43,11 +43,10 @@ class ApiTestCase(TestCase):
         # confirm that it has old timeslot value
         self.assertEqual(ss_one.timeslot, ts_one)
 
-        self.assertTrue(0)
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
             'argv': '{"session_id":"2371","scheduledsession_id":"2372"}}'
-            })
+            }, **auth_ferrel)
 
         # confirm that without login, it does not have new value
         ss_one = ScheduledSession.objects.get(pk=2371)
