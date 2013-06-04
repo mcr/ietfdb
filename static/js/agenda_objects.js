@@ -492,23 +492,37 @@ Session.prototype.retrieve_contraint = function(){
 
 
 // GROUP OBJECTS
-function Group() {}
+function Group() {
+    this.andthen_list = [];
+}
+
+Group.prototype.loaded_andthen = function() {
+    $.each(this.andthen_list, function(index, andthen) {
+        andthen(this);
+    });
+};
 Group.prototype.load_group_obj = function(andthen) {
     //console.log("group ",this.href);
     var group_obj = this;
 
-    if(!this.loaded) {
+    if(!this.loaded && !this.loading) {
         this.loading = true;
+        this.andthen_list.push(andthen);
         $.getJSON( this.href, "", function(newobj) {
-                       if(newobj) {
-                           $.extend(group_obj, newobj);
-                           group_obj.loaded = true;
-                       }
-                       group_obj.loading = false;
-                       andthen(group_obj);
-               });
+            if(newobj) {
+                $.extend(group_obj, newobj);
+                group_obj.loaded = true;
+            }
+            group_obj.loading = false;
+            group_obj.loaded_andthen();
+        });
     } else {
-        andthen(group_obj);
+        if(!this.loaded) {
+            // queue this continuation for later.
+            this.andthen_list.push(andthen);
+        } else {
+            andthen(group_obj);
+        }
     }
 };
 
@@ -535,6 +549,7 @@ function find_group_by_href(href) {
     g = group_objs[href];
     if(!g.loaded) {
         g.href = href;
+        console.log("loading group href", href);
 	g.load_group_obj(function(obj) {});
     }
     return g;
