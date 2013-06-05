@@ -22,7 +22,7 @@ var schedule_id    = 0;   // what is the schedule we are editing.
 var schedule_owner_href = '';  // who owns this schedule
 var is_secretariat = false;
 var meeting_objs = {};    // contains a list of session objects
-var slot_status = {};     // the status of the slot, in format { room_year-month-day_hour: { free: t/f, timeslotid: id } }
+var slot_status = {};     // indexed by domid, contains an array of ScheduledSessions objects
 
 var group_objs = {};      // list of working groups
 
@@ -65,15 +65,15 @@ $(document).ready(function() {
    This is ran at page load and sets up the entire page.
 */
 function initStuff(){
-    log("initstuff() ran");
+    log("initstuff() running...");
     setup_slots();
     log("setup_slots() ran");
     droppable();
     log("droppable() ran");
-    load_events();
-    log("load_events() ran");
     load_all_groups();        // should be in a single big block.
     log("groups loaded");
+    load_events();
+    log("load_events() ran");
     find_meeting_no_room();
 
     listeners();
@@ -87,12 +87,22 @@ function initStuff(){
     read_only = true;
     log("do read only check");
     read_only_check();
+    stop_spin();
 
     meeting_objs_length = Object.keys(meeting_objs).length;
 
     /* Comment this out for fast loading */
-    get_all_conflicts();
-    do_work(function(){ return CONFLICT_LOAD_COUNT >= meeting_objs_length }, function(){ find_all_conflicts(); stop_spin(); display_conflicts(); });
+    if(true) {
+        start_spin();
+        get_all_conflicts();
+        do_work(function() {
+            return CONFLICT_LOAD_COUNT >= meeting_objs_length;
+        },
+                function(){
+                    stop_spin();
+                    display_conflicts();
+                });
+    }
 
 }
 

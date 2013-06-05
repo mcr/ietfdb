@@ -157,7 +157,7 @@ function load_events(){
 	for(var q = 0; q<ssid_arr.length; q++){
 	    ssid = ssid_arr[q];
             slot_id = ("#"+ssid.domid);
-//            $(slot_id).css('background-color',color_droppable_empty_slot ); //'#006699'
+            //$(slot_id).css('background-color',color_droppable_empty_slot ); //'#006699'
 
 	    //console.log("removing class from "+ssid.domid);
 	    /* also, since we are HERE, set the class to indicate if slot is available */
@@ -173,6 +173,8 @@ function load_events(){
 
 		// connect to the group.
 		session.group();
+                session.column_class = ssid.column_class;
+                //console.log("session:",session.title, "column_class", ssid.column_class);
 
                 populate_events(key,
                                 session.title,
@@ -183,7 +185,7 @@ function load_events(){
 
 		// note in the group, what the class of column is.
 		// this is an array, as the group might have multiple
-		// sessions.
+		// sessions!
 		group = session.group();
 		group.add_column_class(ssid.column_class);
 
