@@ -58,26 +58,14 @@ function display_conflicts(){
     show_all_conflicts();
 }
 
-var all_conflicts = [];
+var all_conflicts = {};
 
 function show_all_conflicts(){
-    for(var i = 0; i<all_conflicts.length; i++){
-	all_conflicts[i].addClass("actual_conflict");
-    }
-
-}
-
-function show_all_conflicts_old(){
-    clear_conflict_classes(); // remove the display showing the conflict classes.
-    for(var i =0; i<all_conflicts.length;i++){
-	if(all_conflicts[i][0].attr('class').split(' ').indexOf('actual_conflict') < 0){
-	    all_conflicts[i][0].addClass("actual_conflict");
-	}
-	else{
-	    //console.log(all_conflicts[i][0].attr('class').split(' '));
-	}
-
-    }
+    clear_conflict_classes();   // remove the display showing the conflict classes.
+    $.each(all_conflicts, function(key) {
+        conflict = all_conflicts[key];
+        $("#" + conflict.session_id).addClass("actual_conflict");
+    });
 }
 
 function hide_all_conflicts() {
@@ -85,10 +73,10 @@ function hide_all_conflicts() {
 }
 
 function hide_all_conflicts_real(){
-   for(var i =0; i<all_conflicts.length;i++){
-       //all_conflicts[i][0].removeClass("actual_conflict");
-       all_conflicts[i].removeClass("actual_conflict");
-   }
+    $.each(all_conflicts, function(key) {
+        conflict = all_conflicts[key];
+        $("#" + conflict.session_id).removeClass("actual_conflict");
+    });
 }
 
 var CONFLICT_LOAD_COUNT = 0;
@@ -157,7 +145,7 @@ function find_all_conflicts(){
 
 var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
-    //console.log("populating conflict:",session_obj);
+    console.log("populating conflict:", session_obj.title);
 
     try{
  	var vertical_location = session_obj.column_class.column_tag;
@@ -167,19 +155,25 @@ function find_and_populate_conflicts(session_obj) {
 
     if(session_obj.constraints.conflict != null){
  	$.each(session_obj.constraints.conflict, function(i){
- 	    classes=session_obj.constraints.conflict[i].column_class;
- 	    if(classes != null){
- 		$.each(classes, function(index,value){
- 		    if(value.column_tag == vertical_location){
- 			// there is a conflict!
- 			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
- 			//var conflict_pair = [$("#session_"+session_obj.session_id),$("#"+value[0])];
- 			var conflict_pair = $("#session_"+session_obj.session_id);
- 			all_conflicts.push(conflict_pair);
- 		    }
+            var conflict = session_obj.constraints.conflict[i];
+            //console.log("  conflict check:", conflict.othergroup.acronym, "me:", vertical_location);
 
- 		});
- 	    }
+            var osessions = conflict.othergroup.all_sessions;
+            if(osessions != null) {
+                $.each(osessions, function(index) {
+                    osession = conflict.othergroup.all_sessions[index];
+                    value = osession.column_class;
+                    if(value != undefined) {
+                        //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
+ 		        if(value.column_tag == vertical_location) {
+                            console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
+ 			    // there is a conflict!
+ 			    __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+                            all_conflicts[session_obj.session_id] = session_obj;
+ 		        }
+                    }
+ 	        });
+            }
  	});
      }
  }
@@ -351,6 +345,7 @@ function Session() {
     this.slot_status_key = null;
     this.href       = false;
     this.group_obj  = undefined;
+    this.column_class = undefined;     //column_class will be filled by in load_events
 }
 
 function event_obj(title, description, session_id, owner, group_id, area,duration) {
@@ -511,6 +506,7 @@ Session.prototype.fill_in_constraints = function(constraint_list) {
 // GROUP OBJECTS
 function Group() {
     this.andthen_list = [];
+    this.all_sessions = [];
 }
 
 Group.prototype.loaded_andthen = function() {
@@ -611,7 +607,7 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class_list()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-    console.log("viewing", this.thisgroup.href);
+    //console.log("viewing", this.thisgroup.href);
 
     for(ccn in classes) {
 	var cc = classes[ccn];   // cc is a ColumnClass now
@@ -619,7 +615,7 @@ Constraint.prototype.show_conflict_view = function() {
         if(cc != undefined) {
             /* this extracts the day from this structure */
 	    var th_time = ".day_"+cc.th_time;
-            console.log("299", th_time);
+            //console.log("299", th_time);
 	    $(th_time).addClass("show_conflict_view_highlight");
         }
     }
@@ -681,12 +677,14 @@ Constraint.prototype.build_othername = function() {
 };
 
 
+var __DEBUG__OTHERGROUP;
 Constraint.prototype.conflict_view = function() {
     this.dom_id = "constraint_"+this.constraint_id;
 
     var theconstraint = this;
     if(!this.othergroup.loaded) {
 
+        __DEBUG__OTHERGROUP = this;
         this.othergroup_name = "...";
         this.othergroup.load_group_obj(function (obj) {
                                            theconstraint.othergroup = obj;

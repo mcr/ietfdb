@@ -187,7 +187,8 @@ function load_events(){
 		// this is an array, as the group might have multiple
 		// sessions!
 		group = session.group();
-		group.add_column_class(ssid.column_class);
+                group.add_column_class(ssid.column_class);
+		group.add_session(session);
 
             } else {
 		//log("ssid: "+key+" is null");
