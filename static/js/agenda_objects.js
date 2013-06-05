@@ -48,7 +48,7 @@ function empty_callback(inp){
 
 function get_all_constraints(){
     for(s in meeting_objs){
-	show_non_conflicting_spots(s)
+       show_non_conflicting_spots(s)
     }
 
 }
@@ -88,52 +88,52 @@ function increment_conflict_load_count() {
 function get_all_conflicts(){
     console.log("get_all_conflicts()");
     for(s in meeting_objs){
-	try {
-	    meeting_objs[s].retrieve_constraints_by_session(find_and_populate_conflicts,
+       try {
+           meeting_objs[s].retrieve_constraints_by_session(find_and_populate_conflicts,
                                                             increment_conflict_load_count);
-	}
-	catch(err){
-	   console.log(err);
-	}
+       }
+       catch(err){
+          console.log(err);
+       }
 
     }
 }
 
 function find_all_conflicts(){
     $.each(meeting_objs, function(index,value){
-	try{
-	    var vertical_location = "."+$("#"+value.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
-	}catch(err){}
+       try{
+           var vertical_location = "."+$("#"+value.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+       }catch(err){}
 
-	/* unpack all the conflicts into one arr. */
-	var conflicts = []
-	for( var i = 0; i<value.conflicts.length; i++){
-	    try{
-		for(var k =0; k<value.conflicts[i].length; k++){
-		    try{
-			for(var e=0; e<value.conflicts[i][k].length; e++){
-			    conflicts.push(value.conflicts[i][k][e]);
-			}
-		    }catch(err){}
-		}
+       /* unpack all the conflicts into one arr. */
+       var conflicts = []
+       for( var i = 0; i<value.conflicts.length; i++){
+           try{
+              for(var k =0; k<value.conflicts[i].length; k++){
+                  try{
+                     for(var e=0; e<value.conflicts[i][k].length; e++){
+                         conflicts.push(value.conflicts[i][k][e]);
+                     }
+                  }catch(err){}
+              }
 
-	    }catch(err){}
-	}
+           }catch(err){}
+       }
 
-	/* we go threw the array of conflicts for a session and based on the name (which is a class tied to that table)
-	   we determine if it exists in the vertical column we are located in
-	   the selector is pushed into a array.
-	*/
-	for(var i = 0; i< conflicts.length; i++){
-	    try{
-		var other_group_acr = conflicts[i].othergroup.acronym;
-		result = $(vertical_location).find("."+other_group_acr);
-		if(result.length > 0){
-		    console.log("meeting_obj["+index+"]",value,"found conflict:",result);
-		    all_conflicts.push($("#session_"+value.session_id));
-		}
-	    }catch(err){}
-	}
+       /* we go threw the array of conflicts for a session and based on the name (which is a class tied to that table)
+          we determine if it exists in the vertical column we are located in
+          the selector is pushed into a array.
+       */
+       for(var i = 0; i< conflicts.length; i++){
+           try{
+              var other_group_acr = conflicts[i].othergroup.acronym;
+              result = $(vertical_location).find("."+other_group_acr);
+              if(result.length > 0){
+                  console.log("meeting_obj["+index+"]",value,"found conflict:",result);
+                  all_conflicts.push($("#session_"+value.session_id));
+              }
+           }catch(err){}
+       }
     });
 
 
@@ -148,13 +148,13 @@ function find_and_populate_conflicts(session_obj) {
     console.log("populating conflict:", session_obj.title);
 
     try{
- 	var vertical_location = session_obj.column_class.column_tag;
+        var vertical_location = session_obj.column_class.column_tag;
     }
     catch(err){
     }
 
     if(session_obj.constraints.conflict != null){
- 	$.each(session_obj.constraints.conflict, function(i){
+        $.each(session_obj.constraints.conflict, function(i){
             var conflict = session_obj.constraints.conflict[i];
             //console.log("  conflict check:", conflict.othergroup.acronym, "me:", vertical_location);
 
@@ -165,16 +165,16 @@ function find_and_populate_conflicts(session_obj) {
                     value = osession.column_class;
                     if(value != undefined) {
                         //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
- 		        if(value.column_tag == vertical_location) {
+                       if(value.column_tag == vertical_location) {
                             console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
- 			    // there is a conflict!
- 			    __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+                          // there is a conflict!
+                          __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
                             all_conflicts[session_obj.session_id] = session_obj;
- 		        }
+                       }
                     }
- 	        });
+                });
             }
- 	});
+        });
      }
  }
 
@@ -182,26 +182,26 @@ function find_and_populate_conflicts(session_obj) {
 function show_non_conflicting_spots(ss_id){
     var conflict_spots = []
     $.each(conflict_classes, function(key){
-	conflict_spots.push(conflict_classes[key].session.slot_status_key);
+       conflict_spots.push(conflict_classes[key].session.slot_status_key);
     });
     var empty_slots = find_empty_slots();
     conflict_spots.forEach(function(val){
-	empty_slots.forEach(function(s){
-	    if(val == s.key){
-	    }
-	});
+       empty_slots.forEach(function(s){
+           if(val == s.key){
+           }
+       });
     });
 }
 
 function find_empty_slots(){
     var empty_slots = [];
     $.each(slot_status, function(key){
-	for(var i =0; i<slot_status[key].length; i++){
-	    if(slot_status[key][i].empty == "True" || slot_status[key][i].empty == true){
-		var pos = { "index" :i, key:key } ;
-		empty_slots.push(pos);
-	    }
-	}
+       for(var i =0; i<slot_status[key].length; i++){
+           if(slot_status[key][i].empty == "True" || slot_status[key][i].empty == true){
+              var pos = { "index" :i, key:key } ;
+              empty_slots.push(pos);
+           }
+       }
     });
     return empty_slots;
 }
@@ -228,12 +228,12 @@ function test_ss(){
  */
 function check_delimiter(inp){
     for(var i =0; i<inp.length; i++){
-	if(inp[i] == '/'){
-	    return '/';
-	}
-	else if(inp[i] == '-'){
-	    return '-';
-	}
+       if(inp[i] == '/'){
+           return '/';
+       }
+       else if(inp[i] == '-'){
+           return '-';
+       }
     }
     return ' ';
 
@@ -251,16 +251,16 @@ function upperCaseWords(inp){
     var newStr = "";
     var split = inp.split(check_delimiter(inp));
 
-	for(i=0; i<split.length; i++){
-		newStr = newStr+split[i][0].toUpperCase();
-		newStr = newStr+split[i].slice(1,split[i].length);
+       for(i=0; i<split.length; i++){
+              newStr = newStr+split[i][0].toUpperCase();
+              newStr = newStr+split[i].slice(1,split[i].length);
 
-		if(i+1 < split.length){ // so we don't get a extra space
-			newStr = newStr+" ";
-		}
+              if(i+1 < split.length){ // so we don't get a extra space
+                     newStr = newStr+" ";
+              }
     }
 
-	return newStr;
+       return newStr;
 
 }
 
@@ -294,7 +294,7 @@ function ScheduledSlot(){
 
 ScheduledSlot.prototype.initialize = function(json) {
     for(var key in json) {
-	this[key]=json[key];
+       this[key]=json[key];
     }
 
     /* this needs to be an object */
@@ -303,29 +303,29 @@ ScheduledSlot.prototype.initialize = function(json) {
     var d = new Date(this.date);
     var t = d.getUTCDay();
     if(this.room == "Unassigned"){
-	this.short_string = "Unassigned";
+       this.short_string = "Unassigned";
     }
     else{
-	this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
+       this.short_string = daysofweek[t] + ", "+ this.time + ", " + upperCaseWords(this.room);
     }
     if(!this.domid) {
-    	this.domid = json_to_id(this);
+           this.domid = json_to_id(this);
         //console.log("gen "+timeslot_id+" is domid: "+this.domid);
     }
     //console.log("extend "+this.domid+" with "+JSON.stringify(this));
 
     // the key so two sessions in the same timeslot
     if(slot_status[this.domid] == null) {
-	slot_status[this.domid]=[];
+       slot_status[this.domid]=[];
     }
     slot_status[this.domid].push(this);
 };
 
 ScheduledSlot.prototype.session = function() {
     if(this.session_id != undefined) {
-	return meeting_objs[this.session_id];
+       return meeting_objs[this.session_id];
     } else {
-	return undefined;
+       return undefined;
     }
 };
 
@@ -369,35 +369,35 @@ function event_obj(title, description, session_id, owner, group_id, area,duratio
 // augument to jQuery.getJSON( url, [data], [callback] )
 Session.prototype.load_session_obj = function(andthen, arg) {
     if(!this.loaded) {
-	start_spin();
-	var oXMLHttpRequest = XMLHttpGetRequest(this.href, true);
-	var session = this; // because below, this==XMLHTTPRequest
-	oXMLHttpRequest.onreadystatechange = function() {
-	    if (this.readyState == XMLHttpRequest.DONE) {
-		try{
-		    last_json_txt = this.responseText;
-		    session_obj   = JSON.parse(this.responseText);
-		    last_json_reply = session_obj;
-		    $.extend(session, session_obj);
-		    session.loaded = true;
-		    if(andthen != undefined) {
-			andthen(session, true, arg);
-		    }
-		    stop_spin();
-		}
-		catch(exception){
-		    console.log("exception: "+exception);
-		    if(andthen != undefined) {
-			andthen(session, false, arg);
-		    }
-		}
-	    }
-	};
-	oXMLHttpRequest.send();
+       start_spin();
+       var oXMLHttpRequest = XMLHttpGetRequest(this.href, true);
+       var session = this; // because below, this==XMLHTTPRequest
+       oXMLHttpRequest.onreadystatechange = function() {
+           if (this.readyState == XMLHttpRequest.DONE) {
+              try{
+                  last_json_txt = this.responseText;
+                  session_obj   = JSON.parse(this.responseText);
+                  last_json_reply = session_obj;
+                  $.extend(session, session_obj);
+                  session.loaded = true;
+                  if(andthen != undefined) {
+                     andthen(session, true, arg);
+                  }
+                  stop_spin();
+              }
+              catch(exception){
+                  console.log("exception: "+exception);
+                  if(andthen != undefined) {
+                     andthen(session, false, arg);
+                  }
+              }
+           }
+       };
+       oXMLHttpRequest.send();
     } else {
-	if(andthen != undefined) {
-	    andthen(this, true, arg);
-	}
+       if(andthen != undefined) {
+           andthen(this, true, arg);
+       }
     }
 };
 
@@ -418,20 +418,20 @@ Session.prototype.generate_info_table = function(ss) {
     // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
     // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic.
     // if(ss.timeslot_id == null){
-	$("#info_name_select").val(ss.session_id);
+       $("#info_name_select").val(ss.session_id);
 //    }
     // else{
-    // 	$("#info_name_select").val(ss.timeslot_id);
-    //	$("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
+    //        $("#info_name_select").val(ss.timeslot_id);
+    //       $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
     // }
 
     //var temp_1 = $("#info_name_select_option_"+current_timeslot).val();
     $("#info_name_select_option_"+ss.scheduledsession_id).css('background-color',highlight);
 
     if(ss.timeslot_id == null){
-	$("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
+       $("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
     }else{
-	$("#info_location_select").val(ss.timeslot_id); // ***
+       $("#info_location_select").val(ss.timeslot_id); // ***
     }
     $("#info_location_select").val($("#info_location_select_option_"+ss.timeslot_id).val());
 
@@ -446,7 +446,7 @@ Session.prototype.generate_info_table = function(ss) {
 
 Session.prototype.group = function(andthen) {
     if(this.group_obj == undefined) {
-	this.group_obj = find_group_by_href(this.group_href);
+       this.group_obj = find_group_by_href(this.group_href);
     }
     return this.group_obj;
 };
@@ -465,8 +465,8 @@ var __DEBUG_THIS_SLOT;
 Session.prototype.retrieve_constraints_by_session = function(andthen, success) {
     __DEBUG_THIS_SLOT = this;
     if(this.constraints_loaded) {
-	/* everything is good, call continuation function */
-	andthen(this);
+       /* everything is good, call continuation function */
+       andthen(this);
     } else {
         this.constraint_load_andthen_list.push(andthen);
         if(this.constraints_loading) {
@@ -492,8 +492,8 @@ Session.prototype.fill_in_constraints = function(constraint_list) {
 
     var session_obj = this;
     $.each(constraint_list, function(key){
-	thing = constraint_list[key];
-	session_obj.add_constraint_obj(thing);
+       thing = constraint_list[key];
+       session_obj.add_constraint_obj(thing);
     });
     this.sort_constraints();
 
@@ -548,15 +548,15 @@ Group.prototype.add_session = function(session) {
 };
 Group.prototype.add_column_class = function(column_class) {
     if(this.column_class_list == undefined) {
-	this.column_class_list = [];
+       this.column_class_list = [];
     }
     this.column_class_list.push(column_class);
 };
 
 function find_group_by_href(href) {
     if(group_objs[href] == undefined) {
-	group_objs[href]=new Group();
-	g = group_objs[href];
+       group_objs[href]=new Group();
+       g = group_objs[href];
         g.loaded = false;
         g.loading= false;
     }
@@ -564,7 +564,7 @@ function find_group_by_href(href) {
     if(!g.loaded) {
         g.href = href;
         //console.log("loading group href", href);
-	g.load_group_obj(function(obj) {});
+       g.load_group_obj(function(obj) {});
     }
     return g;
 }
@@ -580,9 +580,9 @@ function clear_conflict_classes() {
     $("#cb_conflict2").prop('checked',false);
     $("#cb_conflict3").prop('checked',false);
     $.each(conflict_classes, function(key) {
-	       constraint = conflict_classes[key];
-	       constraint.clear_conflict_view();
-	   });
+              constraint = conflict_classes[key];
+              constraint.clear_conflict_view();
+          });
     conflict_classes = {};
 }
 function find_conflict(domid) {
@@ -610,13 +610,13 @@ Constraint.prototype.show_conflict_view = function() {
     //console.log("viewing", this.thisgroup.href);
 
     for(ccn in classes) {
-	var cc = classes[ccn];   // cc is a ColumnClass now
+       var cc = classes[ccn];   // cc is a ColumnClass now
 
         if(cc != undefined) {
             /* this extracts the day from this structure */
-	    var th_time = ".day_"+cc.th_time;
+           var th_time = ".day_"+cc.th_time;
             //console.log("299", th_time);
-	    $(th_time).addClass("show_conflict_view_highlight");
+           $(th_time).addClass("show_conflict_view_highlight");
         }
     }
 
@@ -637,10 +637,10 @@ Constraint.prototype.clear_conflict_view = function() {
     classes=this.column_class_list()
     //console.log("hiding", this.thisgroup.href);
     for(ccn in classes) {
-	var cc = classes[ccn];
+       var cc = classes[ccn];
         if(cc != undefined) {
-	    var th_time = ".day_" + cc.th_time;
-	    $(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
+           var th_time = ".day_" + cc.th_time;
+           $(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
         }
     }
 
@@ -660,7 +660,7 @@ Constraint.prototype.clear_conflict_view = function() {
 Constraint.prototype.build_conflict_view = function() {
     var bothways = "&nbsp;&nbsp;&nbsp;";
     if(this.bothways) {
-	bothways=" &lt;-&gt;";
+       bothways=" &lt;-&gt;";
     }
     //this.checked="checked";
 
@@ -716,23 +716,23 @@ Session.prototype.add_constraint_obj = function(obj) {
     if(obj.source == this.group_href) {
         obj.thisgroup  = this.group();
         obj.othergroup = find_group_by_href(obj.target);
-	ogroupname = obj.target;
+       ogroupname = obj.target;
     } else {
         obj.thisgroup  = this.group();
         obj.othergroup = find_group_by_href(obj.source);
-	ogroupname = obj.source;
+       ogroupname = obj.source;
     }
 
     var listname = obj.name;
     obj.conflict_type = listname;
     if(this.constraints[listname]==undefined) {
-	this.constraints[listname]={};
+       this.constraints[listname]={};
     }
 
     if(this.constraints[listname][ogroupname]) {
-	this.constraints[listname][ogroupname].bothways = true;
+       this.constraints[listname][ogroupname].bothways = true;
     } else {
-	this.constraints[listname][ogroupname]=obj;
+       this.constraints[listname][ogroupname]=obj;
     }
 };
 
@@ -742,12 +742,12 @@ function split_list_at(things, keys, place) {
     var len = keys.length;
     var i=0;
     for(i=0; i<place; i++) {
-	var key  = keys[i];
-	half1[i] = things[key];
+       var key  = keys[i];
+       half1[i] = things[key];
     }
     for(;i<len; i++) {
-	var key  = keys[i];
-	half2[i-place] = things[key];
+       var key  = keys[i];
+       half2[i-place] = things[key];
     }
     return [half1, half2];
 }
@@ -755,10 +755,10 @@ function split_list_at(things, keys, place) {
 function constraint_compare(a, b)
 {
     if(a==undefined) {
-	return -1;
+       return -1;
     }
     if(b==undefined) {
-	return 1;
+       return 1;
     }
     return (a.othergroup.href > b.othergroup.href ? 1 : -1);
 }
@@ -766,8 +766,8 @@ function constraint_compare(a, b)
 function split_constraint_list_at(things, place) {
     var keys = Object.keys(things);
     var keys1 = keys.sort(function(a,b) {
-				     return constraint_compare(things[a],things[b]);
-				 });
+                                 return constraint_compare(things[a],things[b]);
+                             });
     var sorted_conflicts = split_list_at(things, keys1, place);
     return sorted_conflicts;
 }
@@ -778,21 +778,21 @@ Session.prototype.sort_constraints = function() {
     // find longest amount
     var big = 0;
     if("conflicts" in this.constraints) {
-	big = Object.keys(this.constraints.conflict).length;
+       big = Object.keys(this.constraints.conflict).length;
     }
 
     if("conflic2" in this.constraints) {
-	var c2 = Object.keys(this.constraints.conflic2).length;
-	if(c2 > big) {
-	    big = c2;
-	}
+       var c2 = Object.keys(this.constraints.conflic2).length;
+       if(c2 > big) {
+           big = c2;
+       }
     }
 
     if("conflic3" in this.constraints) {
-	var c3 = Object.keys(this.constraints.conflic3).length;
-	if(c3 > big) {
-	    big = c3;
-	}
+       var c3 = Object.keys(this.constraints.conflic3).length;
+       if(c3 > big) {
+           big = c3;
+       }
     }
 
     this.conflict_half_count = Math.floor((big+1)/2);
@@ -804,18 +804,18 @@ Session.prototype.sort_constraints = function() {
     this.conflicts[3]=[[],[]]
 
     if("conflict" in this.constraints) {
-	var list1 = this.constraints.conflict;
-	this.conflicts[1] = split_constraint_list_at(list1, half);
+       var list1 = this.constraints.conflict;
+       this.conflicts[1] = split_constraint_list_at(list1, half);
     }
 
     if("conflic2" in this.constraints) {
-	var sort2 = this.constraints.conflic2;
-	this.conflicts[2] = split_constraint_list_at(sort2, half);
+       var sort2 = this.constraints.conflic2;
+       this.conflicts[2] = split_constraint_list_at(sort2, half);
     }
 
     if("conflic3" in this.constraints) {
-	var sort3 = this.constraints.conflic3;
-	this.conflicts[3] = split_constraint_list_at(sort3, half);
+       var sort3 = this.constraints.conflic3;
+       this.conflicts[3] = split_constraint_list_at(sort3, half);
     }
 
 };
