@@ -630,12 +630,12 @@ class Constraint(models.Model):
         ct1['href']          = self.url(sitefqdn)
         ct1['name']          = self.name.slug
         if self.person is not None:
-            ct1['person'] = self.person.url(sitefqdn)
+            ct1['person_href'] = self.person.url(sitefqdn)
         if self.source is not None:
-            ct1['source'] = self.source.url(sitefqdn)
+            ct1['source_href'] = self.source.url(sitefqdn)
         if self.target is not None:
-            ct1['target'] = self.target.url(sitefqdn)
-        ct1['meeting'] = self.meeting.url(sitefqdn)
+            ct1['target_href'] = self.target.url(sitefqdn)
+        ct1['meeting_href'] = self.meeting.url(sitefqdn)
         return ct1
 
 

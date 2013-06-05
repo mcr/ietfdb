@@ -571,6 +571,16 @@ function find_group_by_href(href) {
 
 // Constraint Objects
 function Constraint() {
+// fields: (see ietf.meeting.models Constraint.json_dict)
+//
+//  -constraint_id
+//  -href
+//  -name
+//  -person/_href
+//  -source/_href
+//  -target/_href
+//  -meeting/_href
+//
 }
 
 var conflict_classes = {};
@@ -715,12 +725,12 @@ Session.prototype.add_constraint_obj = function(obj) {
     var ogroupname;
     if(obj.source == this.group_href) {
         obj.thisgroup  = this.group();
-        obj.othergroup = find_group_by_href(obj.target);
-       ogroupname = obj.target;
+        obj.othergroup = find_group_by_href(obj.target_href);
+       ogroupname = obj.target_href;
     } else {
         obj.thisgroup  = this.group();
-        obj.othergroup = find_group_by_href(obj.source);
-       ogroupname = obj.source;
+        obj.othergroup = find_group_by_href(obj.source_href);
+       ogroupname = obj.source_href;
     }
 
     var listname = obj.name;
