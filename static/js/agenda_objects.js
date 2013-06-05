@@ -157,7 +157,7 @@ function find_all_conflicts(){
 
 var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
-    console.log("populating conflict:",session_obj);
+    //console.log("populating conflict:",session_obj);
 
     try{
  	var vertical_location = "."+$("#"+session_obj.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
@@ -556,7 +556,7 @@ function find_group_by_href(href) {
     g = group_objs[href];
     if(!g.loaded) {
         g.href = href;
-        console.log("loading group href", href);
+        //console.log("loading group href", href);
 	g.load_group_obj(function(obj) {});
     }
     return g;
