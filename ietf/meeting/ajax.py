@@ -481,7 +481,7 @@ def session_json(request, num, sessionid):
 def session_constraints(request, num=None, sessionid=None):
     meeting = get_meeting(num)
 
-    print "Getting meeting=%s session contraints for %s" % (num, sessionid)
+    #print "Getting meeting=%s session contraints for %s" % (num, sessionid)
     try:
         session = meeting.session_set.get(pk=int(sessionid))
     except Session.DoesNotExist:
