@@ -99,50 +99,6 @@ function get_all_conflicts(){
     }
 }
 
-function find_all_conflicts(){
-    $.each(meeting_objs, function(index,value){
-       try{
-           var vertical_location = "."+$("#"+value.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
-       }catch(err){}
-
-       /* unpack all the conflicts into one arr. */
-       var conflicts = []
-       for( var i = 0; i<value.conflicts.length; i++){
-           try{
-              for(var k =0; k<value.conflicts[i].length; k++){
-                  try{
-                     for(var e=0; e<value.conflicts[i][k].length; e++){
-                         conflicts.push(value.conflicts[i][k][e]);
-                     }
-                  }catch(err){}
-              }
-
-           }catch(err){}
-       }
-
-       /* we go threw the array of conflicts for a session and based on the name (which is a class tied to that table)
-          we determine if it exists in the vertical column we are located in
-          the selector is pushed into a array.
-       */
-       for(var i = 0; i< conflicts.length; i++){
-           try{
-              var other_group_acr = conflicts[i].othergroup.acronym;
-              result = $(vertical_location).find("."+other_group_acr);
-              if(result.length > 0){
-                  console.log("meeting_obj["+index+"]",value,"found conflict:",result);
-                  all_conflicts.push($("#session_"+value.session_id));
-              }
-           }catch(err){}
-       }
-    });
-
-
-
-
-
-}
-
-
 var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
     console.log("populating conflict:", session_obj.title);
