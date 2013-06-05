@@ -472,6 +472,7 @@ Session.prototype.retrieve_constraints_by_session = function(andthen, success) {
         var href = meeting_base_url+'/session/'+session_obj.session_id+"/constraints.json";
         $.getJSON( href, "", function(constraint_list) {
             session_obj.fill_in_constraints(constraint_list);
+            session_obj.constraints_loaded  = true;
             session_obj.constraints_loading = false;
         }).done(success);
     }
@@ -493,6 +494,7 @@ Session.prototype.fill_in_constraints = function(constraint_list) {
     $.each(this.constraint_load_andthen_list, function(index, andthen) {
         andthen(session_obj);
     });
+    this.constraint_load_andthen_list = [];
 };
 
 // GROUP OBJECTS
@@ -504,6 +506,7 @@ Group.prototype.loaded_andthen = function() {
     $.each(this.andthen_list, function(index, andthen) {
         andthen(this);
     });
+    this.andthen_list = [];
 };
 Group.prototype.load_group_obj = function(andthen) {
     //console.log("group ",this.href);
