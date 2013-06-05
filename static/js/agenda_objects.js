@@ -160,17 +160,17 @@ function find_and_populate_conflicts(session_obj) {
     //console.log("populating conflict:",session_obj);
 
     try{
- 	var vertical_location = "."+$("#"+session_obj.slot_status_key).attr('class').split(' ')[1];  // the timeslot for all rooms.
+ 	var vertical_location = session_obj.column_class.column_tag;
     }
     catch(err){
     }
 
     if(session_obj.constraints.conflict != null){
  	$.each(session_obj.constraints.conflict, function(i){
- 	    classes=session_obj.constraints.conflict[i].column_class();
+ 	    classes=session_obj.constraints.conflict[i].column_class;
  	    if(classes != null){
  		$.each(classes, function(index,value){
- 		    if(value[1] == vertical_location){
+ 		    if(value.column_tag == vertical_location){
  			// there is a conflict!
  			__DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
  			//var conflict_pair = [$("#session_"+session_obj.session_id),$("#"+value[0])];
@@ -272,6 +272,18 @@ function upperCaseWords(inp){
 
 var daysofweek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+// ColumnClass is an object that knows about columns, but also about
+// columns + room (so it can identify a single slot, or a column of them)
+function ColumnClass(room,date,time) {
+    this.room = room;
+    this.date = date;
+    this.time = time;
+    this.room_tag   = this.room+"_"+this.date+"_"+this.time;
+    this.th_time    = this.date+"-"+this.time;
+    this.column_tag = ".agenda-column-"+this.th_time;
+};
+
+
 // ScheduledSession is DJANGO name for this object, but needs to be renamed.
 // It represents a TimeSlot that can be assigned in this schedule.
 //   { "scheduledsession_id": "{{s.id}}",
@@ -292,8 +304,7 @@ ScheduledSlot.prototype.initialize = function(json) {
     }
 
     /* this needs to be an object */
-    this.column_class=[this.room+"_"+this.date+"_"+this.time,
-                       ".agenda-column-"+this.date+"-"+this.time];
+    this.column_class=new ColumnClass(this.room, this.date, this.time);
 
     var d = new Date(this.date);
     var t = d.getUTCDay();
@@ -540,10 +551,10 @@ Group.prototype.add_session = function(session) {
     this.all_sessions.push(session);
 };
 Group.prototype.add_column_class = function(column_class) {
-    if(this.column_class == undefined) {
-	this.column_class = [];
+    if(this.column_class_list == undefined) {
+	this.column_class_list = [];
     }
-    this.column_class.push(column_class);
+    this.column_class_list.push(column_class);
 };
 
 function find_group_by_href(href) {
@@ -582,8 +593,8 @@ function find_conflict(domid) {
     return conflict_classes[domid];
 }
 
-Constraint.prototype.column_class = function() {
-    return this.othergroup.column_class;
+Constraint.prototype.column_class_list = function() {
+    return this.othergroup.column_class_list;
 };
 
 // red is arbitrary here... There should be multiple shades of red for
@@ -592,19 +603,25 @@ Constraint.prototype.column_class = function() {
 
 
 var __CONSTRAINT_DEBUG = null;
+
+// one can get here by having the conflict boxes enabled/disabled.
+// but, when a session is selected, the conflict boxes are filled in,
+// and then they are all clicked in order to highlight everything.
 Constraint.prototype.show_conflict_view = function() {
-    classes=this.column_class()
+    classes=this.column_class_list()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-    //console.log("viewing", this.thisgroup.href);
+    console.log("viewing", this.thisgroup.href);
 
     for(ccn in classes) {
-	var cc = classes[ccn];
+	var cc = classes[ccn];   // cc is a ColumnClass now
 
-        /* this extracts the day from this structure */
-	var th_time = ".day_"+cc[1].substr(15);
-        //console.log("299", th_time);
-	$(th_time).addClass("show_conflict_view_highlight");
+        if(cc != undefined) {
+            /* this extracts the day from this structure */
+	    var th_time = ".day_"+cc.th_time;
+            console.log("299", th_time);
+	    $(th_time).addClass("show_conflict_view_highlight");
+        }
     }
 
     //console.log("make box", this.thisgroup.href);
@@ -621,13 +638,14 @@ Constraint.prototype.show_conflict_view = function() {
 };
 
 Constraint.prototype.clear_conflict_view = function() {
-    classes=this.column_class()
+    classes=this.column_class_list()
     //console.log("hiding", this.thisgroup.href);
     for(ccn in classes) {
 	var cc = classes[ccn];
-	var th_time = ".day_"+cc[1].substr(15);
-        //console.log("259", th_time);
-	$(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
+        if(cc != undefined) {
+	    var th_time = ".day_" + cc.th_time;
+	    $(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
+        }
     }
 
     //console.log("boxes for", this.thisgroup.href);

@@ -78,9 +78,13 @@ function listeners(){
 }
 
 function all_click(event){
-    var classes = $(event.srcElement).attr('class').split(' ');
-    console.log(classes);
-    if(classes.indexOf('meeting_obj') < 0){
+    var all_classes = $(event.srcElement).attr('class');
+    var classes = [];
+    if(all_classes != undefined) {
+            classes = all_classes.split(' ');
+    }
+    console.log("all_click:", classes, classes.indexOf('meeting_obj'));
+    if(classes!=undefined && classes.indexOf('meeting_obj') < 0){
 	show_all_conflicts();
     }
     // console.log(this);
@@ -299,6 +303,7 @@ function meeting_event_click(event){
     var session = meeting_objs[meeting_event_id];
 
     if(slot == null){ // not in a real slot...
+        // 20130606 XXX WHEN IS THIS USED?
 	var slot_obj = {   slot_id: meeting_event_id ,
             scheduledsession_id:meeting_event_id,
             timeslot_id: null,
