@@ -593,28 +593,28 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-//    console.log("viewing", this.thisgroup.href);
+    //console.log("viewing", this.thisgroup.href);
 
     for(ccn in classes) {
 	var cc = classes[ccn];
 
         /* this extracts the day from this structure */
 	var th_time = ".day_"+cc[1].substr(15);
-//        console.log("299", th_time);
+        //console.log("299", th_time);
 	$(th_time).addClass("show_conflict_view_highlight");
     }
 
-//    console.log("make box", this.thisgroup.href);
+    //console.log("make box", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
     if(sessions) {
       $.each(sessions, function(key) {
-  //             console.log("2 make box", key);
-               var nid = "#session_"+this.session_id;
-//               console.log("279", this.session_id, nid);
-               $(nid).addClass("show_conflict_specific_box");
-           });
+          //console.log("2 make box", key);
+          var nid = "#session_"+this.session_id;
+          //console.log("279", this.session_id, nid);
+          $(nid).addClass("show_conflict_specific_box");
+      });
     }
-//    console.log("viewed", this.thisgroup.href);
+    //console.log("viewed", this.thisgroup.href);
 };
 
 Constraint.prototype.clear_conflict_view = function() {
@@ -623,20 +623,20 @@ Constraint.prototype.clear_conflict_view = function() {
     for(ccn in classes) {
 	var cc = classes[ccn];
 	var th_time = ".day_"+cc[1].substr(15);
-//        console.log("259", th_time);
+        //console.log("259", th_time);
 	$(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
     }
 
-  //  console.log("boxes for", this.thisgroup.href);
+    //console.log("boxes for", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
     if(sessions) {
       $.each(sessions, function(key) {
-               var nid = "#session_"+this.session_id;
-//               console.log("269", this.session_id, nid);
-               $(nid).removeClass("show_conflict_specific_box");
-           });
+          var nid = "#session_"+this.session_id;
+          //console.log("269", this.session_id, nid);
+          $(nid).removeClass("show_conflict_specific_box");
+      });
     }
-//    console.log("hid", this.thisgroup.href);
+    //console.log("hid", this.thisgroup.href);
 };
 
 
