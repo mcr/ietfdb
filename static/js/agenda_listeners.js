@@ -83,9 +83,10 @@ function all_click(event){
     if(all_classes != undefined) {
             classes = all_classes.split(' ');
     }
-    console.log("all_click:", classes, classes.indexOf('meeting_obj'));
+    //console.log("all_click:", classes, classes.indexOf('meeting_obj'));
     if(classes!=undefined && classes.indexOf('meeting_obj') < 0){
-	show_all_conflicts();
+        //console.log("32 show_all");
+        clear_conflict_classes();   // remove the display showing the conflict classes.
     }
     // console.log(this);
     // console.log($(this));
@@ -235,17 +236,19 @@ var conflict_status = {};
 function conflict_click(event){
     var clicked = $(event.target).attr('id');
     var constraint = find_conflict(clicked);
-    if(conflict_status[clicked]){
+    //console.log("7 fill", clicked, conflict_status[clicked]);
+    if(conflict_status[clicked] == true){
+        //console.log("8 fill", constraint.href);
 	conflict_status[clicked] = false;
 	constraint.clear_conflict_view();
 	constraint.checked = "checked";
     }
     else{
+        //console.log("9 fill", constraint.href);
 	conflict_status[clicked] = true;
 	constraint.show_conflict_view();
     }
 }
-
 
 function set_transparent(){
     $.each(meeting_objs, function(key){
@@ -282,10 +285,13 @@ var __DEBUG__SLOT_OBJ;
 var current_item = null;
 var current_timeslot = null;
 function meeting_event_click(event){
-    hide_all_conflicts();
+    //hide_all_conflicts();
     try{
 	clear_highlight(find_friends(current_item));
     }catch(err){ }
+
+    // keep event from going up the chain.
+    event.preventDefault();
 
     $(last_item).css("background-color", '');
     $(last_item).removeClass('free_slot');
@@ -294,6 +300,7 @@ function meeting_event_click(event){
     clear_conflict_classes();
     conflict_classes = {};
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
+    //console.log("meeting_click:", slot_id);
     var meeting_event_id = $(this).attr('id');
 
     clicked_event = event;
@@ -322,6 +329,7 @@ function meeting_event_click(event){
 	    current_timeslot = slot[i].timeslot_id;
 
 	    empty_info_table();
+            //console.log("2 meeting_click:", slot[i]);
 	    session.load_session_obj(fill_in_session_info, slot[i]);
 	}
 	__DEBUG__SLOT_OBJ = slot[i];
@@ -410,7 +418,7 @@ function fill_in_session_info(session, success, extra) {
 	empty_info_table();
     }
     $('#ss_info').html(session.generate_info_table(extra));
-    session.retrieve_constraints_by_session(draw_constraints);
+    session.retrieve_constraints_by_session(draw_constraints, function(){});
 }
 
 function group_name_or_empty(constraint) {
@@ -424,7 +432,9 @@ function group_name_or_empty(constraint) {
 function draw_constraints(session) {
     $("#conflict_table_body").html("");
 
+    //console.log("5 fill", session.title);
     if(!"conflicts" in session) {
+        console.log("6 done");
         return;
     }
 
@@ -454,6 +464,14 @@ function draw_constraints(session) {
                                          "<td class='conflict3'>"+
                                          group_name_or_empty(conflict1_b[i])+
                                          "</tr>");
+
+        highlight_conflict(conflict1_a[i]);
+        highlight_conflict(conflict1_b[i]);
+        highlight_conflict(conflict2_a[i]);
+        highlight_conflict(conflict2_b[i]);
+        highlight_conflict(conflict3_a[i]);
+        highlight_conflict(conflict3_b[i]);
+
 	// console.log("draw", i,
 	// 	    group_name_or_empty(conflict1_a[i]),
 	// 	    group_name_or_empty(conflict1_b[i]),
@@ -466,9 +484,15 @@ function draw_constraints(session) {
     // setup check boxes for conflicts
     $('.conflict_checkboxes').unbind('click');
     $('.conflict_checkboxes').click(conflict_click);
+}
 
-    $('.conflict_checkboxes').click();
-
+function highlight_conflict(constraint) {
+    if(constraint != undefined) {
+        var clicked = constraint.dom_id;
+        //console.log("91 fill", constraint.href, constraint.othergroup.href);
+	conflict_status[clicked] = true;
+	constraint.show_conflict_view();
+    }
 }
 
 var menu_bar_hidden = false;
@@ -699,15 +723,14 @@ function drop_bucket(event,ui){
     if(to_slot_id == "sortable-list"){ // it's being moved to the bucketlist so update where it's coming from.
 
 	if (!update_from_slot(meeting_id, from_slot_id)){
-	    console.log(slot_status[from_slot_id]);
-	    console.log("issue updating from_slot");
+	    //console.log("update_from_slot",slot_status[from_slot_id]);
 	    return;
 	}
     }
     else{ // moving from bucket list to a slot, so update it's dest.
 
 	if (!update_to_slot(meeting_id, to_slot_id)){
-	    console.log("issue updating to_slot");
+	    //console.log("issue update to_slot");
 	    return;
 	}
 	meeting_objs[meeting_id].slot_status_key = to_slot[arr_key_index].domid

@@ -53,26 +53,19 @@ function get_all_constraints(){
 
 }
 
-function display_conflicts(){
-    get_all_conflicts();
-    show_all_conflicts();
-}
-
 var all_conflicts = {};
 
 function show_all_conflicts(){
-    clear_conflict_classes();   // remove the display showing the conflict classes.
+    //console.log("all conflicts");
     $.each(all_conflicts, function(key) {
         conflict = all_conflicts[key];
-        $("#" + conflict.session_id).addClass("actual_conflict");
+        //console.log("session:", conflict.title, conflict.session_id);
+        $("#session_" + conflict.session_id).addClass("actual_conflict");
     });
 }
 
-function hide_all_conflicts() {
-    // do nothing.
-}
-
-function hide_all_conflicts_real(){
+// not really used anymore
+function hide_all_conflicts(){
     $.each(all_conflicts, function(key) {
         conflict = all_conflicts[key];
         $("#" + conflict.session_id).removeClass("actual_conflict");
@@ -86,7 +79,7 @@ function increment_conflict_load_count() {
 }
 
 function get_all_conflicts(){
-    console.log("get_all_conflicts()");
+    //console.log("get_all_conflicts()");
     for(s in meeting_objs){
        try {
            meeting_objs[s].retrieve_constraints_by_session(find_and_populate_conflicts,
@@ -101,7 +94,7 @@ function get_all_conflicts(){
 
 var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
-    console.log("populating conflict:", session_obj.title);
+    //console.log("populating conflict:", session_obj.title);
 
     try{
         var vertical_location = session_obj.column_class.column_tag;
@@ -420,6 +413,7 @@ function load_all_groups() {
 var __DEBUG_THIS_SLOT;
 Session.prototype.retrieve_constraints_by_session = function(andthen, success) {
     __DEBUG_THIS_SLOT = this;
+    //console.log("4 retrieve loaded:", this.constraints_loaded, "loading:", this.constraints_loading);
     if(this.constraints_loaded) {
        /* everything is good, call continuation function */
        andthen(this);
@@ -573,19 +567,21 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class_list()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-    //console.log("viewing", this.thisgroup.href);
+    //console.log("viewing", this.href, this.thisgroup.href);
 
+    // this highlights the column headings of the sessions that conflict.
     for(ccn in classes) {
        var cc = classes[ccn];   // cc is a ColumnClass now
 
         if(cc != undefined) {
             /* this extracts the day from this structure */
            var th_time = ".day_"+cc.th_time;
-            //console.log("299", th_time);
+           //console.log("299", th_time);
            $(th_time).addClass("show_conflict_view_highlight");
         }
     }
 
+    // this highlights the conflicts themselves
     //console.log("make box", this.thisgroup.href);
     sessions = this.othergroup.all_sessions
     if(sessions) {

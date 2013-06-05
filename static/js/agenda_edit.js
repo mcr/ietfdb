@@ -98,9 +98,9 @@ function initStuff(){
         do_work(function() {
             return CONFLICT_LOAD_COUNT >= meeting_objs_length;
         },
-                function(){
+                function() {
                     stop_spin();
-                    display_conflicts();
+                    show_all_conflicts();
                 });
     }
 
