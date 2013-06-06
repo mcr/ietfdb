@@ -86,6 +86,7 @@ function move_slot(from,to){
     //    start_spin();
     Dajaxice.ietf.meeting.update_timeslot(dajaxice_callback,
     					  {
+                                              'schedule_id':schedule_id,
     					      'session_id':session_id,
     					      'scheduledsession_id': scheduledsession_id,
     					  });

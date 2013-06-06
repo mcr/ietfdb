@@ -46,7 +46,7 @@ var total_rooms = 0; // the number of rooms
 var hidden_days = [];
 var total_days = 0; // the number of days
 
-var bucketlist = "sortable-list" // for if/when the id for bucket list changes.
+var bucketlist_id = "sortable-list" // for if/when the id for bucket list changes.
 /****************************************************/
 
 /////////////-END-GLOBALS-///////////////////////////////////////

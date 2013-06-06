@@ -64,6 +64,7 @@ def update_timeslot(request, schedule_id, session_id, scheduledsession_id=None):
     schedule = get_object_or_404(Schedule, pk = int(schedule_id))
     meeting  = schedule.meeting
     ss_id = 0
+    ss = None
 
     print "schedule.owner: %s user: %s" % (schedule.owner, request.user.get_profile())
     cansee,canedit = agenda_permissions(meeting, schedule, request.user)
@@ -77,8 +78,9 @@ def update_timeslot(request, schedule_id, session_id, scheduledsession_id=None):
 
     if scheduledsession_id is not None:
         ss_id = int(scheduledsession_id)
-        if ss_id != 0:
-            ss = get_object_or_404(schedule.scheduledsession_set, pk=ss_id)
+
+    if ss_id != 0:
+        ss = get_object_or_404(schedule.scheduledsession_set, pk=ss_id)
 
     for ssO in schedule.scheduledsession_set.filter(session = session):
         ssO.session = None
@@ -86,9 +88,9 @@ def update_timeslot(request, schedule_id, session_id, scheduledsession_id=None):
 
     try:
         # find the scheduledsession, assign the Session to it.
-        if(ss_id != 0):
+        if ss:
             ss.session = session
-        ss.save()
+            ss.save()
     except Exception as e:
         return json.dumps({'error':'invalid scheduledsession'})
 
