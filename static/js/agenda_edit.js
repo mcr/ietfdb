@@ -134,6 +134,7 @@ function read_only_result(msg) {
     console.log("owner href:", schedule_owner_href);
 
     listeners();
+    droppable();
 }
 
 function read_only_check() {
