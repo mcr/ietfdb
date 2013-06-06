@@ -28,7 +28,7 @@ class ApiTestCase(TestCase):
 
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2371","scheduledsession_id":"2372"}'
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"2372"}' % (ss_one.schedule.id,ts_one.id)
             })
 
         # confirm that without login, it does not have new value
@@ -45,7 +45,7 @@ class ApiTestCase(TestCase):
 
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2371","scheduledsession_id":"2372"}}'
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"2372"}' % (ss_one.schedule.id,ts_one.id)
             }, **auth_ferrel)
 
         # confirm that without login, it does not have new value
@@ -65,7 +65,7 @@ class ApiTestCase(TestCase):
 
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2157", "scheduledsession_id":"2372"}'
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"2372"}' % (ss_one.schedule.id,s2157.id)
             }, **auth_joeblow)
 
         # confirm that without login, it does not have new value
@@ -85,7 +85,7 @@ class ApiTestCase(TestCase):
 
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2157", "scheduledsession_id":"2372"}'
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"2372"}' % (ss_one.schedule.id,s2157.id)
             }, **auth_wlo)
 
         # confirm that it new scheduledsession object has new session.
@@ -96,7 +96,7 @@ class ApiTestCase(TestCase):
         ss_one = ScheduledSession.objects.get(pk=2371)
         self.assertEqual(ss_one.session, None)
 
-    def test_chairUpdateAgendaItem(self):
+    def test_wloUpdateAgendaItemToUnscheduled(self):
         s2157 = Session.objects.get(pk=2157)
         ss_one = ScheduledSession.objects.get(pk=2371)
 
@@ -105,16 +105,48 @@ class ApiTestCase(TestCase):
 
         # move this session from one timeslot to another.
         self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2157", "scheduledsession_id":"2372"}'
-            }, **auth_ietfchair)
-
-        # confirm that it new scheduledsession object has new session.
-        ss_two = ScheduledSession.objects.get(pk=2372)
-        self.assertEqual(ss_two.session, s2157)
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"0"}' % (ss_one.schedule.id,s2157.id)
+            }, **auth_wlo)
 
         # confirm that it old scheduledsession object has no session.
         ss_one = ScheduledSession.objects.get(pk=2371)
         self.assertEqual(ss_one.session, None)
+
+    def test_wloUpdateAgendaItemToNone(self):
+        s2157 = Session.objects.get(pk=2157)
+        ss_one = ScheduledSession.objects.get(pk=2371)
+
+        # confirm that it has old timeslot value
+        self.assertEqual(ss_one.session, s2157)
+
+        # move this session from one timeslot to another.
+        self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
+            'argv': '{"schedule_id":"%u", "session_id":"%u"}' % (ss_one.schedule.id,s2157.id)
+            }, **auth_wlo)
+
+        # confirm that it old scheduledsession object has no session.
+        ss_one = ScheduledSession.objects.get(pk=2371)
+        self.assertEqual(ss_one.session, None)
+
+    def test_chairUpdateAgendaItemFails(self):
+        s2157 = Session.objects.get(pk=2157)
+        ss_one = ScheduledSession.objects.get(pk=2371)
+
+        # confirm that it has old timeslot value
+        self.assertEqual(ss_one.session, s2157)
+
+        # move this session from one timeslot to another.
+        self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
+            'argv': '{"schedule_id":"%u", "session_id":"%u", "scheduledsession_id":"%u"}' % (ss_one.schedule.id,s2157.id, 2372)
+            }, **auth_ietfchair)
+
+        # confirm that it new scheduledsession object has no new session.
+        ss_two = ScheduledSession.objects.get(pk=2372)
+        self.assertEqual(ss_two.session, None)
+
+        # confirm that it old scheduledsession object still has old session.
+        ss_one = ScheduledSession.objects.get(pk=2371)
+        self.assertEqual(ss_one.session, s2157)
 
 
     def test_anyoneGetConflictInfo(self):
@@ -199,25 +231,6 @@ class ApiTestCase(TestCase):
         timeslots = mtg83.timeslot_set.all()
         timeslot_final_len = len(timeslots)
         self.assertEqual((timeslot_final_len-timeslot_initial_len), -slotcount)
-
-    def atest_iesgNoAuthWloUpdateAgendaItem(self):
-        ts_one = TimeSlot.objects.get(pk=2371)
-        ts_two = TimeSlot.objects.get(pk=2372)
-        ss_one = ScheduledSession.objects.get(pk=2371)
-
-        # confirm that it has old timeslot value
-        self.assertEqual(ss_one.timeslot, ts_one)
-
-        self.do_auth_ietfchair
-        # move this session from one timeslot to another.
-        self.client.post('/dajaxice/ietf.meeting.update_timeslot/', {
-            'argv': '{"session_id":"2371","scheduledsession_id":"2372"}'
-            })
-
-        self.assertTrue(0)
-        # confirm that it has new timeslot value
-        ss_one = ScheduledSession.objects.get(pk=2371)
-        self.assertEqual(ss_one.timeslot, ts_two)
 
     def test_getGroupInfoJson(self):
         resp = self.client.get('/group/pkix.json')

@@ -60,44 +60,27 @@ def readonly(request, meeting_num, schedule_id):
 
 @group_required('Area Director','Secretariat')
 @dajaxice_register
-def update_timeslot(request, session_id=None, scheduledsession_id=None):
-    if(session_id == None or scheduledsession_id == None):
-        if(scheduledsession_id == None):
-            pass # most likely the user moved the item and dropped it in the same box. js should never make the call in this case.
-        else:
-            log.debug("session_id=%s , scheduledsession_id=%s doing nothing and returning" % (session_id, scheduledsession_id))
+def update_timeslot(request, schedule_id, session_id, scheduledsession_id=None):
+    schedule = get_object_or_404(Schedule, pk = int(schedule_id))
+    meeting  = schedule.meeting
+    ss_id = 0
 
-        return
-
-    # if(scheduledsession_id == "Unassigned"):
-    #     return
-
-    session_id = int(session_id)
-
-    # log.info("%s is updating scheduledsession_id=%u to session_id=%u" %
-    #          (request.user, ss_id, session_id))
-
-
-    try:
-       session = Session.objects.get(pk=session_id)
-    except:
-        return json.dumps({'error':'invalid session'})
-
-    #log.debug("session is %s" % session)
-
-    ss_id = int(scheduledsession_id)
-    if ss_id != 0:
-        ss = ScheduledSession.objects.get(pk=ss_id)
-        schedule = ss.session
-
-    meeting = session.meeting
+    print "schedule.owner: %s user: %s" % (schedule.owner, request.user.get_profile())
     cansee,canedit = agenda_permissions(meeting, schedule, request.user)
 
     if not canedit:
         raise Http403
         return json.dumps({'error':'no permission'})
 
-    for ssO in session.scheduledsession_set.all():
+    session_id = int(session_id)
+    session = get_object_or_404(meeting.session_set, pk=session_id)
+
+    if scheduledsession_id is not None:
+        ss_id = int(scheduledsession_id)
+        if ss_id != 0:
+            ss = get_object_or_404(schedule.scheduledsession_set, pk=ss_id)
+
+    for ssO in schedule.scheduledsession_set.filter(session = session):
         ssO.session = None
         ssO.save()
 
