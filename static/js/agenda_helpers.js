@@ -348,11 +348,7 @@ function calculate_name_select_box(){
 	ts_id = "err";
 	//console.log(mobj_array[i].session_id);
 	try{
-	    //ts_id = slot_status[mobj_array[i].slot_status_key][0].timeslot_id;
-	    ts_id = mobj_array[i].session_id
-
-
-	    //console.log("ts_id="+ts_id);
+	    ts_id = mobj_array[i].session_id;
 	}catch(err){
 	    console.log(err); // bucket list items.
 

@@ -353,14 +353,14 @@ Session.prototype.load_session_obj = function(andthen, arg) {
 };
 
 Session.prototype.selectit = function() {
+    clear_all_selections();
     // mark self as selected
     $("." + this.title).addClass("same_group");
     $("#session_"+session_id).removeClass("save_group");
     $("#session_"+session_id).addClass("selected_group");
 };
 Session.prototype.unselectit = function() {
-    $("." + this.title).removeClass("same_group");
-    $("#session_"+session_id).removeClass("selected_group");
+    clear_all_selections();
 };
 
 
@@ -371,6 +371,7 @@ function andthen_alert(object, result, arg) {
 
 Session.prototype.generate_info_table = function(ss) {
     $("#info_grp").html(name_select_html);
+    $("#info_name_select").val($("#info_name_select_option_"+this.session_id).val());
     $("#info_name").html(this.description);
     $("#info_area").html("<span class='"+this.area.toUpperCase()+"-scheme'>"+this.area+"</span>");
     $("#info_duration").html(this.requested_duration);

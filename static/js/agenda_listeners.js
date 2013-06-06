@@ -77,6 +77,12 @@ function listeners(){
 
 }
 
+function clear_all_selections() {
+    $(".same_group").removeClass("same_group");
+    $(".selected_group").removeClass("selected_group");
+    $(".selected_slot").removeClass("selected_slot");
+}
+
 function all_click(event){
     var all_classes = $(event.srcElement).attr('class');
     var classes = [];
@@ -86,9 +92,12 @@ function all_click(event){
     //console.log("all_click:", classes, classes.indexOf('meeting_obj'));
     if(!meeting_clicked && classes!=undefined && classes.indexOf('meeting_obj') < 0){
         console.log("32 show_all");
+        clear_all_selections();
         clear_conflict_classes();   // remove the display showing the conflict classes.
     }
     meeting_clicked = false;
+    last_session = null;
+    last_item    = null;
     // console.log(this);
     // console.log($(this));
 }
@@ -344,7 +353,7 @@ function meeting_event_click(event){
 
 }
 
-var last_item = null; // used during location change. we make the background color
+var last_item = null; // used during location change we make the background color
 // of the timeslot highlight because it is being set into that slot.
 function info_location_select_change(){
     if(last_item != null){
@@ -362,6 +371,9 @@ function info_name_select_change(){
         console.log("unselecting:",last_session.title);
         last_session.unselectit();
     }
+    $(".same_group").removeClass("same_group");
+    $(".selected_group").removeClass("selected_group");
+    $(".selected_slot").removeClass("selected_slot");
 
     if(last_item != null) {
         $(last_item).removeClass("selected_slot");
@@ -369,9 +381,10 @@ function info_name_select_change(){
     if(current_item != null){
 	$(current_item).addClass("selected_slot");
     }
-    last_name_item = '#'+$('#info_name_select').val();
+    var slot_id    = $('#info_name_select').val();
+    last_name_item = '#'+slot_id;
+    console.log("selecting group", slot_id);
 
-    var slot_id = last_name_item.substring(1,last_name_item.length);
     var ssk = meeting_objs[slot_id].slot_status_key;
     // ssk is null when item is in bucket list.
 
@@ -383,17 +396,18 @@ function info_name_select_change(){
 	ss = slot_status_obj[0];
 	session = ss.session();
         last_session = session;
+        last_session.selectit();
 	// now set up the call back that might have to retrieve info.
 	session.load_session_obj(fill_in_session_info, ss);
     }
     else {
 	ss = meeting_objs[slot_id];
         last_session = ss;
+        last_session.selectit();
 	ss.load_session_obj(fill_in_session_info, ss);
     }
 
-    console.log("selecting new item:",last_session.title);
-    last_session.selectit();
+    console.log("selecting new item:", last_session.title);
 }
 
 function XMLHttpGetRequest(url, sync) {
