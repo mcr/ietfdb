@@ -296,12 +296,14 @@ function meeting_event_click(event){
     event.preventDefault();
     meeting_clicked = true;
 
-    $(last_item).css("background-color", '');
-    $(last_item).removeClass('free_slot');
+    if(last_session != null) {
+        last_session.unselectit();
+    }
 
     /* clear set ot conflict views */
     clear_conflict_classes();
     conflict_classes = {};
+
     var slot_id = $(event.target).closest('.agenda_slot').attr('id');
     //console.log("meeting_click:", slot_id);
     var meeting_event_id = $(this).attr('id');
@@ -311,6 +313,7 @@ function meeting_event_click(event){
     slot = slot_status[slot_id];
     meeting_event_id = meeting_event_id.substring(8,meeting_event_id.length);
     var session = meeting_objs[meeting_event_id];
+    last_session = session;
 
     if(slot == null){ // not in a real slot...
         // 20130606 XXX WHEN IS THIS USED?
@@ -326,7 +329,7 @@ function meeting_event_click(event){
     for(var i = 0; i<slot.length; i++){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
-	    $("#session_"+session_id).css('background-color',highlight);
+            session.selectit();
 	    current_item = "#session_"+session_id;
 
 	    current_timeslot = slot[i].timeslot_id;
@@ -345,45 +348,52 @@ var last_item = null; // used during location change. we make the background col
 // of the timeslot highlight because it is being set into that slot.
 function info_location_select_change(){
     if(last_item != null){
-	$(last_item).css('background-color','');
+	$(last_item).removeClass("selected_slot");
     }
+
     last_item = '#'+$('#info_location_select').val();
-    $(last_item).css('background-color',highlight);
+    $(last_item).addClass("selected_slot");
 }
 
+var last_session = null;
 var last_name_item = null;
 function info_name_select_change(){
-    $(last_item).css("background-color", '');
-    $(current_item).css('background-color','');
-    if(last_name_item != null){
-	$(last_name_item).css('background-color','');
+    if(last_session != null) {
+        console.log("unselecting:",last_session.title);
+        last_session.unselectit();
+    }
+
+    if(last_item != null) {
+        $(last_item).removeClass("selected_slot");
     }
     if(current_item != null){
-	$(current_item).css('background-color','');
-     }
+	$(current_item).addClass("selected_slot");
+    }
     last_name_item = '#'+$('#info_name_select').val();
+
     var slot_id = last_name_item.substring(1,last_name_item.length);
-    var ssk = meeting_objs[slot_id].slot_status_key
+    var ssk = meeting_objs[slot_id].slot_status_key;
+    // ssk is null when item is in bucket list.
+
     current_item = "#session_"+slot_id; //slot_status_obj[0].session_id;
+
     if(ssk != null){
 	var slot_status_obj = slot_status[ssk];
 	current_timeslot = slot_status_obj[0].timeslot_id;
 	ss = slot_status_obj[0];
 	session = ss.session();
+        last_session = session;
 	// now set up the call back that might have to retrieve info.
 	session.load_session_obj(fill_in_session_info, ss);
-
     }
-    else{
+    else {
 	ss = meeting_objs[slot_id];
-	ss.load_session_obj(fill_in_session_info,ss);
+        last_session = ss;
+	ss.load_session_obj(fill_in_session_info, ss);
     }
-    $(current_item).css('background-color',highlight);
-    // $('#'+$('#info_name_select').val()).css('background-color',highlight);
 
-    // now find the relevant session.  The session may be found by
-    // calling ss.session().
-
+    console.log("selecting new item:",last_session.title);
+    last_session.selectit();
 }
 
 function XMLHttpGetRequest(url, sync) {

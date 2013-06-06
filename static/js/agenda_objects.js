@@ -350,6 +350,19 @@ Session.prototype.load_session_obj = function(andthen, arg) {
     }
 };
 
+Session.prototype.selectit = function() {
+    // mark self as selected
+    $("." + this.title).addClass("same_group");
+    $("#session_"+session_id).removeClass("save_group");
+    $("#session_"+session_id).addClass("selected_group");
+};
+Session.prototype.unselectit = function() {
+    $("." + this.title).removeClass("same_group");
+    $("#session_"+session_id).removeClass("selected_group");
+};
+
+
+
 function andthen_alert(object, result, arg) {
     alert("result: "+result+" on obj: "+object);
 };
@@ -364,18 +377,7 @@ Session.prototype.generate_info_table = function(ss) {
         $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
     }
 
-    // XXX we use *GLOBAL* current_timeslot rather than ss.timeslot_id!!!
-    // when it's coming from the bucket list, the ss.timeslot_id will be null and thus not pick a value. here we put the logic.
-    // if(ss.timeslot_id == null){
-       $("#info_name_select").val(ss.session_id);
-//    }
-    // else{
-    //        $("#info_name_select").val(ss.timeslot_id);
-    //       $("#info_name_select").val($("#info_name_select_option_"+current_timeslot).val());
-    // }
-
-    //var temp_1 = $("#info_name_select_option_"+current_timeslot).val();
-    $("#info_name_select_option_"+ss.scheduledsession_id).css('background-color',highlight);
+    this.selectit();
 
     if(ss.timeslot_id == null){
        $("#info_location_select").val(meeting_objs[ss.scheduledsession_id]);
@@ -383,8 +385,6 @@ Session.prototype.generate_info_table = function(ss) {
        $("#info_location_select").val(ss.timeslot_id); // ***
     }
     $("#info_location_select").val($("#info_location_select_option_"+ss.timeslot_id).val());
-
-    $("#"+ss.timeslot_id).css('background-color',highlight);
 
     listeners();
 

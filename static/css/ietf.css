@@ -444,6 +444,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99beff', end
   border: 2px solid red;
 }
 
+.same_group {
+    background-color: green;
+}
+.selected_group {
+    background-color: purple;
+}
+.selected_slot {
+    background-color: purple;
+}
+
 table.actual_conflict {
   padding-left: 20px;
   background-image: url('/images/clker-1195427724688380074fire_cefa_01.png');
@@ -773,4 +783,4 @@ div.line{
 #agenda_edit_properties div#title table {
     display: inline;
 }
-    
+
