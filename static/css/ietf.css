@@ -117,12 +117,12 @@ tr.agenda_slot{
 td.agenda_slot{
     /* overflow-y:auto; */
     /* height:20px; */
-    /* max-height:20px; */
+    height: 40px;
     /* min-height:20px; */
    /* height:50px; */
 }
 
-.agenda_slot{
+.agenda_slot {
     /* background-color:#E6E6E6; */
     padding:0px;
     width:100px;
@@ -610,7 +610,6 @@ table.actual_conflict {
     background: #2E5481;
     border: solid 1px #203E5F;
 }
-
 
 .agenda_slot_alt {
     /* for now, use no alternating theme */
