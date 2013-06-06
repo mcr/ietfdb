@@ -736,6 +736,29 @@ function drop_drop(event, ui){
 						  'scheduledsession_id': schedulesession_id,
 					      });
 
+        old_column_class = session.column_class;
+        if(bucket_list) {
+            session.placed = false;
+            new_column_class = undefined;
+        } else {
+            new_column_class = to_slot.column_class;
+        }
+        session.column_class = new_column_class;
+        $("#" + session.session_id).removeClass("actual_conflict");
+        delete all_conflicts[session];
+        session.retrieve_constraints_by_session(find_and_populate_conflicts,
+                                                function() {});
+        for(sk in meeting_objs) {
+            s = meeting_objs[sk];
+            if(s.column_class == new_column_class ||
+               s.column_class == old_column_class) {
+                $("#" + s.session_id).removeClass("actual_conflict");
+                delete all_conflicts[s];
+                s.retrieve_constraints_by_session(find_and_populate_conflicts,
+                                                  function() {});
+            }
+        }
+        show_all_conflicts();
     }
     else{
 	console.log("issue sending ajax call!!!");
