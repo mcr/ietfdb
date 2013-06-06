@@ -745,50 +745,6 @@ function drop_drop(event, ui){
     listeners();
 }
 
-/* what happens when we drop the session onto the bucket list
-   (thing named "unassigned events") */
-function drop_bucket(event,ui){
-
-    if(read_only) {
-        return;
-    }
-
-    var meeting_id = ui.draggable.attr('id');
-    meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
-
-    var to_slot_id = $(this).attr('id'); // where we are dragging it.
-    var from_slot_id = meeting_objs[meeting_id].slot_status_key;
-
-    if(to_slot_id == "sortable-list"){ // it's being moved to the bucketlist so update where it's coming from.
-
-	if (!update_from_slot(meeting_id, from_slot_id)){
-	    //console.log("update_from_slot",slot_status[from_slot_id]);
-	    return;
-	}
-    }
-    else{ // moving from bucket list to a slot, so update it's dest.
-
-	if (!update_to_slot(meeting_id, to_slot_id)){
-	    //console.log("issue update to_slot");
-	    return;
-	}
-	meeting_objs[meeting_id].slot_status_key = to_slot[arr_key_index].domid
-
-    }
-
-
-    //*****  do dajaxice call here  ****** //
-
-    var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id);
-    $(this).append(eTemplate)
-
-    ui.draggable.remove();
-
-    droppable();
-    listeners();
-
-}
-
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
     $(event.draggable).css("background",dragging_color);
