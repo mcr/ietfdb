@@ -96,10 +96,11 @@ var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
     //console.log("populating conflict:", session_obj.title);
 
-    try{
-        var vertical_location = session_obj.column_class.column_tag;
-    }
-    catch(err){
+    var vertical_location = null;
+    var room_tag = null;
+    if(session_obj.column_class != null) {
+        vertical_location = session_obj.column_class.column_tag;
+        room_tag = session_obj.column_class.room_tag;
     }
 
     if(session_obj.constraints.conflict != null){
@@ -114,7 +115,8 @@ function find_and_populate_conflicts(session_obj) {
                     value = osession.column_class;
                     if(value != undefined) {
                         //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
-                       if(value.column_tag == vertical_location) {
+                       if(value.column_tag == vertical_location &&
+                          value.room_tag   != room_tag) {
                             console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
                           // there is a conflict!
                           __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
