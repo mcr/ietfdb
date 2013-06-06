@@ -59,6 +59,7 @@ var meeting_base_url = "{{ meeting_base_url }}";
 var site_base_url = "{{ site_base_url }}";
 total_days = {{time_slices|length}};
 total_rooms = {{rooms|length}};
+
 function setup_slots(){
 {% for day in time_slices %}
     days.push("{{day}}");
