@@ -109,7 +109,7 @@ function cb_all_conflict(event){
 function close_room(event){
     var close_room = $(event.target).attr('id');
     close_room =  close_room.substr(6);
-    console.log(close_room);
+    //console.log("close_room",close_room);
     $("#"+close_room).hide("fast");
     hidden_rooms.push("#"+close_room);
     $("#hidden_rooms").html((hidden_rooms.length.toString()+"/"+total_rooms.toString()));
@@ -148,7 +148,7 @@ function show_hidden_days(event){
 
 function show_all_area(event){
     var areas = find_same_area($("#info_area").children().text());
-    console.log(areas);
+    //console.log("show all area",areas);
     $.each(areas, function(index,obj){
 
 	var selector = $("#"+obj.slot_status_key);
