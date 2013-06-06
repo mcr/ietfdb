@@ -165,6 +165,7 @@ function load_events(){
 	    $(slot_id).addClass("agenda_slot_" + ssid.roomtype);
 	    $(slot_id).addClass('free_slot');
 	    $(slot_id).removeClass("agenda_slot_unavailable");
+	    $(slot_id).removeClass("agenda_slot_session");
 
             session = meeting_objs[ssid.session_id];
             if (session != null) {
