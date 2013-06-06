@@ -90,7 +90,8 @@ class ViewTestCase(TestCase):
         url = reverse(edit_agenda,
                       args=['83', 'mtg:83'])
         resp = self.client.get(url, **auth_joeblow)
-        self.assertEqual(resp.status_code, 200) # a public agenda can be seen by unlogged in people (read-only) XXX
+        #self.assertEqual(resp.status_code, 200) # a public agenda can be seen by unlogged in people (read-only) XXX
+        self.assertEqual(resp.status_code, 403) # a public agenda can not be seen by unlogged in people
 
     def test_agenda_edit_public_authwlo(self):
         url = reverse(edit_agenda,
@@ -116,7 +117,7 @@ class ViewTestCase(TestCase):
         url = reverse(edit_agenda,
                       args=['83', 'sf_83_invisible'])
         resp = self.client.get(url, **auth_joeblow)
-        self.assertEqual(resp.status_code, 401)  # a private agenda can not be seen by the public XXX
+        self.assertEqual(resp.status_code, 403)  # a private agenda can not be seen by the public
 
     def test_agenda_edit_private_authwlo(self):
         url = reverse(edit_agenda,
