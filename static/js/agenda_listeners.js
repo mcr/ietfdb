@@ -587,7 +587,9 @@ function update_to_slot(meeting_id, to_slot_id, force){
 	    // setup slot_status info.
 	    to_slot[i].session_id = meeting_id;
 
-	    to_slot[i].empty = false;
+            if(to_slot_id != bucketlist_id) {
+	        to_slot[i].empty = false;
+            }
 
 	    // update meeting_obj
 	    //meeting_objs[meeting_id].slot_status_key = to_slot[i].domid
@@ -601,7 +603,12 @@ function update_to_slot(meeting_id, to_slot_id, force){
     }
 
     if(!found && force){
-	to_slot.push(new slot_obj(to_slot[0].scheduledsession_id, to_slot[0].empty, to_slot[0].timeslot_id,meeting_id,to_slot[0].room, to_slot[0].time,to_slot[0].date,to_slot[0].domid));
+        var unassigned_slot_obj = new ScheduledSlot();
+        unassigned_slot_obj.scheduledsession_id = to_slot[0].scheduledsession_id;
+        unassigned_slot_obj.timeslot_id         = to_slot[0].timeslot_id;
+        unassigned_slot_obj.meeting_id          = meeting_id;
+
+	to_slot.push(unassigned_slot_obj);
 	found = true;
 	return found;
     }
@@ -638,16 +645,19 @@ function drop_drop(event, ui){
     var meeting_id = ui.draggable.attr('id'); // the meeting id.
     meeting_id = meeting_id.substring(8,meeting_id.length); // it has session_ infront of it. so make it this.
 
+    var session = meeting_objs[meeting_id];
+
     var to_slot_id = $(this).attr('id'); // where we are dragging it.
     var to_slot = slot_status[to_slot_id]
 
-    var from_slot_id = meeting_objs[meeting_id].slot_status_key;
-    var from_slot = slot_status[meeting_objs[meeting_id].slot_status_key]; // remember this is an array...
+    var from_slot_id = session.slot_status_key;
+    var from_slot = slot_status[session.slot_status_key]; // remember this is an array...
 
-    bucket_list = (to_slot_id == "sortable-list");
+    console.log("from -> to", from_slot_id, to_slot_id);
+    bucket_list = (to_slot_id == bucketlist_id);
     if(!check_free({id:to_slot_id}) ){
 	console.log("not free...");
-	if(!bucket_list){
+	if(!bucket_list) {
 	    return
 	}
     }
@@ -657,9 +667,10 @@ function drop_drop(event, ui){
 	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, true);
     }
     else{
-	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id);
+	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, false);
     }
 
+    console.log("update_slot_worked", update_to_slot_worked);
     if(update_to_slot_worked){
 	if(update_from_slot(meeting_id, from_slot_id)){
 	    remove_duplicate(from_slot_id,meeting_id);
@@ -676,10 +687,10 @@ function drop_drop(event, ui){
 	console.log("to_slot_id",to_slot_id, slot_status[to_slot_id]);
 	return;
     }
-    meeting_objs[meeting_id].slot_status_key = to_slot[arr_key_index].domid
+    session.slot_status_key = to_slot[arr_key_index].domid
     //*****  do dajaxice call here  ****** //
 
-    var eTemplate = event_template(meeting_objs[meeting_id].title, meeting_objs[meeting_id].description, meeting_objs[meeting_id].session_id,meeting_objs[meeting_id].area);
+    var eTemplate = event_template(session.title, session.description, session.session_id,session.area);
     $(this).append(eTemplate)
 
     ui.draggable.remove();
@@ -789,14 +800,15 @@ function drop_over(event, ui){
     if(check_free(this)){
 	$(this).addClass('highlight_free_slot');
     }
-    // $(ui.draggable).css("background",dragging_color);
-    // $(event.draggable).css("background",dragging_color);
+
+    $(ui.draggable).css("background",dragging_color);
+    $(event.draggable).css("background",dragging_color);
 }
 
 /* when we have actually dropped the meeting event */
 function drop_out(event, ui){
     if(check_free(this)){
-	if($(this).attr('id') != bucketlist){
+	if($(this).attr('id') != bucketlist_id){
 	    $(this).addClass("free_slot");
 	}
     }
