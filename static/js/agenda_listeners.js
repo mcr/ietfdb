@@ -84,10 +84,11 @@ function all_click(event){
             classes = all_classes.split(' ');
     }
     //console.log("all_click:", classes, classes.indexOf('meeting_obj'));
-    if(classes!=undefined && classes.indexOf('meeting_obj') < 0){
-        //console.log("32 show_all");
+    if(!meeting_clicked && classes!=undefined && classes.indexOf('meeting_obj') < 0){
+        console.log("32 show_all");
         clear_conflict_classes();   // remove the display showing the conflict classes.
     }
+    meeting_clicked = false;
     // console.log(this);
     // console.log($(this));
 }
@@ -284,6 +285,7 @@ var __DEBUG__SESSION_OBJ;
 var __DEBUG__SLOT_OBJ;
 var current_item = null;
 var current_timeslot = null;
+var meeting_clicked  = false;
 function meeting_event_click(event){
     //hide_all_conflicts();
     try{
@@ -292,6 +294,7 @@ function meeting_event_click(event){
 
     // keep event from going up the chain.
     event.preventDefault();
+    meeting_clicked = true;
 
     $(last_item).css("background-color", '');
     $(last_item).removeClass('free_slot');
