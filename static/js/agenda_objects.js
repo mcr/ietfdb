@@ -92,6 +92,32 @@ function get_all_conflicts(){
     }
 }
 
+function calculate_real_conflict(conflict, vertical_location, room_tag, session_obj) {
+    //console.log("  conflict check:", conflict.othergroup.acronym, "me:", vertical_location);
+
+    var osessions = conflict.othergroup.all_sessions;
+    //console.log("ogroup: ", conflict.othergroup.href, "me: ", session_obj.group_obj.href);
+    if(conflict.othergroup === session_obj.group_obj) {
+        osessions = conflict.thisgroup.all_sessions;
+    }
+    if(osessions != null) {
+        $.each(osessions, function(index) {
+            osession = osessions[index];
+            var value = osession.column_class;
+            if(value != undefined) {
+                //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
+                if(value.column_tag == vertical_location &&
+                   value.room_tag   != room_tag) {
+                    console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
+                    // there is a conflict!
+                    __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
+                    all_conflicts[session_obj.session_id] = session_obj;
+                }
+            }
+        });
+    }
+}
+
 var __DEBUG_SHOW_CONSTRAINT = null;
 function find_and_populate_conflicts(session_obj) {
     //console.log("populating conflict:", session_obj.title);
@@ -106,28 +132,22 @@ function find_and_populate_conflicts(session_obj) {
     if(session_obj.constraints.conflict != null){
         $.each(session_obj.constraints.conflict, function(i){
             var conflict = session_obj.constraints.conflict[i];
-            //console.log("  conflict check:", conflict.othergroup.acronym, "me:", vertical_location);
-
-            var osessions = conflict.othergroup.all_sessions;
-            if(osessions != null) {
-                $.each(osessions, function(index) {
-                    osession = conflict.othergroup.all_sessions[index];
-                    value = osession.column_class;
-                    if(value != undefined) {
-                        //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
-                       if(value.column_tag == vertical_location &&
-                          value.room_tag   != room_tag) {
-                            console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
-                          // there is a conflict!
-                          __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
-                            all_conflicts[session_obj.session_id] = session_obj;
-                       }
-                    }
-                });
-            }
+            calculate_real_conflict(conflict, vertical_location, room_tag, session_obj);
         });
-     }
- }
+    }
+    if(session_obj.constraints.conflic2 != null){
+        $.each(session_obj.constraints.conflic2, function(i){
+            var conflict = session_obj.constraints.conflic2[i];
+            calculate_real_conflict(conflict, vertical_location, room_tag, session_obj);
+        });
+    }
+    if(session_obj.constraints.conflic3 != null){
+        $.each(session_obj.constraints.conflic3, function(i){
+            var conflict = session_obj.constraints.conflic3[i];
+            calculate_real_conflict(conflict, vertical_location, room_tag, session_obj);
+        });
+    }
+}
 
 
 function show_non_conflicting_spots(ss_id){
