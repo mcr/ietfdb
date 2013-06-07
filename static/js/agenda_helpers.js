@@ -173,6 +173,7 @@ function load_events(){
 
                 session.placed = true;
 
+	        $(slot_id).removeClass('free_slot');
 		// connect to the group.
 		session.group();
                 session.column_class = ssid.column_class;

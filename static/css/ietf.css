@@ -633,7 +633,7 @@ table.actual_conflict {
     background-color: #9448d4;  /* purple */
 }
 
-.agenda_slot_unavailable {
+.agenda_slot_unavailable,.agenda_slot_unavail {
     background-color: #4c4c4c;  /* dark grey */
 }
 

@@ -81,7 +81,7 @@ function setup_slots(){
      "timeslot_id":"{{s.timeslot.id}}",
      "session_id" :"{{s.session.id}}",
      "room"       :"{{s.timeslot.location|slugify}}",
-     "roomtype"   :"{{s.timeslot.type|lower}}",
+     "roomtype"   :"{{s.slottype|lower}}",
      "time"       :"{{s.timeslot.time|date:'Hi' }}",
      "date"       :"{{s.timeslot.time|date:'Y-m-d'}}",
      "domid"      :"{{s.timeslot.js_identifier}}"});
@@ -91,7 +91,7 @@ function setup_slots(){
      "empty": true,
      "timeslot_id":"Unassigned",
      "session_id" :null,
-     "room"       :"Unassigned",
+     "room"       :"unassigned",
      "time"       :null,
      "date"       :null,
      "domid"      :"sortable-list"});

@@ -578,6 +578,13 @@ class ScheduledSession(models.Model):
         return ""
 
     @property
+    def slottype(self):
+        if self.timeslot and self.timeslot.type:
+            return self.timeslot.type.slug
+        else:
+            return ""
+
+    @property
     def empty_str(self):
         # return JS happy value
         if self.session:
