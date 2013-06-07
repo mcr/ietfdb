@@ -670,7 +670,6 @@ Constraint.prototype.build_othername = function() {
     this.othergroup_name = this.othergroup.acronym;
 };
 
-
 var __DEBUG__OTHERGROUP;
 Constraint.prototype.conflict_view = function() {
     this.dom_id = "constraint_"+this.constraint_id;
@@ -695,6 +694,7 @@ Constraint.prototype.conflict_view = function() {
 
 // SESSION CONFLICT OBJECTS
 // take an object and add attributes so that it becomes a session_conflict_obj.
+// note that constraints are duplicated: each session has both incoming and outgoing constraints added.
 Session.prototype.add_constraint_obj = function(obj) {
     // turn this into a Constraint object
     //console.log("session: ",JSON.stringify(this));
@@ -707,7 +707,7 @@ Session.prototype.add_constraint_obj = function(obj) {
     obj.session   = this;
 
     var ogroupname;
-    if(obj.source == this.group_href) {
+    if(obj.source_href == this.group_href) {
         obj.thisgroup  = this.group();
         obj.othergroup = find_group_by_href(obj.target_href);
        ogroupname = obj.target_href;
