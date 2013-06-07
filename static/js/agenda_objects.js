@@ -333,6 +333,15 @@ function event_obj(title, description, session_id, owner, group_id, area,duratio
     session.href       = meeting_base_url+'/session/'+session_id+".json";
     session.group_href = site_base_url+'/group/'+title+".json";
     session.duration = duration;
+
+    // keep a list of sessions by name
+    // this is mostly used for debug purposes only.
+    if(session_objs[session.title] == undefined) {
+        session_objs[session.title] = [];
+    }
+    session_objs[session.title].push(session);
+
+
     return session;
 };
 
