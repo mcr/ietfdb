@@ -771,7 +771,7 @@ function split_constraint_list_at(things, place) {
 Session.prototype.sort_constraints = function() {
     // find longest amount
     var big = 0;
-    if("conflicts" in this.constraints) {
+    if("conflict" in this.constraints) {
        big = Object.keys(this.constraints.conflict).length;
     }
 
