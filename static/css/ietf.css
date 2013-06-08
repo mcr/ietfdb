@@ -611,9 +611,10 @@ table.actual_conflict {
     border: solid 1px #203E5F;
 }
 
-.agenda_slot_alt {
+.agenda_row_alt td {
     /* for now, use no alternating theme */
-    /* border: 1px dashed #E3E3E3; */ /* darker greyish */
+    border-bottom: 1px solid orange;
+    margin-bottom: 2px;
 }
 
 .agenda_slot_plenary {
@@ -783,3 +784,13 @@ div.line{
     display: inline;
 }
 
+#unassigned-items {
+    position: relative;
+}
+
+#all_agendas {
+    position: absolute;
+    top:   3px;
+    right: 15px;
+    z-index: 5;
+}

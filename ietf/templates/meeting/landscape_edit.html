@@ -129,15 +129,22 @@ Please save this agenda to your account first.
 </div>
 
 <div class="wrapper custom_text_stuff">
+
 <div style="ui-icon ui-icon-arrow-1-w" id="CLOSE_IETF_MENUBAR">
 &lt;
-
 </div>
-
-<div id="sortable-list" class="ui-droppable bucket-list room_title">
-	<div class="agenda_slot_title" ><b>Unassigned Events:</b></div>
+<div id="unassigned-items">
+  <div id="all_agendas">
+    <a href="{% url ietf.meeting.views.edit_agendas meeting.number %}">
+      <button class="styled_button">all agendas</button>
+    </a>
+  </div>
+  <div class="agenda_slot_title" >
+    <b>Unassigned Events:</b>
+  </div>
+  <div id="sortable-list" class="ui-droppable bucket-list room_title">
+  </div>
 </div>
-
 
 <div class="agenda_div">
 
@@ -172,7 +179,7 @@ Please save this agenda to your account first.
 
 
   {% for r in rooms %}
-  <tr id="{{r|to_acceptable_id}}" class="agenda_slot">
+  <tr id="{{r|to_acceptable_id}}" class="{% cycle 'agenda_row_alt' '' %} agenda_slot">
     <th class="vert_time">
       <div class="close very_small close_room top_left small_button" id="close_{{r|to_acceptable_id}}">X</div>
       <div class="right room_name">{{r}} <span class="capacity">({{r.capacity}})</span></div>
@@ -180,7 +187,7 @@ Please save this agenda to your account first.
       <!-- <span class="hide_room light_blue_border">X</span><span class="left">{{r}}</span></th> -->
     {% for day in time_slices %}
       {% for slot in date_slices|lookup:day %}
-        <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="day_{{day}} agenda-column-{{day}}-{{slot.0|date:'Hi'}} agenda_slot {% cycle 'agenda_slot_alt' '' %} agenda_slot_unavailable" ></td>
+        <td id="{{r|slugify}}_{{day}}_{{slot.0|date:'Hi'}}" class="day_{{day}} agenda-column-{{day}}-{{slot.0|date:'Hi'}} agenda_slot agenda_slot_unavailable" ></td>
       {% endfor %}
         <td class="day_{{day}} spacer {{day|date:'Y-m-d'}}-spacer"></td>
     {% endfor %}
