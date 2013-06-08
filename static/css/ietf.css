@@ -565,8 +565,7 @@ table.actual_conflict {
 }
 
 .highlight_free_slot{
-    background-color:green;
-
+    background-image: url('/images/green_hatch.png');
 }
 
 
@@ -614,7 +613,7 @@ table.actual_conflict {
 .agenda_row_alt td {
     /* for now, use no alternating theme */
     border-bottom: 1px solid orange;
-    margin-bottom: 2px;
+    margin-bottom: 5px;
 }
 
 .agenda_slot_plenary {
