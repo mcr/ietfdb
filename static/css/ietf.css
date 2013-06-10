@@ -41,6 +41,12 @@
   font-size: 10px;
 }
 
+div.meeting_box {
+    height: 23px;
+    width:  98px;
+    float: left;
+}
+
 table.meeting_event {
     /* border:1px solid black; */
     /* background:#E0FFFF; */

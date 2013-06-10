@@ -398,7 +398,19 @@ Session.prototype.visible_title = function() {
 };
 
 Session.prototype.event_template = function() {
-    return "<table class='meeting_event "+ this.title +"' id='session_"+this.session_id+"'><tr id='meeting_event_title'><th class='"+this.area+"-scheme meeting_obj'>"+this.visible_title()+"<span> ("+this.duration+")</span>"+"</th></tr>";
+    // the extra div is present so that the table can have a border which does not
+    // affect the total height of the box.  The border otherwise screws up the height,
+    // causing things to the right to avoid this box.
+    return "<div class=\"meeting_box\"><table class='meeting_event "+
+        this.title +
+        "' id='session_"+
+        this.session_id+
+        "'><tr id='meeting_event_title'><th class='"+
+        this.area+
+        "-scheme meeting_obj'>"+
+        this.visible_title()+
+        "<span> ("+this.duration+")</span>"+
+        "</th></tr></table></div>";
 };
 
 function andthen_alert(object, result, arg) {
