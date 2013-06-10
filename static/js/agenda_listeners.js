@@ -77,6 +77,34 @@ function listeners(){
 
 }
 
+function toggle_dialog(){
+    var result = "null";
+    $( "#dialog-confirm" ).dialog({
+	resizable: false,
+	height:140,
+	modal: true,
+	buttons: {
+            "Yes": function() {
+		$( this ).dialog( "close" );
+		result = "yes";
+            },
+	    "Swap Slots": function(){
+		$( this ).dialog( "close" );
+		result = "swap";
+	    },
+            Cancel: function() {
+		$( this ).dialog( "close" );
+		result = "cancel"
+            }
+	}
+    });
+    return result;
+    
+
+
+}
+
+
 function clear_all_selections() {
     $(".same_group").removeClass("same_group");
     $(".selected_group").removeClass("selected_group");
@@ -658,9 +686,17 @@ function drop_drop(event, ui){
     if(!check_free({id:to_slot_id}) ){
 	console.log("not free...");
 	if(!bucket_list) {
+	    console.log(toggle_dialog());
 	    return
 	}
     }
+    move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
+}
+
+function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui,thiss){
+/* thiss: is a jquery selector of where the slot will be appeneded to
+   Naming is in regards to that most often function is called from drop_drop where 'this' is the dom dest. 
+*/ 
     var update_to_slot_worked = false;
 
     if(bucket_list){
@@ -690,22 +726,23 @@ function drop_drop(event, ui){
     session.slot_status_key = to_slot[arr_key_index].domid
     //*****  do dajaxice call here  ****** //
 
+    console.log("this:", thiss);
     var eTemplate = event_template(session.title, session.description, session.session_id,session.area);
-    $(this).append(eTemplate)
+    $(thiss).append(eTemplate)
 
     ui.draggable.remove();
 
 
 
     /* set colours */
-    $(this).removeClass('highlight_free_slot');
+    $(thiss).removeClass('highlight_free_slot');
     if(check_free({id:to_slot_id}) ){
-	// $(this).css('background-color', color_droppable_empty_slot)
-	$(this).addClass('free_slot')
+	// $(thiss).css('background-color', color_droppable_empty_slot)
+	$(thiss).addClass('free_slot')
     }
     else{
-	// $(this).css('background-color',none_color);
-	$(this).removeClass('free_slot')
+	// $(thiss).css('background-color',none_color);
+	$(thiss).removeClass('free_slot')
     }
 
     if(check_free({id:from_slot_id}) ){

@@ -65,9 +65,9 @@ function move_slot(from,to){
 
     if(result){
 	if(update_from_slot(from,from_slot)){
-	    console.log("success");
+	    console.log("move_slot: success");
 	}else{
-	    console.log("fail");
+	    console.log("move_slot: fail");
 	    }
     }
 

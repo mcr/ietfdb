@@ -783,3 +783,7 @@ div.line{
     display: inline;
 }
 
+.highlight_current_moving{
+    background-color:red;
+
+}
