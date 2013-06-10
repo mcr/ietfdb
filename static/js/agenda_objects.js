@@ -401,9 +401,18 @@ function andthen_alert(object, result, arg) {
 Session.prototype.generate_info_table = function(ss) {
     $("#info_grp").html(name_select_html);
     $("#info_name_select").val($("#info_name_select_option_"+this.session_id).val());
-    $("#info_name").html(this.description);
+    if(this.description.length > 35) {
+        $("#info_name").html("<span title=\""+this.description+"\">"+this.description.substring(0,35)+"</span>");
+    } else {
+        $("#info_name").html(this.description);
+    }
     $("#info_area").html("<span class='"+this.area.toUpperCase()+"-scheme'>"+this.area+"</span>");
     $("#info_duration").html(this.requested_duration);
+    if(this.attendees == "None") {
+        $("#info_capacity").html("size unknown");
+    } else {
+        $("#info_capacity").html(this.attendees + " people");
+    }
 
     if(!read_only) {
         $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");

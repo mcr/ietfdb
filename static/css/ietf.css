@@ -236,6 +236,10 @@ div.agenda_slot{
     padding:0px;
 
 }
+
+.ss_info td.info_split {
+    min-width:100px;
+}
 .ss_info td{
     min-width:200px;
 /* //  border:1px solid #89D; */
@@ -316,10 +320,19 @@ td.ss_info_name_short{
 div#conflict_table {
   font-size: 8pt;
   position: absolute;
-  left: 620px;
+  left: 650px;
   top: 14px;
   margin-left: 10px;
   margin-top:  3px;
+}
+
+#special_requests {
+    min-height: 30px;
+    overflow: scroll;
+    border: 1px solid #89D;
+    background-color: #EDF5FF;
+    border-spacing:0;
+    border-collapse: collapse;
 }
 
 #conflict_table table {

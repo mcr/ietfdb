@@ -214,14 +214,15 @@ Please save this agenda to your account first.
 
     <div class="ss_info ss_info_right">
       <table>
-	<tr><td class="ss_info_name_long">Duration:</td><td id="info_duration"></td></tr>
-	<tr><td class="ss_info_name_long">Location:</td><td id="info_location"></td></tr>
-	<tr><td class="ss_info_name_long">Responsible AD:</td><td id="info_responsible"></td></tr>
-	<tr><td class="ss_info_name_long">Requested By:</td><td id="info_requestedby"></td></tr>
+	<tr><td class="ss_info_name_long">Duration/Capacity:</td><td class="info_split" id="info_duration"></td> <td class="info_split" id="info_capacity"></td></tr>
+	<tr><td class="ss_info_name_long">Location:</td><td colspan=2 id="info_location"></td></tr>
+	<tr><td class="ss_info_name_long">Responsible AD:</td><td colspan=2 id="info_responsible"></td></tr>
+	<tr><td class="ss_info_name_long">Requested By:</td><td colspan=2 id="info_requestedby"></td></tr>
       </table>
     </div>
 
     <div id="conflict_table">
+      <div id="special_requests">Special Requests</div>
       <table>
 	<tr>
 	  <th class="heading" colspan=2>conflict 1 <span class="small right cb_all_conflict">show all<input id="cb_conflict1" type="checkbox"></span></th>
