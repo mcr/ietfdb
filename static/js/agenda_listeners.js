@@ -770,6 +770,9 @@ function drop_drop(event, ui){
 
     var eTemplate = session.event_template()
     $(this).append(eTemplate)
+    if(bucket_list) {
+        session.on_bucket_list();
+    }
 
     ui.draggable.remove();
 

@@ -393,15 +393,23 @@ Session.prototype.load_session_obj = function(andthen, arg) {
     }
 };
 
+Session.prototype.element = function() {
+    return $("#session_"+this.session_id);
+};
+
 Session.prototype.selectit = function() {
     clear_all_selections();
     // mark self as selected
     $("." + this.title).addClass("same_group");
-    $("#session_"+this.session_id).removeClass("save_group");
-    $("#session_"+this.session_id).addClass("selected_group");
+    this.element.removeClass("save_group");
+    this.element.addClass("selected_group");
 };
 Session.prototype.unselectit = function() {
     clear_all_selections();
+};
+
+Session.prototype.on_bucket_list = function() {
+    this.element.addClass("meeting_box_bucket_list");
 };
 
 Session.prototype.populate_event = function(js_room_id) {

@@ -62,8 +62,11 @@
 }
 
 div.meeting_box {
-    height: 23px;
     width:  98px;
+}
+
+div.meeting_box_bucket_list {
+    height: 23px;
     float: left;
 }
 
