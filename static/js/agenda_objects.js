@@ -393,8 +393,12 @@ Session.prototype.populate_event = function(js_room_id) {
     insert_cell(js_room_id, eTemplate, false);
 };
 
+Session.prototype.visible_title = function() {
+    return this.special_request + this.title;
+};
+
 Session.prototype.event_template = function() {
-    return "<table class='meeting_event "+ this.title +"' id='session_"+this.session_id+"'><tr id='meeting_event_title'><th class='"+this.area+"-scheme meeting_obj'>"+this.title+"<span> ("+this.duration+")</span>"+"</th></tr>";
+    return "<table class='meeting_event "+ this.title +"' id='session_"+this.session_id+"'><tr id='meeting_event_title'><th class='"+this.area+"-scheme meeting_obj'>"+this.visible_title()+"<span> ("+this.duration+")</span>"+"</th></tr>";
 };
 
 function andthen_alert(object, result, arg) {
@@ -412,13 +416,19 @@ Session.prototype.generate_info_table = function(ss) {
     $("#info_area").html("<span class='"+this.area.toUpperCase()+"-scheme'>"+this.area+"</span>");
     $("#info_duration").html(this.requested_duration);
     if(this.attendees == "None") {
-        $("#info_capacity").html("size unknown");
+        $("#info_capacity").text("size unknown");
     } else {
-        $("#info_capacity").html(this.attendees + " people");
+        $("#info_capacity").text(this.attendees + " people");
     }
 
     if(!read_only) {
         $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
+    }
+
+    if(this.comments.length > 0 && this.comments != "None") {
+        $("#special_requests").text(this.comments);
+    } else {
+        $("#special_requests").text("Special requests: None");
     }
 
     this.selectit();

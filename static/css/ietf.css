@@ -327,8 +327,10 @@ div#conflict_table {
 }
 
 #special_requests {
+    text-align: left;
     min-height: 30px;
-    overflow: scroll;
+    width: 620px;
+    overflow: auto;
     border: 1px solid #89D;
     background-color: #EDF5FF;
     border-spacing:0;

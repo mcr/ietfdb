@@ -721,7 +721,7 @@ class Session(models.Model):
 
     @property
     def special_request_token(self):
-        if self.comments is not None:
+        if self.comments is not None and len(self.comments)>0:
             return "*"
         else:
             return ""
