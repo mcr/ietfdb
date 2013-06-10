@@ -432,8 +432,8 @@ function andthen_alert(object, result, arg) {
 Session.prototype.generate_info_table = function(ss) {
     $("#info_grp").html(name_select_html);
     $("#info_name_select").val($("#info_name_select_option_"+this.session_id).val());
-    if(this.description.length > 35) {
-        $("#info_name").html("<span title=\""+this.description+"\">"+this.description.substring(0,35)+"</span>");
+    if(this.description.length > 33) {
+        $("#info_name").html("<span title=\""+this.description+"\">"+this.description.substring(0,35)+"...</span>");
     } else {
         $("#info_name").html(this.description);
     }
