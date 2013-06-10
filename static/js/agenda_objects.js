@@ -326,13 +326,17 @@ function Session() {
     this.group_obj  = undefined;
     this.column_class = undefined;     //column_class will be filled by in load_events
     this.loaded = false;
+    this.area = "noarea";
+    this.special_request = "";
 }
 
 function session_obj(json) {
     session = new Session();
 
     for(var key in json) {
-       session[key]=json[key];
+        if(json[key].length > 0) {
+            session[key]=json[key];
+        }
     }
 
     if(!session.href) {

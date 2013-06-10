@@ -81,6 +81,9 @@ table.meeting_event {
     float:left;
 }
 
+.noarea-scheme {
+    background-color:#2b95b5;
+}
 
 .meeting_event th {
     /* background:#E6E6FA; */
@@ -88,7 +91,6 @@ table.meeting_event {
     /* background-color:#ff7373; */
 
     border-radius: 4px;
-    background-color:#2b95b5;
     color:white;
     font-size: 10px;
     text-align:center;
