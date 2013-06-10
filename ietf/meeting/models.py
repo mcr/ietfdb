@@ -167,6 +167,19 @@ class Meeting(models.Model):
             slots[ymd].sort(lambda x,y: cmp(x.time, y.time))
         return days,time_slices,slots
 
+    # this functions makes a list of timeslices and rooms, and
+    # makes sure that all schedules have all of them.
+    def create_all_timeslots(self):
+        alltimeslots = self.timeslot_set.all()
+        for sched in self.schedule_set.all():
+            ts_hash = {}
+            for ss in sched.scheduledsession_set.all():
+                ts_hash[ss.timeslot] = ss
+            for ts in alltimeslots:
+                if not (ts in ts_hash):
+                    ScheduledSession.objects.create(schedule = sched,
+                                                    timeslot = ts)
+
 class Room(models.Model):
     meeting = models.ForeignKey(Meeting)
     name = models.CharField(max_length=255)
@@ -190,9 +203,7 @@ class Room(models.Model):
                                     time=ts.time,
                                     location=self,
                                     duration=ts.duration)
-                for sched in self.meeting.schedule_set.all():
-                    sched.scheduledsession_set.create(timeslot=ts0,
-                                                      schedule=sched)
+        self.meeting.create_all_timeslots()
 
     def url(self, sitefqdn):
         return "%s/meeting/%s/room/%s.json" % (sitefqdn, self.meeting.number, self.id)
@@ -374,6 +385,7 @@ class TimeSlot(models.Model):
             ts.save()
             # this is simplest way to "clone" an object...
             ts.id = None
+        self.meeting.create_all_timeslots()
 
     """
     This routine deletes all timeslots which are in the same time as this slot.
