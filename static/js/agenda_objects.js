@@ -15,10 +15,6 @@
 |      - check_delimiter(inp)
 |      - upperCaseWords(inp)
 |
-|
-|      - event_obj:
-|          - short_string()
-|
 `----
 */
 
@@ -317,22 +313,22 @@ function Session() {
     this.href       = false;
     this.group_obj  = undefined;
     this.column_class = undefined;     //column_class will be filled by in load_events
+    this.loaded = false;
 }
 
-function event_obj(title, description, session_id, owner, group_id, area,duration) {
+function session_obj(json) {
     session = new Session();
 
-    // this.slug = slug;
-    session.title = title;
-    session.description = description;
-    session.session_id = session_id;
-    session.owner = owner;
-    session.area  = area;
-    session.group_id = group_id;
-    session.loaded = false;
-    session.href       = meeting_base_url+'/session/'+session_id+".json";
-    session.group_href = site_base_url+'/group/'+title+".json";
-    session.duration = duration;
+    for(var key in json) {
+       session[key]=json[key];
+    }
+
+    if(!session.href) {
+        session.href       = meeting_base_url+'/session/'+session.session_id+".json";
+    }
+    if(!session.group_href) {
+        session.group_href = site_base_url+'/group/'+session.title+".json";
+    }
 
     // keep a list of sessions by name
     // this is mostly used for debug purposes only.
@@ -341,10 +337,10 @@ function event_obj(title, description, session_id, owner, group_id, area,duratio
     }
     session_objs[session.title].push(session);
 
+    meeting_objs[session.session_id] = session;
 
     return session;
-};
-
+}
 
 // augument to jQuery.getJSON( url, [data], [callback] )
 Session.prototype.load_session_obj = function(andthen, arg) {

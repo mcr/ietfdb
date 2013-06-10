@@ -66,13 +66,13 @@ function setup_slots(){
 {% endfor %}
 
 {% for s in sessions %}
-    meeting_objs["{{s.id}}"]=event_obj( "{{ s.short_name }}",
-                               "{{ s.group.name }}",
-                               "{{s.id}}",
-                               "{{s.owner.owner}}",
-                               "{{s.group.id}}",
-                               "{{s.group.parent.acronym|upper}}",
-                               "{{s.requested_duration.seconds|durationFormat}}");
+   session_obj({"title" : "{{ s.short_name }}",
+                "description":"{{ s.group.name }}",
+                "session_id":"{{s.id}}",
+                "owner": "{{s.owner.owner}}",
+                "group_id":"{{s.group.id}}",
+                "area":"{{s.group.parent.acronym|upper}}",
+                "duration":"{{s.requested_duration.seconds|durationFormat}}"});
 {% endfor %}
 
 {% for s in scheduledsessions %}
