@@ -381,8 +381,8 @@ Session.prototype.selectit = function() {
     clear_all_selections();
     // mark self as selected
     $("." + this.title).addClass("same_group");
-    $("#session_"+session_id).removeClass("save_group");
-    $("#session_"+session_id).addClass("selected_group");
+    $("#session_"+this.session_id).removeClass("save_group");
+    $("#session_"+this.session_id).addClass("selected_group");
 };
 Session.prototype.unselectit = function() {
     clear_all_selections();
