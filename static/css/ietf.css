@@ -32,13 +32,33 @@
   color:white;
   background-color:#2647A0;
   overflow-x: hidden;
-  padding: 7px 3px;
+  padding: 7px 10px;
+  margin-left: 10px;
   position:relative;
+  text-align: left;
 }
 
 .bucket-list .agenda_slot_title {
   padding: 1px;
   font-size: 10px;
+}
+
+#unassigned-items {
+    position: relative;
+}
+
+#all_agendas {
+    position: absolute;
+    top:   3px;
+    right: 5px;
+    z-index: 5;
+}
+
+#unassigned_order {
+    position: absolute;
+    top:   3px;
+    left:  200px;
+    z-index: 5;
 }
 
 div.meeting_box {
@@ -804,13 +824,3 @@ div.line{
     display: inline;
 }
 
-#unassigned-items {
-    position: relative;
-}
-
-#all_agendas {
-    position: absolute;
-    top:   3px;
-    right: 15px;
-    z-index: 5;
-}

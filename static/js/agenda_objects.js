@@ -303,7 +303,19 @@ function make_ss(json) {
 
 
 // SESSION OBJECTS
-// really session_obj.
+//
+// initialized from landscape_edit.html template with:
+//   session_obj({"title" : "{{ s.short_name }}",
+//                "description":"{{ s.group.name }}",
+//                "special_request": "{{ s.special_request_token }}",
+//                "session_id":"{{s.id}}",
+//                "owner": "{{s.owner.owner}}",
+//                "group_id":"{{s.group.id}}",
+//                "area":"{{s.group.parent.acronym|upper}}",
+//                "duration":"{{s.requested_duration.seconds|durationFormat}}"});
+//
+
+
 function Session() {
     this.constraints = {};
     this.constraint_load_andthen_list = [];
@@ -401,7 +413,7 @@ Session.prototype.event_template = function() {
     // the extra div is present so that the table can have a border which does not
     // affect the total height of the box.  The border otherwise screws up the height,
     // causing things to the right to avoid this box.
-    return "<div class=\"meeting_box\"><table class='meeting_event "+
+    return "<div class=\"meeting_box\" session_id=\""+this.session_id+"\"><table class='meeting_event "+
         this.title +
         "' id='session_"+
         this.session_id+

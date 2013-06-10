@@ -1,3 +1,4 @@
+{# -*- html -*- #}
 {% extends "base.html" %}
 {% load ietf_filters %}
 {# Copyright The IETF Trust 2007, All Rights Reserved #}
@@ -139,6 +140,14 @@ Please save this agenda to your account first.
     <a href="{% url ietf.meeting.views.edit_agendas meeting.number %}">
       <button class="styled_button">all agendas</button>
     </a>
+  </div>
+  <div id="unassigned_order">
+    <select id="unassigned_sort_button" class="dialog">
+      <option id="unassigned_alpha" value="alphaname" selected>Alphabetical</option>
+      <option id="unassigned_area" value="area">By Area</option>
+      <option id="unassigned_duration" value="duration">By Duration</option>
+      <option id="unassigned_special" value="special">Special Request</option>
+    </select>
   </div>
   <div class="agenda_slot_title" >
     <b>Unassigned Events:</b>

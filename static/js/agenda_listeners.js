@@ -225,9 +225,87 @@ function expand_spacer(target) {
 
 }
 
+function sort_by_alphaname(a,b) {
+    am = meeting_objs[$(a).attr('session_id')]
+    bm = meeting_objs[$(b).attr('session_id')]
+    if(am.title < bm.title) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+function sort_by_area(a,b) {
+    am = meeting_objs[$(a).attr('session_id')]
+    bm = meeting_objs[$(b).attr('session_id')]
+    if(am.area < bm.area) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+function sort_by_duration(a,b) {
+    am = meeting_objs[$(a).attr('session_id')]
+    bm = meeting_objs[$(b).attr('session_id')]
+    if(am.duration < bm.duration) {
+        // sort duration biggest to smallest.
+        return 1;
+    } else if(am.duration == bm.duration &&
+              am.title    < bm.title) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+function sort_by_specialrequest(a,b) {
+    am = meeting_objs[$(a).attr('session_id')]
+    bm = meeting_objs[$(b).attr('session_id')]
+    if(am.special_request == '*' && bm.special_request == '') {
+        return -1;
+    } else if(am.special_request == '' && bm.special_request == '*') {
+        return 1;
+    } else if(am.title < bm.title) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+function sort_unassigned() {
+    $('#'+bucketlist_id+" div").sort(unassigned_sort_function).appendTo('#'+bucketlist_id);
+}
+
+var unassigned_sort_function = sort_by_alphaname;
+function unassigned_sort_change(){
+    var last_sort_method = unassigned_sort_function;
+    var sort_method= $("#unassigned_sort_button").attr('value');
+
+    if(sort_method == "alphaname") {
+        unassigned_sort_function = sort_by_alphaname;
+    } else if(sort_method == "area") {
+        unassigned_sort_function = sort_by_area;
+    } else if(sort_method == "duration") {
+        unassigned_sort_function = sort_by_duration;
+    } else if(sort_method == "special") {
+        unassigned_sort_function = sort_by_specialrequest;
+    } else {
+        unassigned_sort_function = sort_by_alphaname;
+    }
+
+    if(unassigned_sort_function != last_sort_method) {
+        sort_unassigned();
+    }
+}
+
+
 /* the functionality of these listeners will never change so they do not need to be run twice  */
 function static_listeners(){
     $('#CLOSE_IETF_MENUBAR').click(hide_ietf_menu_bar);
+
+    $('#unassigned_sort_button').unbind('change');
+    $('#unassigned_sort_button').change(unassigned_sort_change);
+    $('#unassigned_sort_button').css('display','block');
+    $("#unassigned_alpha").attr('selected',true);
+    sort_unassigned();
 }
 
 function color_legend_click(event){
