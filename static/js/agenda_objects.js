@@ -388,7 +388,14 @@ Session.prototype.unselectit = function() {
     clear_all_selections();
 };
 
+Session.prototype.populate_event = function(js_room_id) {
+    var eTemplate =     this.event_template()
+    insert_cell(js_room_id, eTemplate, false);
+};
 
+Session.prototype.event_template = function() {
+    return "<table class='meeting_event "+ this.title +"' id='session_"+this.session_id+"'><tr id='meeting_event_title'><th class='"+this.area+"-scheme meeting_obj'>"+this.title+"<span> ("+this.duration+")</span>"+"</th></tr>";
+};
 
 function andthen_alert(object, result, arg) {
     alert("result: "+result+" on obj: "+object);

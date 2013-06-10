@@ -690,7 +690,7 @@ function drop_drop(event, ui){
     session.slot_status_key = to_slot[arr_key_index].domid
     //*****  do dajaxice call here  ****** //
 
-    var eTemplate = event_template(session.title, session.description, session.session_id,session.area);
+    var eTemplate = session.event_template()
     $(this).append(eTemplate)
 
     ui.draggable.remove();
