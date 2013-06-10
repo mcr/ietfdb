@@ -719,6 +719,13 @@ class Session(models.Model):
             return self.group.acronym
         return u"req#%u" % (id)
 
+    @property
+    def special_request_token(self):
+        if self.comments is not None:
+            return "*"
+        else:
+            return ""
+
     def constraints(self):
         return Constraint.objects.filter(source=self.group, meeting=self.meeting).order_by('name__name')
 
@@ -755,6 +762,8 @@ class Session(models.Model):
         sess1['agenda_note']    = str(self.agenda_note)
         sess1['attendees']      = str(self.attendees)
         sess1['status']         = str(self.status)
+        if self.comments is not None:
+            sess1['comments']       = str(self.comments)
         sess1['requested_time'] = str(self.requested.strftime("%Y-%m-%d"))
         sess1['requested_by']   = str(self.requested_by)
         sess1['requested_duration']= "%.1f h" % (float(self.requested_duration.seconds) / 3600)

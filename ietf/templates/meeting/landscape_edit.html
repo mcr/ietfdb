@@ -68,6 +68,7 @@ function setup_slots(){
 {% for s in sessions %}
    session_obj({"title" : "{{ s.short_name }}",
                 "description":"{{ s.group.name }}",
+                "special_request": "{{ s.special_request_token }}",
                 "session_id":"{{s.id}}",
                 "owner": "{{s.owner.owner}}",
                 "group_id":"{{s.group.id}}",
