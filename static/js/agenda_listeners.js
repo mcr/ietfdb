@@ -795,7 +795,7 @@ function drop_drop(event, ui){
 	$("#"+from_slot_id).removeClass('free_slot');
     }
     // $("#"+"sortable-list").css('background-color',none_color);
-    $("#"+"sortable-list").removeClass('free_slot');
+    $("#"+bucketlist_id).removeClass('free_slot');
     /******************************************************/
 
     var schedulesession_id = null;
@@ -844,6 +844,7 @@ function drop_drop(event, ui){
 
     droppable();
     listeners();
+    sort_unassigned();
 }
 
 /* first thing that happens when we grab a meeting_event */
