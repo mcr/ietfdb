@@ -425,7 +425,7 @@ Session.prototype.generate_info_table = function(ss) {
         $("#info_location").html(generate_select_box()+"<button id='info_location_set'>set</button>");
     }
 
-    if(this.comments.length > 0 && this.comments != "None") {
+    if("comments" in this && this.comments.length > 0 && this.comments != "None") {
         $("#special_requests").text(this.comments);
     } else {
         $("#special_requests").text("Special requests: None");
