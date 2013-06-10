@@ -401,15 +401,20 @@ Session.prototype.selectit = function() {
     clear_all_selections();
     // mark self as selected
     $("." + this.title).addClass("same_group");
-    this.element.removeClass("save_group");
-    this.element.addClass("selected_group");
+    this.element().removeClass("save_group");
+    this.element().addClass("selected_group");
 };
 Session.prototype.unselectit = function() {
     clear_all_selections();
 };
 
 Session.prototype.on_bucket_list = function() {
-    this.element.addClass("meeting_box_bucket_list");
+    this.is_placed = false;
+    this.element().parent("div").addClass("meeting_box_bucket_list");
+};
+Session.prototype.placed = function() {
+    this.is_placed = true;
+    this.element().parent("div").removeClass("meeting_box_bucket_list");
 };
 
 Session.prototype.populate_event = function(js_room_id) {
@@ -421,17 +426,24 @@ Session.prototype.visible_title = function() {
     return this.special_request + this.title;
 };
 
+Session.prototype.area_scheme = function() {
+    return this.area.toUpperCase() + "-scheme";
+};
+
 Session.prototype.event_template = function() {
     // the extra div is present so that the table can have a border which does not
     // affect the total height of the box.  The border otherwise screws up the height,
     // causing things to the right to avoid this box.
-    return "<div class=\"meeting_box\" session_id=\""+this.session_id+"\"><table class='meeting_event "+
+    var bucket_list_style = "meeting_box_bucket_list"
+    if(this.is_placed) {
+        bucket_list_style = "";
+    }
+    return "<div class=\""+bucket_list_style+" meeting_box\" session_id=\""+this.session_id+"\"><table class='meeting_event "+
         this.title +
         "' id='session_"+
         this.session_id+
         "'><tr id='meeting_event_title'><th class='"+
-        this.area+
-        "-scheme meeting_obj'>"+
+        this.area_scheme() +" meeting_obj'>"+
         this.visible_title()+
         "<span> ("+this.duration+")</span>"+
         "</th></tr></table></div>";

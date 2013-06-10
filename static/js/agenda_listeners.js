@@ -672,7 +672,7 @@ function update_to_slot(meeting_id, to_slot_id, force){
 	    // update meeting_obj
 	    //meeting_objs[meeting_id].slot_status_key = to_slot[i].domid
 	    arr_key_index = i;
-	    meeting_objs[meeting_id].placed = true;
+	    meeting_objs[meeting_id].placed();
 	    found = true;
 	    // update from_slot
 
@@ -770,10 +770,6 @@ function drop_drop(event, ui){
 
     var eTemplate = session.event_template()
     $(this).append(eTemplate)
-    if(bucket_list) {
-        session.on_bucket_list();
-    }
-
     ui.draggable.remove();
 
 
@@ -819,7 +815,7 @@ function drop_drop(event, ui){
 
         old_column_class = session.column_class;
         if(bucket_list) {
-            session.placed = false;
+            session.on_bucket_list();
             new_column_class = undefined;
         } else {
             new_column_class = to_slot.column_class;

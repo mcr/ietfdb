@@ -150,7 +150,6 @@ td.agenda_slot{
     /* height:20px; */
     height: 40px;
     /* min-height:20px; */
-   /* height:50px; */
 }
 
 .agenda_slot {
@@ -668,7 +667,7 @@ table.actual_conflict {
 }
 
 .agenda_slot_session {
-    background-color: #E6E6E6;  /* light grey-ish */
+    background-color: #E0E0E0;
 }
 
 .agenda_slot_reserved {
@@ -682,6 +681,12 @@ table.actual_conflict {
 .agenda_slot_unavailable,.agenda_slot_unavail {
     background-color: #4c4c4c;  /* dark grey */
 }
+
+.NOAREA-scheme {
+    background-color: blue;
+    color: white;
+}
+
 
 /* this is for timeslot edit page */
 

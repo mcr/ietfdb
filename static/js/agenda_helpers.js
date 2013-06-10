@@ -163,15 +163,11 @@ function load_events(){
 	    //console.log("removing class from "+ssid.domid);
 	    /* also, since we are HERE, set the class to indicate if slot is available */
 	    $(slot_id).addClass("agenda_slot_" + ssid.roomtype);
-	    $(slot_id).addClass('free_slot');
-	    $(slot_id).removeClass("agenda_slot_unavailable");
-	    $(slot_id).removeClass("agenda_slot_session");
+            $(slot_id).removeClass("agenda_slot_unavailable");
 
             session = meeting_objs[ssid.session_id];
             if (session != null) {
 	       	session.slot_status_key = key;
-
-                session.placed = true;
 
 	        $(slot_id).removeClass('free_slot');
 		// connect to the group.
@@ -189,9 +185,9 @@ function load_events(){
                 group.add_column_class(ssid.column_class);
 		group.add_session(session);
 
+                session.placed();
             } else {
-		//log("ssid: "+key+" is null");
-
+	        $(slot_id).addClass('free_slot');
             }
 	}
 	}
