@@ -262,7 +262,7 @@ function gen_tr_td(title,data){
 
 /* Mainly for the case where we didn't get any data back from the server */
 function empty_info_table(){
-    $("#info_grp").html("");
+    $("#info_grp").html(name_select_html);
     $("#info_name").html("");
     $("#info_area").html("");
     $("#info_duration").html("");
