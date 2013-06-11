@@ -448,7 +448,7 @@ function meeting_event_click(event){
 	session_id = slot[i].session_id;
 	if(session_id == meeting_event_id){
             session.selectit();
-	    current_item = "#session_"+session_id;
+	    current_item = session.element();
 
 	    current_timeslot = slot[i].timeslot_id;
 
@@ -848,8 +848,10 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
     /******************************************************/
 
     var schedulesession_id = null;
+    var scheduledsession = null;
     for(var i =0; i< to_slot.length; i++){
 	if (to_slot[i].session_id == meeting_id){
+            scheduledsession = to_slot[i];
 	    schedulesession_id = to_slot[i].scheduledsession_id;
 	    break;
 	}
@@ -900,7 +902,6 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
 function drop_activate(event, ui){
     $(event.draggable).css("background",dragging_color);
     // $(event.currentTarget).addClass('highlight_current_moving');
-    // $("#session_"+session_id).css('background-color',highlight);
 }
 
 
