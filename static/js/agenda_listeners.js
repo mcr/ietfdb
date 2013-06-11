@@ -29,7 +29,6 @@ function resize_listeners() {
 function listeners(){
     //$(".agenda_slot td").not(".meeting_event ui-draggable").unbind('click');
     //$(".agenda_slot td").not(".meeting_event ui-draggable").click(function(event){ console.log("#meetings clicked"); console.log(event); });
-    // $($("#meetings").not('.meeting_event').not('.ui-draggable')).click(function(){ console.log("#meetings clicked") }); //show_all_conflicts);
     $("#meetings").unbind('click');
     $("#meetings").click(all_click);
 
@@ -778,11 +777,38 @@ function drop_drop(event, ui){
     move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
 }
 
+function recalculate_conflicts_for_session(session, old_column_class, new_column_class)
+{
+    // go recalculate things
+    session.clear_conflict();
+    session.retrieve_constraints_by_session(find_and_populate_conflicts,
+                                            function() {});
+
+    var sk;
+    for(sk in meeting_objs) {
+        var s = meeting_objs[sk];
+        if(s != session && s.column_class != undefined &&
+           (s.column_class.column_tag == new_column_class.column_tag||
+            s.column_class.column_tag == old_column_class.column_tag)) {
+            console.log("recalculating conflicts for:", s.title);
+            s.clear_conflict();
+            s.retrieve_constraints_by_session(find_and_populate_conflicts,
+                                              function() {});
+        }
+    }
+    console.log("new conflict for ",session.title," is ", session.conflicted);
+    show_all_conflicts();
+}
+
+var _LAST_MOVED;
+var _LAST_MOVED_OLD;
+var _LAST_MOVED_NEW;
 function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui,thiss,force){
 /* thiss: is a jquery selector of where the slot will be appeneded to
    Naming is in regards to that most often function is called from drop_drop where 'this' is the dom dest.
 */
 
+    _LAST_MOVED = session;
     console.log("from_slot", from_slot);
     var update_to_slot_worked = false;
     if(force == null){
@@ -878,28 +904,11 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
         }
         console.log("setting column_class for ",session.title," to ",new_column_class.column_tag, "was: ", old_column_class.column_tag);
         session.column_class = new_column_class;
-        session.hide_conflict();
-        delete all_conflicts[session];
-        console.log("unset conflict for ",session.title," is ", all_conflicts[session]);
-        show_all_conflicts();
+        console.log("unset conflict for ",session.title," is ", session.conflicted);
 
-        // go recalculate things
-        session.retrieve_constraints_by_session(find_and_populate_conflicts,
-                                                function() {});
-        for(sk in meeting_objs) {
-            s = meeting_objs[sk];
-            if(s != session && s.column_class != undefined &&
-               (s.column_class.column_tag == new_column_class.column_tag||
-                s.column_class.column_tag == old_column_class.column_tag)) {
-                console.log("recalculating conflicts for:", s.title);
-                s.hide_conflict();
-                delete all_conflicts[s];
-                s.retrieve_constraints_by_session(find_and_populate_conflicts,
-                                                  function() {});
-            }
-        }
-        console.log("new conflict for ",session.title," is ", session in all_conflicts);
-        show_all_conflicts();
+        _LAST_MOVED_OLD = old_column_class;
+        _LAST_MOVED_NEW = new_column_class;
+        recalculate_conflicts_for_session(session, old_column_class, new_column_class);
     }
     else{
 	console.log("issue sending ajax call!!!");

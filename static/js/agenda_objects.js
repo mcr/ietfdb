@@ -49,25 +49,20 @@ function get_all_constraints(){
 
 }
 
-var all_conflicts = {};
-
 function show_all_conflicts(){
-    //console.log("all conflicts");
-    $.each(all_conflicts, function(key) {
-        conflict = all_conflicts[key];
-        if(conflict) {
-            //console.log("session:", conflict.title, conflict.session_id);
-            conflict.show_conflict();
-        }
-    });
+    console.log("all conflicts");
+    for(sk in meeting_objs) {
+        var s = meeting_objs[sk];
+        s.display_conflict();
+    }
 }
 
 // not really used anymore -- just for debugging
 function hide_all_conflicts(){
-    $.each(all_conflicts, function(key) {
-        conflict = all_conflicts[key];
-        conflict.hide_conflict();
-    });
+    for(sk in meeting_objs) {
+        var s = meeting_objs[sk];
+        s.hide_conflict();
+    }
 }
 
 var CONFLICT_LOAD_COUNT = 0;
@@ -106,10 +101,10 @@ function calculate_real_conflict(conflict, vertical_location, room_tag, session_
                 //console.log("    vs: ",index, "session_id:",osession.session_id," at: ",value.column_tag);
                 if(value.column_tag == vertical_location &&
                    value.room_tag   != room_tag) {
-                    console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym," #session_",session_obj.session_id);
+                    console.log("real conflict:",session_obj.title," with: ",conflict.othergroup.acronym, " #session_",session_obj.session_id);
                     // there is a conflict!
                     __DEBUG_SHOW_CONSTRAINT = $("#"+value[0]).children()[0];
-                    all_conflicts[session_obj.session_id] = session_obj;
+                    session_obj.add_conflict();
                 }
             }
         });
@@ -330,6 +325,7 @@ function Session() {
     this.loaded = false;
     this.area = "noarea";
     this.special_request = "";
+    this.conflicted = false;
 }
 
 function session_obj(json) {
@@ -428,11 +424,34 @@ Session.prototype.visible_title = function() {
     return this.special_request + this.title;
 };
 
+var _conflict_debug = false;
+Session.prototype.mark_conflict = function(value) {
+    this.conflicted = value;
+};
+Session.prototype.add_conflict = function() {
+    this.conflicted = true;
+};
+Session.prototype.clear_conflict = function() {
+    this.conflicted = false;
+};
 Session.prototype.show_conflict = function() {
+    if(_conflict_debug) {
+        console.log("adding conflict for", this.title);
+    }
     this.element().addClass("actual_conflict");
 };
 Session.prototype.hide_conflict = function() {
+    if(_conflict_debug) {
+        console.log("removing conflict for", this.title);
+    }
     this.element().removeClass("actual_conflict");
+};
+Session.prototype.display_conflict = function() {
+    if(this.conflicted) {
+        this.show_conflict();
+    } else {
+        this.hide_conflict();
+    }
 };
 
 Session.prototype.area_scheme = function() {
