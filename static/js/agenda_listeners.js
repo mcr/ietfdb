@@ -77,7 +77,7 @@ function listeners(){
 
 }
 
-function toggle_dialog(){
+function toggle_dialog(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, dom_obj){
     var result = "null";
     $( "#dialog-confirm" ).dialog({
 	resizable: false,
@@ -87,6 +87,7 @@ function toggle_dialog(){
             "Yes": function() {
 		$( this ).dialog( "close" );
 		result = "yes";
+		move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, dom_obj,true /* force */);
             },
 	    "Swap Slots": function(){
 		$( this ).dialog( "close" );
@@ -98,6 +99,8 @@ function toggle_dialog(){
             }
 	}
     });
+
+
     return result;
     
 
@@ -635,8 +638,12 @@ function update_to_slot(meeting_id, to_slot_id, force){
         unassigned_slot_obj.scheduledsession_id = to_slot[0].scheduledsession_id;
         unassigned_slot_obj.timeslot_id         = to_slot[0].timeslot_id;
         unassigned_slot_obj.meeting_id          = meeting_id;
+        unassigned_slot_obj.session_id          = to_slot[0].session_id;
 
+	console.log("to_slot (BEFORE):", to_slot, to_slot.length);
 	to_slot.push(unassigned_slot_obj);
+	console.log("to_slot (AFTER):", to_slot, to_slot.length);
+	arr_key_index = to_slot.length-1;
 	found = true;
 	return found;
     }
@@ -686,24 +693,28 @@ function drop_drop(event, ui){
     if(!check_free({id:to_slot_id}) ){
 	console.log("not free...");
 	if(!bucket_list) {
-	    console.log(toggle_dialog());
+	    toggle_dialog(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
 	    return
 	}
     }
     move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
 }
 
-function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui,thiss){
+function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui,thiss,force){
 /* thiss: is a jquery selector of where the slot will be appeneded to
    Naming is in regards to that most often function is called from drop_drop where 'this' is the dom dest. 
 */ 
-    var update_to_slot_worked = false;
 
+    console.log("from_slot", from_slot);
+    var update_to_slot_worked = false;
+    if(force == null){
+	force = false;
+    }
     if(bucket_list){
 	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, true);
     }
     else{
-	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, false);
+	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, force);
     }
 
     console.log("update_slot_worked", update_to_slot_worked);
@@ -808,6 +819,8 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
     $(event.draggable).css("background",dragging_color);
+    // $(event.currentTarget).addClass('highlight_current_moving');
+    // $("#session_"+session_id).css('background-color',highlight);
 }
 
 
