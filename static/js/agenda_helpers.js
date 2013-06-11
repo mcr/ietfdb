@@ -458,7 +458,7 @@ function remove_duplicate(timeslot_id, ss_id){
     child = children;
     console.log(children);
     for(var i = 0; i< children.length; i++){ // loop to
-	if($(children[i]).attr('id') == "session_"+ss_id){ // make sure we only remove duplicate.
+	if($(children[i]).attr('session_id') == ss_id) { // make sure we only remove duplicate.
 	    try{
 		$(children[i]).remove();
 	    }catch(exception){
