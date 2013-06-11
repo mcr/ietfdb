@@ -239,6 +239,7 @@ function ColumnClass(room,date,time) {
     this.room_tag   = this.room+"_"+this.date+"_"+this.time;
     this.th_time    = this.date+"-"+this.time;
     this.column_tag = ".agenda-column-"+this.th_time;
+    this.th_tag     = ".day_" + this.th_time;
 };
 
 
@@ -632,6 +633,13 @@ Group.prototype.add_column_class = function(column_class) {
     }
     this.column_class_list.push(column_class);
 };
+Group.prototype.del_column_class = function(column_class) {
+    for(n in this.column_class_list) {
+        if(this.column_class_list[n] == column_class) {
+            delete this.column_class_list[n];
+        }
+    }
+};
 
 function find_group_by_href(href) {
     if(group_objs[href] == undefined) {
@@ -666,14 +674,11 @@ function Constraint() {
 var conflict_classes = {};
 
 function clear_conflict_classes() {
-    $("#cb_conflict1").prop('checked',false);
-    $("#cb_conflict2").prop('checked',false);
-    $("#cb_conflict3").prop('checked',false);
-    $.each(conflict_classes, function(key) {
-              constraint = conflict_classes[key];
-              constraint.clear_conflict_view();
-          });
-    conflict_classes = {};
+    // remove all conflict boxes from before
+    $(".show_conflict_specific_box").removeClass("show_conflict_specific_box");
+
+    // reset all column headings
+    $(".show_conflict_view_highlight").removeClass("show_conflict_view_highlight");
 }
 function find_conflict(domid) {
     return conflict_classes[domid];
@@ -689,6 +694,7 @@ Constraint.prototype.column_class_list = function() {
 
 
 var __CONSTRAINT_DEBUG = null;
+var __column_class_debug = false;
 
 // one can get here by having the conflict boxes enabled/disabled.
 // but, when a session is selected, the conflict boxes are filled in,
@@ -697,7 +703,9 @@ Constraint.prototype.show_conflict_view = function() {
     classes=this.column_class_list()
     //console.log("show_conflict_view", this);
     __CONSTRAINT_DEBUG = this;
-    //console.log("viewing", this.href, this.thisgroup.href);
+    if(__column_class_debug) {
+        console.log("viewing", this.href, this.thisgroup.href);
+    }
 
     // this highlights the column headings of the sessions that conflict.
     for(ccn in classes) {
@@ -705,9 +713,13 @@ Constraint.prototype.show_conflict_view = function() {
 
         if(cc != undefined) {
             /* this extracts the day from this structure */
-           var th_time = ".day_"+cc.th_time;
-           //console.log("299", th_time);
-           $(th_time).addClass("show_conflict_view_highlight");
+            var th_tag = cc.th_tag;
+            if(__column_class_debug) {
+                console.log("add conflict for column_class", this.session.title, th_tag);
+            }
+            $(th_tag).addClass("show_conflict_view_highlight");
+        } else {
+            console.log("cc is undefined for ccn:",ccn);
         }
     }
 
@@ -717,37 +729,11 @@ Constraint.prototype.show_conflict_view = function() {
     if(sessions) {
       $.each(sessions, function(key) {
           //console.log("2 make box", key);
-          var nid = "#session_"+this.session_id;
-          //console.log("279", this.session_id, nid);
-          $(nid).addClass("show_conflict_specific_box");
+          this.element().addClass("show_conflict_specific_box");
       });
     }
     //console.log("viewed", this.thisgroup.href);
 };
-
-Constraint.prototype.clear_conflict_view = function() {
-    classes=this.column_class_list()
-    //console.log("hiding", this.thisgroup.href);
-    for(ccn in classes) {
-       var cc = classes[ccn];
-        if(cc != undefined) {
-           var th_time = ".day_" + cc.th_time;
-           $(th_time).removeClass("show_conflict_view_highlight"); //css('background-color',"red");
-        }
-    }
-
-    //console.log("boxes for", this.thisgroup.href);
-    sessions = this.othergroup.all_sessions
-    if(sessions) {
-      $.each(sessions, function(key) {
-          var nid = "#session_"+this.session_id;
-          //console.log("269", this.session_id, nid);
-          $(nid).removeClass("show_conflict_specific_box");
-      });
-    }
-    //console.log("hid", this.thisgroup.href);
-};
-
 
 Constraint.prototype.build_conflict_view = function() {
     var bothways = "&nbsp;&nbsp;&nbsp;";

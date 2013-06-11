@@ -119,7 +119,7 @@ function all_click(event){
     if(all_classes != undefined) {
             classes = all_classes.split(' ');
     }
-    //console.log("all_click:", classes, classes.indexOf('meeting_obj'));
+    console.log("all_click:", classes, classes.indexOf('meeting_obj'), meeting_clicked);
     if(!meeting_clicked && classes!=undefined && classes.indexOf('meeting_obj') < 0){
         console.log("32 show_all");
         clear_all_selections();
@@ -358,7 +358,6 @@ function conflict_click(event){
     if(conflict_status[clicked] == true){
         //console.log("8 fill", constraint.href);
 	conflict_status[clicked] = false;
-	constraint.clear_conflict_view();
 	constraint.checked = "checked";
     }
     else{
@@ -774,6 +773,7 @@ function drop_drop(event, ui){
 	    return
 	}
     }
+    clear_conflict_classes();
     move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
 }
 
@@ -908,6 +908,9 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
 
         _LAST_MOVED_OLD = old_column_class;
         _LAST_MOVED_NEW = new_column_class;
+
+        session.group_obj.del_column_class(old_column_class);
+        session.group_obj.add_column_class(new_column_class);
         recalculate_conflicts_for_session(session, old_column_class, new_column_class);
     }
     else{
