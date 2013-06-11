@@ -878,8 +878,12 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
         }
         console.log("setting column_class for ",session.title," to ",new_column_class.column_tag, "was: ", old_column_class.column_tag);
         session.column_class = new_column_class;
-        $("#" + session.session_id).removeClass("actual_conflict");
+        session.hide_conflict();
         delete all_conflicts[session];
+        console.log("unset conflict for ",session.title," is ", all_conflicts[session]);
+        show_all_conflicts();
+
+        // go recalculate things
         session.retrieve_constraints_by_session(find_and_populate_conflicts,
                                                 function() {});
         for(sk in meeting_objs) {
@@ -888,12 +892,13 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
                (s.column_class.column_tag == new_column_class.column_tag||
                 s.column_class.column_tag == old_column_class.column_tag)) {
                 console.log("recalculating conflicts for:", s.title);
-                $("#" + s.session_id).removeClass("actual_conflict");
+                s.hide_conflict();
                 delete all_conflicts[s];
                 s.retrieve_constraints_by_session(find_and_populate_conflicts,
                                                   function() {});
             }
         }
+        console.log("new conflict for ",session.title," is ", session in all_conflicts);
         show_all_conflicts();
     }
     else{

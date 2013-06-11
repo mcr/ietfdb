@@ -55,16 +55,18 @@ function show_all_conflicts(){
     //console.log("all conflicts");
     $.each(all_conflicts, function(key) {
         conflict = all_conflicts[key];
-        //console.log("session:", conflict.title, conflict.session_id);
-        $("#session_" + conflict.session_id).addClass("actual_conflict");
+        if(conflict) {
+            //console.log("session:", conflict.title, conflict.session_id);
+            conflict.show_conflict();
+        }
     });
 }
 
-// not really used anymore
+// not really used anymore -- just for debugging
 function hide_all_conflicts(){
     $.each(all_conflicts, function(key) {
         conflict = all_conflicts[key];
-        $("#" + conflict.session_id).removeClass("actual_conflict");
+        conflict.hide_conflict();
     });
 }
 
@@ -424,6 +426,13 @@ Session.prototype.populate_event = function(js_room_id) {
 
 Session.prototype.visible_title = function() {
     return this.special_request + this.title;
+};
+
+Session.prototype.show_conflict = function() {
+    this.element().addClass("actual_conflict");
+};
+Session.prototype.hide_conflict = function() {
+    this.element().removeClass("actual_conflict");
 };
 
 Session.prototype.area_scheme = function() {
