@@ -866,12 +866,17 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
 					      });
 
         old_column_class = session.column_class;
+        if(old_column_class == undefined) {
+            console.log("old column class was undefined for session:", session.title);
+            old_column_class = new ColumnClass();
+        }
         if(bucket_list) {
             session.on_bucket_list();
-            new_column_class = undefined;
+            new_column_class = new ColumnClass();
         } else {
-            new_column_class = to_slot.column_class;
+            new_column_class = scheduledsession.column_class;
         }
+        console.log("setting column_class for ",session.title," to ",new_column_class.column_tag, "was: ", old_column_class.column_tag);
         session.column_class = new_column_class;
         $("#" + session.session_id).removeClass("actual_conflict");
         delete all_conflicts[session];
@@ -879,8 +884,10 @@ function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_
                                                 function() {});
         for(sk in meeting_objs) {
             s = meeting_objs[sk];
-            if(s.column_class == new_column_class ||
-               s.column_class == old_column_class) {
+            if(s != session && s.column_class != undefined &&
+               (s.column_class.column_tag == new_column_class.column_tag||
+                s.column_class.column_tag == old_column_class.column_tag)) {
+                console.log("recalculating conflicts for:", s.title);
                 $("#" + s.session_id).removeClass("actual_conflict");
                 delete all_conflicts[s];
                 s.retrieve_constraints_by_session(find_and_populate_conflicts,
