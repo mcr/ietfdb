@@ -158,6 +158,14 @@ Please save this agenda to your account first.
 
 <div class="agenda_div">
 
+
+<div id="dialog-confirm" title="" style="display:none">
+  <p>
+    <span class="ui-icon ui-icon-alert" style="background: white; float: left; margin: 0 7px 20px 0;"></span>
+    Are you sure you want to put two sessions into the same slot?
+  </p>
+</div>
+
 <table id="meetings" class="ietf-navbar" style="width:100%">
   <th class="schedule_title"><span id="schedule_name">name: {{schedule.name}}</span><div id="spinner"><!-- spinney goes here --></div></th>
 {% for day in time_slices %}

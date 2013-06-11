@@ -77,6 +77,37 @@ function listeners(){
 
 }
 
+function toggle_dialog(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, dom_obj){
+    var result = "null";
+    $( "#dialog-confirm" ).dialog({
+	resizable: false,
+	height:140,
+	modal: true,
+	buttons: {
+            "Yes": function() {
+		$( this ).dialog( "close" );
+		result = "yes";
+		move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, dom_obj,true /* force */);
+            },
+	    "Swap Slots": function(){
+		$( this ).dialog( "close" );
+		result = "swap";
+	    },
+            Cancel: function() {
+		$( this ).dialog( "close" );
+		result = "cancel"
+            }
+	}
+    });
+
+
+    return result;
+
+
+
+}
+
+
 function clear_all_selections() {
     $(".same_group").removeClass("same_group");
     $(".selected_group").removeClass("selected_group");
@@ -685,8 +716,12 @@ function update_to_slot(meeting_id, to_slot_id, force){
         unassigned_slot_obj.scheduledsession_id = to_slot[0].scheduledsession_id;
         unassigned_slot_obj.timeslot_id         = to_slot[0].timeslot_id;
         unassigned_slot_obj.meeting_id          = meeting_id;
+        unassigned_slot_obj.session_id          = to_slot[0].session_id;
 
+	console.log("to_slot (BEFORE):", to_slot, to_slot.length);
 	to_slot.push(unassigned_slot_obj);
+	console.log("to_slot (AFTER):", to_slot, to_slot.length);
+	arr_key_index = to_slot.length-1;
 	found = true;
 	return found;
     }
@@ -736,16 +771,28 @@ function drop_drop(event, ui){
     if(!check_free({id:to_slot_id}) ){
 	console.log("not free...");
 	if(!bucket_list) {
+	    toggle_dialog(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
 	    return
 	}
     }
-    var update_to_slot_worked = false;
+    move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui, this);
+}
 
+function move_slot(meeting_id, session, to_slot_id, to_slot, from_slot_id, from_slot, bucket_list, event, ui,thiss,force){
+/* thiss: is a jquery selector of where the slot will be appeneded to
+   Naming is in regards to that most often function is called from drop_drop where 'this' is the dom dest.
+*/
+
+    console.log("from_slot", from_slot);
+    var update_to_slot_worked = false;
+    if(force == null){
+	force = false;
+    }
     if(bucket_list){
 	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, true);
     }
     else{
-	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, false);
+	update_to_slot_worked = update_to_slot(meeting_id, to_slot_id, force);
     }
 
     console.log("update_slot_worked", update_to_slot_worked);
@@ -769,20 +816,23 @@ function drop_drop(event, ui){
     //*****  do dajaxice call here  ****** //
 
     var eTemplate = session.event_template()
-    $(this).append(eTemplate)
+
+    console.log("this:", thiss);
+    $(thiss).append(eTemplate)
+
     ui.draggable.remove();
 
 
 
     /* set colours */
-    $(this).removeClass('highlight_free_slot');
+    $(thiss).removeClass('highlight_free_slot');
     if(check_free({id:to_slot_id}) ){
-	// $(this).css('background-color', color_droppable_empty_slot)
-	$(this).addClass('free_slot')
+	// $(thiss).css('background-color', color_droppable_empty_slot)
+	$(thiss).addClass('free_slot')
     }
     else{
-	// $(this).css('background-color',none_color);
-	$(this).removeClass('free_slot')
+	// $(thiss).css('background-color',none_color);
+	$(thiss).removeClass('free_slot')
     }
 
     if(check_free({id:from_slot_id}) ){
@@ -849,6 +899,8 @@ function drop_drop(event, ui){
 /* first thing that happens when we grab a meeting_event */
 function drop_activate(event, ui){
     $(event.draggable).css("background",dragging_color);
+    // $(event.currentTarget).addClass('highlight_current_moving');
+    // $("#session_"+session_id).css('background-color',highlight);
 }
 
 
