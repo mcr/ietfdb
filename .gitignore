@@ -10,3 +10,5 @@ ietf/settings_local.py
 run_old
 django_cache
 *.orig
+ajax.log
+testrusult
