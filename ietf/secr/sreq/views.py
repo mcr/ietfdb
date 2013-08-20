@@ -382,6 +382,8 @@ def edit(request, acronym):
                     Constraint.objects.filter(meeting=meeting,source=group,name='conflic3').delete()
                     save_conflicts(group,meeting,form.cleaned_data['conflict3'],'conflic3')
 
+                # XXX
+                # people who must be present.
                 # deprecated
                 # log activity
                 #add_session_activity(group,'Session Request was updated',meeting,user)
@@ -396,10 +398,13 @@ def edit(request, acronym):
     else:
         form = SessionForm(initial=initial)
 
+    person_conflict_list = []
+
     return render_to_response('sreq/edit.html', {
         'meeting': meeting,
         'form': form,
         'group': group,
+        'person_conflict_list' : person_conflict_list,
         'session_conflicts': session_conflicts},
         RequestContext(request, {}),
     )
