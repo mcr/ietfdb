@@ -33,7 +33,7 @@ class AgendaInfoTestCase(AgendaTransactionalTestCase):
         self.assertEqual(meeting.number,'83')
         self.assertEqual(venue.meeting_num, "83")
         # will change as more ADs are added to fixtures
-        self.assertEqual(len(ads), 3)
+        self.assertEqual(len(ads), 4)
 
     def test_AgendaInfoReturnsSortedTimeSlots(self):
         from ietf.meeting.views import agenda_info
@@ -155,9 +155,9 @@ class AgendaInfoTestCase(AgendaTransactionalTestCase):
 
     def test_clue_has_ad_present(self):
         mtg83 = get_meeting(83)
-        sch83 = get_schedule(mtg83, "mtg:83")
-        clue83 = mtg83.session_set.get(group__acronym='avtcore')
-        is_present = clue83.people_constraints()
+        clue83 = mtg83.session_set.filter(group__acronym='clue')[0]
+        is_present = clue83.people_constraints
+        self.assertIsNotNone(is_present, "why is constraint list none")
         self.assertEqual(len(is_present), 3)
 
 

@@ -776,6 +776,10 @@ class Session(models.Model):
             constraint_list.append(ct1)
         return constraint_list
 
+    @property
+    def people_constraints(self):
+        return self.group.constraint_source_set.filter(meeting=self.meeting, name='bethere')
+
     def url(self, sitefqdn):
         return "%s/meeting/%s/session/%s.json" % (sitefqdn, self.meeting.number, self.id)
 
