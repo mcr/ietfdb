@@ -651,7 +651,7 @@ class Constraint(models.Model):
     Specifies a constraint on the scheduling.
     One type (name=conflic?) of constraint is between source WG and target WG,
            e.g. some kind of conflict.
-    Another type (name=adpresent) of constraing is between source WG and
+    Another type (name=bethere) of constraing is between source WG and
            availability of a particular Person, usually an AD.
     A third type (name=avoidday) of constraing is between source WG and
            a particular day of the week, specified in day.
@@ -668,6 +668,15 @@ class Constraint(models.Model):
 
     def url(self, sitefqdn):
         return "%s/meeting/%s/constraint/%s.json" % (sitefqdn, self.meeting.number, self.id)
+
+    @property
+    def person_conflicted(self):
+        if self.person is None:
+            return "unknown person"
+        return self.person.name
+
+    def status(self):
+        return "true"
 
     def json_dict(self, sitefqdn):
         ct1 = dict()

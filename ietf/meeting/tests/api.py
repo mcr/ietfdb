@@ -156,10 +156,20 @@ class ApiTestCase(AgendaTransactionalTestCase):
     def test_anyoneGetConflictInfo(self):
         s2157 = Session.objects.get(pk=2157)
 
-        # move this session from one timeslot to another.
+        # retrive some json that shows the conflict for this session.
         resp = self.client.get('/meeting/83/session/2157/constraints.json')
         conflicts = json.loads(resp.content)
         self.assertNotEqual(conflicts, None)
+
+    def test_conflictInfoIncludesPeople(self):
+        mtg83 = get_meeting(83)
+        clue83 = mtg83.session_set.filter(group__acronym='clue')[0]
+
+        # retrive some json that shows the conflict for this session.
+        resp = self.client.get("/meeting/83/session/%u/constraints.json" % (clue83.pk))
+        conflicts = json.loads(resp.content)
+        self.assertNotEqual(conflicts, None)
+        self.assertEqual(len(conflicts), 39)
 
     def test_getMeetingInfoJson(self):
         resp = self.client.get('/meeting/83.json')
