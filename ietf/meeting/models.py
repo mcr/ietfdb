@@ -663,6 +663,8 @@ class Constraint(models.Model):
     day    = models.DateTimeField(null=True, blank=True)
     name   = models.ForeignKey(ConstraintName)
 
+    active_status = None
+
     def __unicode__(self):
         return u"%s %s %s" % (self.source, self.name.name.lower(), self.target)
 
@@ -676,7 +678,10 @@ class Constraint(models.Model):
         return self.person.name
 
     def status(self):
-        return "true"
+        if self.active_status is not None:
+            return self.active_status
+        else:
+            return True
 
     def json_dict(self, sitefqdn):
         ct1 = dict()
