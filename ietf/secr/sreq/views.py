@@ -78,11 +78,18 @@ def get_lock_message():
         message = "This application is currently locked."
     return message
 
-def get_meeting():
+# now identical to get_meeting from ietf.meeting.helpers
+def get_meeting(num = None):
     '''
-    Function to get the current IETF regular meeting.  Simply returns the meeting with the most recent date
+    Function to get the current IETF regular meeting.
+    If num=None... then Simply returns the meeting with the most recent date
+    else, find the meeting with this number.
     '''
-    return Meeting.objects.filter(type='ietf').order_by('-date')[0]
+    if num is None:
+        return Meeting.objects.filter(type='ietf').order_by('-date')[0]
+    else:
+        return get_object_or_404(Meeting, number=num)
+
 
 def save_conflicts(group, meeting, conflicts, name):
     '''
@@ -293,12 +300,55 @@ def confirm(request, acronym):
         RequestContext(request, {}),
     )
 
+def make_essential_person(pk, person, required):
+    essential_person = dict()
+    essential_person["person"]     = person.pk
+    essential_person["bethere"]    = required
+    return essential_person
+
+def make_bepresent_formset(group, session, default=True):
+    dict_of_essential_people = {}
+
+    for x in session.people_constraints.all():
+        #print "add db: %u %s" % (x.person.pk, x.person)
+        dict_of_essential_people[x.person.pk] = make_essential_person(x.person.pk, x.person, True)
+
+    # now, add the co-chairs if they were not already present
+    chairs  = group.role_set.filter(name='chair')
+    for chairrole in chairs:
+        chair = chairrole.person
+        if not chair.pk in dict_of_essential_people:
+            #print "add chair: %u" % (chair.pk)
+            dict_of_essential_people[chair.pk] = make_essential_person(chair.pk, chair, default)
+
+    # add the responsible AD
+    if not group.ad.pk in dict_of_essential_people:
+        #print "add ad: %u" % (chair.pk)
+        dict_of_essential_people[group.ad.pk] = make_essential_person(group.ad.pk, group.ad, default)
+
+    # make the form set of these people
+    list_of_essential_people = []
+    for k,x in dict_of_essential_people.iteritems():
+        #print "k: %s x: %s" % (k,x)
+        list_of_essential_people.append(x)
+
+    list_of_essential_people.reverse()
+    #for t in list_of_essential_people:
+    #    print "t: %s" % (t)
+
+    formset = MustBePresentFormSet(initial=list_of_essential_people)
+    return formset
+
 @check_permissions
 def edit(request, acronym):
+    return edit_mtg(request, None, acronym)
+
+@check_permissions
+def edit_mtg(request, num, acronym):
     '''
     This view allows the user to edit details of the session request
     '''
-    meeting = get_meeting()
+    meeting = get_meeting(num)
     group = get_object_or_404(Group, acronym=acronym)
     sessions = Session.objects.filter(meeting=meeting,group=group).order_by('id')
     sessions_count = sessions.count()
@@ -398,49 +448,14 @@ def edit(request, acronym):
     else:
         form = SessionForm(initial=initial)
 
-    # does not matter which session we pick for people conflicts, as
-    # all conflicts are by group.
-    basic_list_of_essential_people = {}
-
-    # add the co-chairs.
-    chairs  = group.role_set.filter(name='chair')
-    for chairrole in chairs:
-        chair = chairrole.person
-        basic_list_of_essential_people[chair.pk] = chair
-    # add the responsible AD
-    basic_list_of_essential_people[group.ad.pk] = group.ad
-
-    for key in iter(basic_list_of_essential_people):
-        print "key[%s] = %s" % (key, basic_list_of_essential_people[key])
-
     session = sessions[0]
-
-    # turn it into a plain array so that it can be pushed onto
-    person_conflict_list = [ x for x in session.people_constraints.all() ]
-    person_conflict_keys = [ x.pk for x in person_conflict_list ]
-
-    extra_list = []
-
-    for essentialkey in iter(basic_list_of_essential_people):
-        if not essentialkey in person_conflict_keys:
-            person_conflict = basic_list_of_essential_people[essentialkey]
-            # no conflict recorded for this person, so list it as false with a made up
-            # constraint
-            false_constraint = Constraint()
-            false_constraint.active_status = False
-            false_constraint.meeting = meeting
-            false_constraint.source  = group
-            false_constraint.person  = person_conflict
-            extra_list.append(false_constraint)
-
-
-    person_conflict_list += extra_list
+    bepresent_formset = make_bepresent_formset(group, session, False)
 
     return render_to_response('sreq/edit.html', {
         'meeting': meeting,
         'form': form,
         'group': group,
-        'person_conflict_list' : person_conflict_list,
+        'bepresent_formset' : bepresent_formset,
         'session_conflicts': session_conflicts},
         RequestContext(request, {}),
     )
