@@ -51,13 +51,14 @@ class GroupSelectForm(forms.Form):
         super(GroupSelectForm, self).__init__(*args,**kwargs)
         self.fields['group'].widget.choices = choices
 
+BETHERE_CHOICES = ((False , 'No'), (True , 'Yes'))
 # not using the ModelFormset, too complex.
 class MustBePresentForm(forms.Form):
     from ietf.person.models import Person
     person   = forms.ModelChoiceField(queryset= Person.objects.all(), required=False)
-    #bethere  = forms.ChoiceField(required = True, choices = { "0" : "No", "1": "Yes"})
-    bethere  = forms.BooleanField(required = True)
-    pk       = forms.IntegerField(widget = forms.HiddenInput)
+    bethere  = forms.ChoiceField(required = False, choices = BETHERE_CHOICES)
+    #bethere  = forms.BooleanField()
+    #pk       = forms.IntegerField(widget = forms.HiddenInput)
 
 MustBePresentFormSet = formset_factory(MustBePresentForm, extra = 1)
 

@@ -355,6 +355,7 @@ def edit_mtg(request, num, acronym):
     initial = get_initial_session(sessions)
     session_conflicts = session_conflicts_as_string(group, meeting)
     login = request.user.get_profile()
+    session = sessions[0]
 
     if request.method == 'POST':
         button_text = request.POST.get('submit', '')
@@ -363,7 +364,8 @@ def edit_mtg(request, num, acronym):
             return HttpResponseRedirect(url)
 
         form = SessionForm(request.POST,initial=initial)
-        if form.is_valid():
+        bepresent_formset = MustBePresentFormSet(request.POST)
+        if form.is_valid() or bepresent_formset.is_valid():
             if form.has_changed():
                 # might be cleaner to simply delete and rewrite all records (but maintain submitter?)
                 # adjust duration or add sessions
@@ -441,6 +443,26 @@ def edit_mtg(request, num, acronym):
                 # send notification
                 send_notification(group,meeting,login,form.cleaned_data,'update')
 
+            for bepresent in bepresent_formset.forms:
+                if bepresent.is_valid() and 'person' in bepresent.cleaned_data:
+                    #print "analyzing for %s" % (bepresent.cleaned_data)
+                    person = bepresent.cleaned_data['person']
+                    if 'bethere' in bepresent.changed_data and bepresent.cleaned_data['bethere']=='True':
+                        #print "Maybe adding bethere constraint for %s" % (person)
+                        if session.people_constraints.filter(person = person).count()==0:
+                            # need to create new constraint.
+                            #print "  yes"
+                            nc = session.people_constraints.create(person = person,
+                                                                   meeting = meeting,
+                                                                   name_id = 'bethere',
+                                                                   source = session.group)
+                            nc.save()
+                    else:
+                        #print "Maybe deleting bethere constraint for %s" % (person)
+                        if session.people_constraints.filter(person = person).count() > 0:
+                            #print "  yes"
+                            session.people_constraints.filter(person = person).delete()
+
             messages.success(request, 'Session Request updated')
             url = reverse('sessions_view', kwargs={'acronym':acronym})
             return HttpResponseRedirect(url)
@@ -448,7 +470,6 @@ def edit_mtg(request, num, acronym):
     else:
         form = SessionForm(initial=initial)
 
-    session = sessions[0]
     bepresent_formset = make_bepresent_formset(group, session, False)
 
     return render_to_response('sreq/edit.html', {
