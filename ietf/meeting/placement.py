@@ -17,7 +17,7 @@ from datetime            import datetime
 
 from django.db           import models
 from settings import BADNESS_UNPLACED, BADNESS_TOOSMALL_50, BADNESS_TOOSMALL_100, BADNESS_TOOBIG, BADNESS_MUCHTOOBIG
-from ietf.meeting.models import Schedule, ScheduledSession,TimeSlot,Room, set_prompt_wait
+from ietf.meeting.models import Schedule, ScheduledSession,TimeSlot,Room
 
 def do_prompt():
     print "waiting:"
